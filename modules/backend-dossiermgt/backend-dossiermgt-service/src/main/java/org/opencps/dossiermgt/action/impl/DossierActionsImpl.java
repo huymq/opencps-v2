@@ -1393,7 +1393,9 @@ public class DossierActionsImpl implements DossierActions {
 
 				dossier.setReceiveDate(new Date());
 
+//				_log.info("==DossierNumberGenerator==" + dossier.getDossierId() + "=" + dossierRef.trim());
 				dossier.setDossierNo(dossierRef.trim());
+				
 				// To index
 				DossierLocalServiceUtil.syncDossier(dossier);
 			}

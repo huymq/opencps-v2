@@ -24,7 +24,7 @@ public class TimerSchedule extends BaseSchedulerEntryMessageListener{
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		_log.info("****OutputDB Timer****");
+		_log.info("===OutputDB=Timer===");
 		VROutputDBActions outputDB = new VROutputDBActionsImpl();
 		outputDB.processOutputDB();
 	}
@@ -33,7 +33,7 @@ public class TimerSchedule extends BaseSchedulerEntryMessageListener{
 	@Modified
 	protected void activate() {
 		schedulerEntryImpl.setTrigger(
-				TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(), 2, TimeUnit.MINUTE));
+				TriggerFactoryUtil.createTrigger(getEventListenerClass(), getEventListenerClass(), 24, TimeUnit.HOUR));
 		_schedulerEngineHelper.register(this, schedulerEntryImpl, DestinationNames.SCHEDULER_DISPATCH);
 	}
 

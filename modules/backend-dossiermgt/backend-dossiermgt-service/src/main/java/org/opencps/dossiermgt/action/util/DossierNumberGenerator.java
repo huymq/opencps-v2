@@ -38,6 +38,92 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 public class DossierNumberGenerator {
+	
+	public static void main(String[] args) {
+		String codePattern = "\\{(n+|N+)\\}";
+		String dayPattern = "\\{(d{2}|D{2})\\}";
+		String monthPattern = "\\{(m{2}|M{2})\\}";
+		String yearPattern = "\\{(y+|Y+)\\}";
+		String dynamicVariablePattern = "\\{\\$(.*?)\\}";
+		String defaultValuePattern = "^([A-Z]|[a-z])+\\d*\\s";
+		String extractValuePattern = "\\[\\$(.*?)\\$\\]";
+		String datetimePattern = "\\{([D|d]{2}[-\\/]{1}[M|m]{2}[-|\\/]{1}[Y|y]{4})\\}";
+		String[] patterns = new String[] { codePattern, dayPattern, monthPattern, yearPattern,
+				dynamicVariablePattern, datetimePattern };
+		
+		String seriNumberPattern = "{nnnnn}/{yy}/{$XH [$dossierNo@TT302011BGTVTTTKXCGPL05$]}";
+	
+		String year = "2019";
+		for (String pattern : patterns) {
+			Pattern r = Pattern.compile(pattern);
+	
+			Matcher m = r.matcher(seriNumberPattern);
+			
+			System.out.println("==pattern==" + pattern);
+			while (m.find()) {
+				String tmp = m.group(1);
+
+				if (r.toString().equals(codePattern)) {
+
+					//String key = "opencps.dossier.number.counter#" + processOtionId + "#" + year;
+					
+					String number = "1";
+
+					tmp = tmp.replaceAll(tmp.charAt(0) + StringPool.BLANK, String.valueOf(0));
+
+					if (number.length() < tmp.length()) {
+						number = tmp.substring(0, tmp.length() - number.length()).concat(number);
+					}
+					System.out.println(m.group(0));
+					seriNumberPattern = seriNumberPattern.replace(m.group(0), number);
+
+				} else if (r.toString().equals(datetimePattern)) {
+					System.out.println(tmp);
+
+					seriNumberPattern = seriNumberPattern.replace(m.group(0), "OK");
+
+				} else if (r.toString().equals(yearPattern)) {
+
+					tmp = tmp.replaceAll(tmp.charAt(0) + StringPool.BLANK, String.valueOf(0));
+
+					if (year.length() < tmp.length()) {
+						year = tmp.substring(0, tmp.length() - year.length()).concat(year);
+					} else if (year.length() > tmp.length()) {
+						year = year.substring(year.length() - tmp.length(), year.length());
+					}
+
+					seriNumberPattern = seriNumberPattern.replace(m.group(0), year);
+
+				} else if (r.toString().equals(dynamicVariablePattern)) {
+					Pattern r1 = Pattern.compile(defaultValuePattern);
+					Matcher m1 = r1.matcher(tmp);
+
+					String defaultValue = (m1.find() ? m1.group() : StringPool.BLANK).trim();
+
+					Pattern r2 = Pattern.compile(extractValuePattern);
+					Matcher m2 = r2.matcher(tmp);
+					String extractContent = (m2.find() ? m2.group(1) : StringPool.BLANK).trim();
+					String key = StringPool.BLANK;
+					String param = StringPool.BLANK;
+					String value = StringPool.BLANK;
+					String[] textSplit = StringUtil.split(extractContent, "@");
+					if (textSplit == null || textSplit.length < 2) {
+						seriNumberPattern = seriNumberPattern.replace(m.group(0), defaultValue);
+					} else {
+						key = textSplit[0];
+						param = textSplit[1];
+						
+						seriNumberPattern = seriNumberPattern.replace(m.group(0), defaultValue);
+					}
+
+				}
+
+				m = r.matcher(seriNumberPattern);
+			}
+		}
+		
+		System.out.println(seriNumberPattern);
+	}
 
 	public static String generateReferenceUID(long groupId) {
 		// TODO add more logic here for the generate by pattern
@@ -101,7 +187,9 @@ public class DossierNumberGenerator {
 						//String key = "opencps.dossier.number.counter#" + processOtionId + "#" + year;
 						
 						String number = countByInit(serviceProcessCode, dossierId);
-
+						
+//						_log.info("==DossierNumberGenerator==" + serviceProcessCode + "=" + tmp + "=" + number);
+						
 						_log.info("//////////////////////////////////////////////////////////// " + number
 								+ "|processOtionId= " + number);
 
@@ -111,10 +199,11 @@ public class DossierNumberGenerator {
 							number = tmp.substring(0, tmp.length() - number.length()).concat(number);
 						}
 
+//						_log.info("==DossierNumberGenerator==" + codePattern + "=" + m.group(1) + "=" + number);
 						seriNumberPattern = seriNumberPattern.replace(m.group(0), number);
 
 					} else if (r.toString().equals(datetimePattern)) {
-						System.out.println(tmp);
+//						System.out.println(tmp);
 
 						seriNumberPattern = seriNumberPattern.replace(m.group(0), "OK");
 
@@ -296,6 +385,12 @@ public class DossierNumberGenerator {
 			_log.info("___certConfigCurrId" + certConfigCurrId);
 
 			Counter counterConfig = CounterLocalServiceUtil.fetchCounter(certConfigId);
+			
+			if (Validator.isNull(counterConfig)) {
+				counterConfig = CounterLocalServiceUtil.createCounter(certConfigId);
+				counterConfig.setCurrentId(1);
+				CounterLocalServiceUtil.updateCounter(counterConfig);
+			}
 
 			String elmCertId = PRE_FIX_CERT_ELM + pattern + StringPool.AT + curYear + StringPool.AT + dossierid;
 
@@ -355,7 +450,7 @@ public class DossierNumberGenerator {
 				}
 
 
-				certNumber = String.format("%7d", _counterNumber); 
+				certNumber = String.format("%07d", _counterNumber); 
 				
 			} else {
 				certNumber = "0";
