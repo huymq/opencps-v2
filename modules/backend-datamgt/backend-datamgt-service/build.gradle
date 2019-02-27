@@ -7,6 +7,7 @@ dependencies {
 	compileOnly group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
 	compileOnly project(":modules:backend-datamgt:backend-datamgt-api")
 	compileOnly project(":modules:backend-auth")
+	compile group: 'com.liferay', name: 'com.liferay.portal.dao.orm.custom.sql', version: '1.0.3'
 }
 
 buildService {
