@@ -293,7 +293,7 @@
 
 <div class="row-parts-content" id="postalInfo">
 
-	<div class="checkbox ML15">
+	<div class="ML15">
 		<input type="checkbox" id="viaPostal" name="viaPostal" data-bind="attr : {viaPostal : viaPostal}"> <label class="text-normal">Ông bà muốn sử dụng phương thức nhận kết quả hồ sơ qua đường bưu điện</label>
 	</div>
 	
@@ -709,7 +709,9 @@
 						});
 						
 						funSaveDossier();
-						manageDossier.navigate("/taohosomoi/nophoso/${dossierId}");
+						setTimeout(function () {
+							manageDossier.navigate("/taohosomoi/nophoso/${dossierId}");
+						}, 500);
 
 						
 					}
@@ -717,7 +719,9 @@
 				}else {
 					
 					funSaveDossier();
-					manageDossier.navigate("/taohosomoi/nophoso/${dossierId}");
+					setTimeout(function () {
+						manageDossier.navigate("/taohosomoi/nophoso/${dossierId}");
+					}, 500);
 					
 				}
 			}catch(e){
@@ -729,7 +733,9 @@
 		fnNext = function(){
 			
 			funSaveDossier();
-			manageDossier.navigate("/taohosomoi/nophoso/${dossierId}");
+			setTimeout(function () {
+				manageDossier.navigate("/taohosomoi/nophoso/${dossierId}");
+			}, 500);
 		}
 
 		$("#btn-back-dossier").click(function(){

@@ -104,6 +104,14 @@
 											data-bind="click: filterInvestigation">
 											<span class="dossierStatus">Tra cứu phương tiện xuất xưởng</span>
 										</li>
+										<li class="hover-pointer text-hover-blue itemStatus" 
+											data-bind="click: filterBill">
+											<span class="dossierStatus">Phiếu tính tiền</span>
+										</li>
+										<li class="hover-pointer text-hover-blue itemStatus" 
+											data-bind="click: filterProductStop">
+											<span class="dossierStatus">Sản phẩm dừng sản xuất</span>
+										</li>
 									</ul>
 								</div>
 							</div>

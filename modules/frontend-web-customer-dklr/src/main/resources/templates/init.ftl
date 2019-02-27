@@ -40,5 +40,6 @@
 	
 	
 	<#assign RequestParameters = (Request.RequestParameters)!>
+	<#assign productId = (Request.productId)!>
 	
 </#if>

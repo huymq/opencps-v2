@@ -26,7 +26,7 @@
     <div style="width: 100%; background-color: #fff;">
         <v-layout row wrap class="pt-2 pb-2">
           <v-flex xs12 sm2 class="text-xs-right">
-            <label class="mr-3 my-0" style="padding-top: 15px;">Tên doanh nghiệp</label>
+            <label class="mr-3 my-0" style="padding-top: 6px;">Tên doanh nghiệp</label>
           </v-flex>
           <v-flex xs12 sm4>
             <v-text-field
@@ -37,7 +37,7 @@
             ></v-text-field>
           </v-flex>
           <v-flex xs12 sm2 class="text-xs-right">
-            <label class="mr-3 my-0" style="padding-top: 15px;">Mã số thuế</label>
+            <label class="mr-3 my-0" style="padding-top: 6px;">Mã số thuế</label>
           </v-flex>
           <v-flex xs12 sm4>
             <v-text-field
@@ -49,7 +49,7 @@
           </v-flex>
 
           <v-flex xs12 sm2 class="text-xs-right">
-            <label class="mr-3 my-0" style="padding-top: 15px;">Loại hình</label>
+            <label class="mr-3 my-0" style="padding-top: 6px;">Loại hình</label>
           </v-flex>
           <v-flex xs12 sm4>
             <v-select
@@ -63,7 +63,7 @@
             ></v-select>
           </v-flex>
           <v-flex xs12 sm2 class="text-xs-right">
-            <label class="mr-3 my-0" style="padding-top: 15px;">Tình trạng</label>
+            <label class="mr-3 my-0" style="padding-top: 6px;">Tình trạng</label>
           </v-flex>
           <v-flex xs12 sm4>
             <v-select
@@ -78,7 +78,7 @@
           </v-flex>
 
           <v-flex xs12 sm2 class="text-xs-right">
-            <label class="mr-3 my-0" style="padding-top: 15px;">Địa chỉ</label>
+            <label class="mr-3 my-0" style="padding-top: 6px;">Địa chỉ</label>
           </v-flex>
           <v-flex xs12 sm10>
             <v-text-field

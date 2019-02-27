@@ -72,6 +72,58 @@
 	  	class="py-0 pr-3"
 	  	></v-text-field>
 	  </v-flex>
+	  <v-flex xs12 sm12>
+	    <v-expansion-panel expand class="my-0 opencps-dossier-info opencps-dossier-part-style">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
+		
+			<div slot="header" class="text-bold primary--text">Doanh nghiệp nhập khẩu (trong nước) có liên kết</div>
+			<v-layout row wrap class="ml-0">
+				<v-flex xs12 sm12 v-if="!loadingDoanhNghiepTT_NN">
+					<v-data-table 
+						:headers="headersDoanhNghiepTT_NN"
+						:items="itemsDoanhNghiepTT_NN"
+						no-data-text="Không có dữ liệu"
+						hide-actions
+						class="table__overflow ml-0 px-3 py-2"
+						loading="true"
+						hide-actions
+					>
+						<template slot="headers" slot-scope="props">
+							<tr>
+								<th v-for="header in props.headers" :key="header.text"
+								:class="['column text-xs-center']" v-html="header.text"
+								>
+								</th>
+							</tr>
+						</template>
+						<template slot="items" slot-scope="props">
+							<td class="text-xs-center" style="padding: 8px; width: 3%;">
+								{{ props.index + 1 }}
+							</td>
+							<td style="padding: 8px; width: 33%;" class="text-xs-left">
+								{{ props.item.applicantName }}  <br/>
+								{{ props.item.address }}
+							</td>
+							<td style="padding: 8px;" class="text-xs-left">
+								{{ props.item.applicantIdNo }} <br/>
+								{{ props.item.contactTelNo }} <br/>
+								{{ props.item.contactEmail }} 
+							</td>
+							<td style="padding: 8px;" class="text-xs-left">{{ props.item.contactName }}</td>
+							<td style="padding: 8px;" class="text-xs-left">
+								{{ props.item['loaiHinh'] }} 
+							</td>
+						</template>
+					</v-data-table>
+			  </v-flex>
+			  <v-flex xs12 sm12 class="text-xs-center" v-else>
+			    <v-progress-circular indeterminate v-bind:size="70" v-bind:width="2" color="purple"></v-progress-circular>
+			  </v-flex>
+			</v-layout>
+
+		</v-expansion-panel-content>
+		</v-expansion-panel>
+	  </v-flex>
 	  <v-flex xs12 sm12 class="pb-2">
 	    <v-btn color="primary" small @click="saveCoSoNuocNgoai()">Lưu lại</v-btn>
 	    <v-btn color="primary" small @click="backCSSXNuocNgoai()">Quay lại</v-btn>

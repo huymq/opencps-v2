@@ -144,6 +144,12 @@
            window.location.href = "${portalURL}/confirm-account?active_user_id=" + result.applicantId;
          }, 2000);
         },
+        400: function (result) {
+          notification.show({
+            title: "Error",
+            message: "Xử lý không thành công, vui lòng thử lại!"
+          }, "error");
+        },
         500: function(result) {
           if (JSON.parse(result.responseText).description == 'DuplicateContactEmailException'){
            notification.show({

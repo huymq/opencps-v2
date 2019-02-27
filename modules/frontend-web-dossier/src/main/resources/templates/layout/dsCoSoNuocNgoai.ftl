@@ -13,7 +13,7 @@
         <v-btn v-if="!navigationFilterview" v-on:click.native="navigationFilterview = !navigationFilterview" flat icon class="mr-4"><v-icon>fullscreen_exit</v-icon></v-btn>
 		
 		<v-btn flat class=" my-0 py-0 btn-border-left" color="grey darken-1" v-on:click.native="toAddCoSoNuocNgoai()">
-					<v-icon class="mr-2">assignment</v-icon>
+			<v-icon class="mr-2">assignment</v-icon>
 			Tạo mới
 		</v-btn>
     </div>
@@ -65,6 +65,6 @@
 		</td>
 	</template>
 	</v-data-table>
-	<v-pagination :length="lengthCoSoNuocNgoai" v-model="pageCoSoNuocNgoai" class="mr-3 mt-3"></v-pagination>
+	<!-- <v-pagination :length="lengthCoSoNuocNgoai" v-model="pageCoSoNuocNgoai" class="mr-3 mt-3"></v-pagination> -->
 	</div>
 </v-slide-x-transition>

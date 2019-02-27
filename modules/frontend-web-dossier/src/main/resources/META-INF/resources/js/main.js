@@ -38,6 +38,7 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 			menu: false,
 			dateFormatted: null,
 			advanced_filter: false,
+			advanced_filter_all: false,
 			alpacaAssignUserId: 0,
 			subUsers: [],
 			currentCounter : 0,
@@ -236,30 +237,6 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 				sortable: false,
 				value: 'soluong'
 			}
-			// {
-			// 	text: 'Đơn giá',
-			// 	align: 'center',
-			// 	sortable: false,
-			// 	value: 'dongia'
-			// },
-			// {
-			// 	text: 'Thành tiền',
-			// 	align: 'center',
-			// 	sortable: false,
-			// 	value: 'thanhtien'
-			// },
-			// {
-			// 	text: 'Ngày xuất xưởng',
-			// 	align: 'center',
-			// 	sortable: false,
-			// 	value: 'ngayxuatxuong'
-			// },
-			// {
-			// 	text: 'Hành động',
-			// 	align: 'center',
-			// 	sortable: false,
-			// 	value: 'hanhdong'
-			// }
 			],
 			dsGCNItems: [],
 			selected: [],
@@ -676,7 +653,323 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 			loaiHinhCSSXItems: [],
 			loaiHinhCSSX: '',
 			cssxChaItems: [],
-			cssxCha: ''
+			cssxCha: '',
+			headersCoSoNuocNgoai_Regis: [
+				{
+					text: 'STT',
+					align: 'center',
+					sortable: false,
+					value: 'stt'
+				},
+				{
+					text: ' Mã CSSX/Nhà Xưởng',
+					align: 'center',
+					sortable: false,
+					value: 'macssx'
+				},
+				{
+					text: 'Tên CSSX/Nhà Xưởng',
+					align: 'center',
+					sortable: false,
+					value: 'tencssx'
+				},
+				{
+					text: 'Địa chỉ CSSX/Nhà Xưởng',
+					align: 'center',
+					sortable: false,
+					value: 'diachicssx'
+				}
+			],
+			itemsCoSoNuocNgoai_Regis: [],
+			loadingCoSoNuocNgoai_Regis: false,
+			loadingDoanhNghiepTT_NN: false,
+			headersDoanhNghiepTT_NN: [
+				{
+					text: 'STT',
+					align: 'left',
+					sortable: false,
+					value: 'stt'
+				},
+				{
+					text: 'Tên, địa chỉ cơ sở sản xuất. Cơ sở nhập khẩu',
+					align: 'left',
+					sortable: true,
+					value: 'address'
+				},
+				{
+					text: 'Mã số thuế. điện thoại. fax. email',
+					align: 'left',
+					sortable: true,
+					value: 'contactEmail'
+				},
+				{
+					text: 'Người đại diện. chức danh',
+					align: 'left',
+					sortable: true,
+					value: 'applicantName'
+				},
+				{
+					text: 'Thông tin chung',
+					align: 'left',
+					sortable: true,
+					value: 'thongtinchung'
+				}
+			],
+			itemsDoanhNghiepTT_NN: [],
+			loadingLichSuDanhGiaCOP: false,
+			headersLichSuDanhGiaCOP: [
+				{
+					text: 'STT',
+					align: 'left',
+					sortable: false,
+					value: 'stt'
+				},
+				{
+					text: 'Số báo cáo đánh giá COP',
+					align: 'left',
+					sortable: false,
+					value: 'sobaocaoCOP'
+				},
+				{
+					text: 'Ngày đánh giá',
+					align: 'left',
+					sortable: false,
+					value: 'ngaydanhgia'
+				},
+				{
+					text: 'Nhà xưởng/ địa chỉ',
+					align: 'left',
+					sortable: false,
+					value: 'nhãuongdiachi'
+				},
+				{
+					text: 'Còn hạn/ hết hạn',
+					align: 'left',
+					sortable: false,
+					value: 'conhanhethan'
+				},
+				{
+					text: 'Tổng điểm',
+					align: 'left',
+					sortable: false,
+					value: 'tongdiem'
+				},
+				{
+					text: 'Kết quả',
+					align: 'left',
+					sortable: false,
+					value: 'ketqua'
+				},
+				{
+					text: 'Ngày đánh giá kế tiếp',
+					align: 'left',
+					sortable: false,
+					value: 'ngaydanhgiaketiep'
+				}
+			],
+			itemsLichSuDanhGiaCOP: [],
+			loadingHSDenHanXacNhan: false,
+			headersHSDenHanXacNhan: [
+				{
+					text: 'STT',
+					align: 'center',
+					sortable: false,
+					value: 'stt'
+				},
+				{
+					text: 'Tên thủ tục <br> Tên doanh nghiệp',
+					align: 'left',
+					sortable: false,
+					value: 'applicantName'
+				},
+				{
+					text: 'Mã hồ sơ <br> Số hồ sơ',
+					align: 'left',
+					sortable: false,
+					value: 'dossierId'
+				},
+				{
+					text: 'Ngày gửi <br> Ngày tiếp nhận <br> Hạn xử lý',
+					align: 'left',
+					sortable: false,
+					value: 'submitDate'
+				},
+				{
+					text: 'Số chứng chỉ <br> Ngày cấp',
+					align: 'center',
+					sortable: false,
+					value: 'action'
+				},
+				{
+					text: 'Nội dung',
+					align: 'left',
+					sortable: false,
+					value: 'action'
+				},
+				{
+					text: 'Ghi chú',
+					align: 'left',
+					sortable: false,
+					value: 'lastActionNote'
+				}
+			],
+			itemsHSDenHanXacNhan: [],
+			loadingSpDungSanXuat: false,
+			headersSpDungSanXuat: [
+				{
+					text: 'STT',
+					align: 'left',
+					sortable: false,
+					value: 'stt'
+				},
+				{
+					text: 'Nhóm sản phẩm',
+					align: 'left',
+					sortable: false,
+					value: 'nhomsanpham'
+				},
+				{
+					text: 'Loại sản phẩm',
+					align: 'left',
+					sortable: false,
+					value: 'loaisanpham'
+				},
+				{
+					text: 'Nhãn hiệu',
+					align: 'left',
+					sortable: false,
+					value: 'nhanhieu'
+				},
+				{
+					text: 'Tên thương mại',
+					align: 'left',
+					sortable: false,
+					value: 'tenthuongmai'
+				},
+				{
+					text: 'Mã kiểu loại',
+					align: 'left',
+					sortable: false,
+					value: 'makieuloai'
+				}
+			],
+			itemsSpDungSanXuat: [],
+			loadingPtCapPhieuXX: false,
+			headersPtCapPhieuXX: [
+				{
+					text: 'STT',
+					align: 'left',
+					sortable: false,
+					value: 'stt'
+				},
+				{
+					text: 'Thủ tục',
+					align: 'left',
+					sortable: false,
+					value: 'thutuc'
+				},
+				{
+					text: 'Phương thức cấp',
+					align: 'left',
+					sortable: false,
+					value: 'phuongthuccap'
+				},
+				{
+					text: 'Tần suất kiểm tra trong 1 chu kỳ <br> (90 ngày)',
+					align: 'left',
+					sortable: false,
+					value: 'tanxuatkiemtra'
+				},
+				{
+					text: 'Điểm cấp phát <br> (Luồng xanh, đỏ, vàng)',
+					align: 'left',
+					sortable: false,
+					value: 'diemcapphat'
+				},
+				{
+					text: 'Ghi chú (5)...(14)',
+					align: 'left',
+					sortable: false,
+					value: 'ghichu'
+				}
+			],
+			itemsPtCapPhieuXX: [],
+			loadingAnhXaTK: false,
+			itemsAnhXaOracle: [],
+			anhXaOracle: '',
+			tcDoiTuongHS: '',
+			tcPhuongTienHS: '',
+			tcSoHoSoHS: '',
+			menuTcNgayNopHS: false,
+			tcNgayNopHS: '',
+			dateTcNgayNopHS: '',
+			menuTcNgayNopDenNgayHS: false,
+			tcNgayNopDenNgayHS: '',
+			dateTcNgayNopDenNgayHS: '',
+			tcNamHS1: '',
+			tcSoDKKTHS: '',
+			menuTcNgayCapDKKTTuNgayHS: false,
+			tcNgayCapDKKTTuNgayHS: '',
+			dateTcNgayCapDKKTTuNgayHS: '',
+			menuTcNGayKTDenNGayHS: false,
+			tcNGayKTDenNGayHS: '',
+			dateTcNGayKTDenNGayHS: '',
+			tcNamHS2: '',
+			tcSoBBKiemTraHS: '',
+			menuTcNgayKTHS: false,
+			tcNgayKTHS: '',
+			dateTcNgayKTHS: '',
+			menuTcNgayKTDenNgayHS: false,
+			tcNgayKTDenNgayHS: '',
+			dateTcNgayKTDenNgayHS: '',
+			tcNamHS3: '',
+			tcSoChungChiHS: '',
+			menuTcNgayCapCCHS: false,
+			tcNgayCapCCHS: '',
+			dateTcNgayCapCCHS: '',
+			menuTcNgayCapCcDEnNgayHS: false,
+			tcNgayCapCcDEnNgayHS: '',
+			dateTcNgayCapCcDEnNgayHS: '',
+			tcNamHS4: '',
+			tcSoToKhaiHS: '',
+			menuTcNgayToKhaiHQHS: false,
+			tcNgayToKhaiHQHS: '',
+			dateTcNgayToKhaiHQHS: '',
+			menuTcNgayToKhaiHqDenNgayHS: false,
+			tcNgayToKhaiHqDenNgayHS: '',
+			dateTcNgayToKhaiHqDenNgayHS: '',
+			tcNamHS5: '',
+			tcTinhTrangHS: '',
+			tcSoSerialHS: '',
+			tcTuSoHS: '',
+			tcDenSoHS: '',
+			tcDiaDiemDKKTHS: '',
+			tcMauXeCBHS: false,
+			tcLoaiPhuongTienGTHS: '',
+			tcDiaDiemSLHS: '',
+			tcNhanHieuHS: '',
+			tcMaKieuLoaiHS: '',
+			tcDonViKiemTraHS: '',
+			tcTenThuongMaiHS: '',
+			tcSoPinSoSerialHS: '',
+			tcDangKiemVienHS: '',
+			tcSoKhungSoVinHS: '',
+			tcSoDongCoHS: '',
+			tcDoanhNghiepHS: '',
+			tcNuocSanXuatHS: '',
+			tcNamSXHS: '',
+			tcMaSoThueHS: '',
+			tcSoHoaDonHS: '',
+			tcMauSonHS: '',
+			tcSoBCTNAnToanHS: '',
+			tcTenNhaMaySXHS: '',
+			tcSoBCTNKhiThaiHS: '',
+			tcDiaChiNhaMaySXHS: '',
+			tcSoBCCOPHS: '',
+			tcTieuChuanKhiThaiHS: '',
+			tcPhuongThucCapPPHS: '',
+			tcDoiTuongCbHS: false,
+			tcLoaiPhuongTienCbHS: false
 		},
 		watch: {
 			dateNgayXuatXuong_add (val) {
@@ -816,6 +1109,70 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 							var vm = this;
 							vm.tcNgayToKhaiHqDenNgay = vm.parseDate2(vm.dateTcNgayToKhaiHqDenNgay);
 							vm.menuTcNgayToKhaiHqDenNgay = false;
+						},
+						parseTcNgayNopHS: function () {
+							var vm = this;
+							vm.tcNgayNopHS = vm.parseDate2(vm.dateTcNgayNopHS);
+							vm.menuTcNgayNopHS = false;
+						},
+						parseTcNgayNopDenNgayHS: function () {
+							var vm = this;
+							vm.tcNgayNopDenNgayHS = vm.parseDate2(vm.dateTcNgayNopDenNgayHS);
+							vm.menuTcNgayNopDenNgayHS = false;
+						},
+						parseTcNgayCapDKKTTuNgayHS: function () {
+							var vm = this;
+							vm.tcNgayCapDKKTTuNgayHS = vm.parseDate2(vm.dateTcNgayCapDKKTTuNgayHS);
+							vm.menuTcNgayCapDKKTTuNgayHS = false;
+						},
+						parseTcNGayKTDenNGayHS: function () {
+							var vm = this;
+							vm.tcNGayKTDenNGayHS = vm.parseDate2(vm.dateTcNGayKTDenNGayHS);
+							vm.menuTcNGayKTDenNGayHS = false;
+						},
+						parseNgayKTHS: function () {
+							var vm = this;
+							vm.tcNgayKTHS = vm.parseDate2(vm.dateTcNgayKTHS);
+							vm.menuTcNgayKTHS = false;
+						},
+						parseNgayKTDenNgayHS: function () {
+							var vm = this;
+							vm.tcNgayKTDenNgayHS = vm.parseDate2(vm.dateTcNgayKTDenNgayHS);
+							vm.menuTcNgayKTDenNgayHS = false;
+						},
+						parseNgayCapCCHS: function () {
+							var vm = this;
+							vm.tcNgayCapCCHS = vm.parseDate2(vm.dateTcNgayCapCCHS);
+							vm.menuTcNgayCapCCHS = false;
+						},
+						parseNgayCapCcDEnNgayHS: function () {
+							var vm = this;
+							vm.tcNgayCapCcDEnNgayHS = vm.parseDate2(vm.dateTcNgayCapCcDEnNgayHS);
+							vm.menuTcNgayCapCcDEnNgayHS = false;
+						},
+						parseNgayToKhaiHQHS: function () {
+							var vm = this;
+							vm.tcNgayToKhaiHQHS = vm.parseDate2(vm.dateTcNgayToKhaiHQHS);
+							vm.menuTcNgayToKhaiHQHS = false;
+						},
+						parseNgayToKhaiHqDenNgayHS: function () {
+							var vm = this;
+							vm.tcNgayToKhaiHqDenNgayHS = vm.parseDate2(vm.dateTcNgayToKhaiHqDenNgayHS);
+							vm.menuTcNgayToKhaiHqDenNgayHS = false;
+						},
+						changeDoiTuongHS: function () {
+							var vm = this;
+							vm.loadDSPhuongTien(data);
+							vm.loadDSThongSoKyThuat(data);
+						},
+						advanceFilterAll: function () {
+							var vm = this;
+							vm.advanced_filter_all = !vm.advanced_filter_all;
+							if (typeof(Storage) !== "undefined") {
+								sessionStorage.setItem("advanced_filter_all", vm.advanced_filter_all);
+							} else {
+								console.log('browser not support sessionStorage :(');
+							}
 						},
 						deleteDieuKienLoc: function (index) {
 							var vm = this;
@@ -1504,9 +1861,9 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 									groupId: themeDisplay.getScopeGroupId()
 								},
 								params: {
-									keyword: vm.keywordsSearchTraCuuDoanhNghiepNuocNgoai,
-									start: start,
-									end: end
+									keyword: vm.keywordsSearchTraCuuDoanhNghiepNuocNgoai
+									// start: start,
+									// end: end
 								}
 							}
 							vm.loadingCoSoNuocNgoai = true;
@@ -1521,6 +1878,210 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 								vm.loadingCoSoNuocNgoai = false;
 							})
 						},
+						loadDSCoSoNuocNgoai_Regis: function (registrationId) {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/temp/dictcollections/' + itemCodeNuocNgoai + '/dictitems';
+ 							var start = (vm.pageCoSoNuocNgoai - 1) * 15;
+							var end = (vm.pageCoSoNuocNgoai - 1) * 15 + 15;
+							var configDSCoSoNuocNgoai = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									registrationId: registrationId
+									// start: start,
+									// end: end
+								}
+							}
+							vm.loadingCoSoNuocNgoai_Regis = true;
+							axios.get(url, configDSCoSoNuocNgoai).then(function (response) {
+								vm.itemsCoSoNuocNgoai_Regis = response.data.data;
+								vm.loadingCoSoNuocNgoai_Regis = false;
+							}).catch(function (xhr) {
+								console.log(xhr);
+								vm.loadingCoSoNuocNgoai_Regis = false;
+							})
+						},
+						loadDSCoSoNuocNgoai_Regis: function (registrationId) {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/temp/dictcollections/' + itemCodeNuocNgoai + '/dictitems';
+ 							var start = (vm.pageCoSoNuocNgoai - 1) * 15;
+							var end = (vm.pageCoSoNuocNgoai - 1) * 15 + 15;
+							var configDSCoSoNuocNgoai = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									registrationId: registrationId
+									// start: start,
+									// end: end
+								}
+							}
+							vm.loadingCoSoNuocNgoai_Regis = true;
+							axios.get(url, configDSCoSoNuocNgoai).then(function (response) {
+								vm.itemsCoSoNuocNgoai_Regis = response.data.data;
+								vm.loadingCoSoNuocNgoai_Regis = false;
+							}).catch(function (xhr) {
+								console.log(xhr);
+								vm.loadingCoSoNuocNgoai_Regis = false;
+							})
+						},
+						loadDSLichSuDanhGiaCOP: function (registrationId) {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/temp/dictcollections/' + itemCodeNuocNgoai + '/dictitems';
+							var configDSCoSoNuocNgoai = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									registrationId: registrationId
+								}
+							}
+							vm.loadingLichSuDanhGiaCOP = true;
+							axios.get(url, configDSCoSoNuocNgoai).then(function (response) {
+								vm.itemsLichSuDanhGiaCOP = response.data.data;
+								vm.loadingLichSuDanhGiaCOP = false;
+							}).catch(function (xhr) {
+								console.log(xhr);
+								vm.loadingLichSuDanhGiaCOP = false;
+							})
+						},
+						loadDSHSDenHanXacNhan: function (registrationId) {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/dossiers/dossiersTest';
+							var configDSCoSoNuocNgoai = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									registrationId: registrationId,
+									follow: true,
+									start: 0,
+									end: 15,
+									status: 'processing',
+									substatus: '',
+									sort: 'modified',
+									order: false
+								}
+							}
+							vm.loadingHSDenHanXacNhan = true;
+							axios.get(url, configDSCoSoNuocNgoai).then(function (response) {
+								vm.itemsHSDenHanXacNhan = response.data.data;
+								vm.loadingHSDenHanXacNhan = false;
+							}).catch(function (xhr) {
+								console.log(xhr);
+								vm.loadingHSDenHanXacNhan = false;
+							})
+						},
+						loadDSSpDungSanXuat: function (registrationId) {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/temp/dictcollections/' + itemCodeNuocNgoai + '/dictitems';
+							var configDSCoSoNuocNgoai = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									registrationId: registrationId
+								}
+							}
+							vm.loadingSpDungSanXuat = true;
+							axios.get(url, configDSCoSoNuocNgoai).then(function (response) {
+								vm.itemsSpDungSanXuat = response.data.data;
+								vm.loadingSpDungSanXuat = false;
+							}).catch(function (xhr) {
+								console.log(xhr);
+								vm.loadingSpDungSanXuat = false;
+							})
+						},
+						loadDSPtCapPhieuXX: function (registrationId) {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/temp/dictcollections/' + itemCodeNuocNgoai + '/dictitems';
+							var configDSCoSoNuocNgoai = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									registrationId: registrationId
+								}
+							}
+							vm.loadingPtCapPhieuXX = true;
+							axios.get(url, configDSCoSoNuocNgoai).then(function (response) {
+								vm.itemsPtCapPhieuXX = response.data.data;
+								vm.loadingPtCapPhieuXX = false;
+							}).catch(function (xhr) {
+								console.log(xhr);
+								vm.loadingPtCapPhieuXX = false;
+							})
+						},
+						loadDoanhNghiepTT_NN: function (dictItemId) {
+ 							var vm = this;
+ 							var paramsBuilder = {
+								start: 0,
+								end: 15
+							};
+							vm.loadingDoanhNghiepTT_NN = true;
+							const config_registrations = {
+								params: paramsBuilder,
+								headers: {
+									'groupId': themeDisplay.getScopeGroupId(),
+								}
+							};
+							var url = '/o/rest/v2/registrations';
+							axios.get(url, config_registrations).then(function (response) {
+								var serializable = response.data;
+								var arrResult = [];
+								if (serializable.data) {
+									for (var i = 0; i < serializable.data.length; i++) {
+										if (!serializable.data[i].removed) {
+											arrResult.push(serializable.data[i]);
+										}
+									}
+								}
+								vm.itemsDoanhNghiepTT_NN = arrResult;
+								vm.loadingDoanhNghiepTT_NN = false;
+							}).catch(function (error) {
+								console.log(error);
+								vm.itemsDoanhNghiepTT_NN = [];
+								vm.loadingDoanhNghiepTT_NN = false;
+							});
+						},
+						searchAnhXaTK: function () {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/applicants';
+							var configDSSeachAnhXa = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									keyword: vm.anhXaOracle
+								}
+							}
+							vm.loadingAnhXaTK = true;
+							axios.get(url, configDSSeachAnhXa).then(function (response) {
+								vm.itemsAnhXaOracle = response.data.data;
+								vm.loadingAnhXaTK = false;
+							}).catch(function (xhr) {
+								console.log(xhr);
+								vm.itemsAnhXaOracle = false;
+							})
+						},
+						changeAnhXaTK: function (data) {
+ 							var vm = this;
+ 							var url = '/o/rest/v2/applicants';
+							var configDSSeachAnhXa = {
+								headers: {
+									groupId: themeDisplay.getScopeGroupId()
+								},
+								params: {
+									keyword: data
+								}
+							}
+							axios.get(url, configDSSeachAnhXa).then(function (response) {
+								
+							}).catch(function (xhr) {
+								console.log(xhr);
+							})
+						},
 						toAddCoSoNuocNgoai: function (item) {
 							var vm = this;
 							vm.cssxModel = {};
@@ -1532,6 +2093,16 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 							var vm = this;
 							vm.detailPage = true;
 							vm.cssxModel = item;
+							if (item.parentItemId) {
+								var parentItem = vm.cssxChaItems.find(function (cssxCha) {
+									return cssxCha.dictItemId == item.parentItemId;
+								});
+								console.log('parentItem+++++++', parentItem);
+								if (parentItem) {
+									vm.cssxModel['parentItemCode'] = parentItem.itemCode;
+								}
+							}
+							vm.loadDoanhNghiepTT_NN(item.dictItemId);
 							vm.loadSelectLoaiHinhCSSX(item.dictItemId);
 							vm.onScrollTop();
 						},
@@ -3024,6 +3595,11 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
                     			vm.getLastedStateUserInfo(function() {
                     				vm._inidanhSachHoSoTable(false);
                     			});
+                    			if (sessionStorage.getItem("advanced_filter_all") === 'true') {
+                    				vm.advanced_filter_all = true;
+                    			} else {
+                    				vm.advanced_filter_all = false;
+                    			}
                     			vm.stageFilterView = 'danh_sach';
                     			vm.listgroupHoSoFilterItems = [];
                     			var url = '/o/rest/v2/statistics/dossiers/todo';
@@ -3289,7 +3865,14 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
                     				vm.loadDSThongSoKyThuat();
                     				vm.timKiem();
                     			} else if (item.id === 'tat_ca_hoso') {
-
+                    				vm.loadDSDangKiemVien();
+                    				vm.loadDSTinhThanh();
+                    				vm.loadDSDoiTuong();
+                    				vm.loadDSDonViKiemTra();
+                    				vm.loadDSPhuongThucCapPP();
+                    				vm.loadDSKQChungChi();
+                    				vm.loadDSPhuongTien();
+                    				vm.loadDSThongSoKyThuat();
                     				vm.detailPage = false;
                     				vm.detailRegistPage = false;
                     				vm.listgroupHoSoFilterselected = item.id;
@@ -3813,8 +4396,10 @@ var funLoadVue = function (stateWindowParam, dossierIdParam, dossierPartNo, emai
 							var vm = this;
 							// call DetailAPI.
 
-							var url = '/o/rest/v2/registrations/'+item.registrationId;
+							var url = '/o/rest/v2/registrations/' + item.registrationId;
 							vm.detailPage = true;
+							vm.loadDSCoSoNuocNgoai_Regis(item.registrationId);
+							vm.loadDSHSDenHanXacNhan();
 							axios.get(url, config).then(function (response) {
 								var serializable = response.data;
 

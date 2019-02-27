@@ -300,7 +300,7 @@
 
 <div class="row-parts-content">
 
-	<div class="checkbox ML15">
+	<div class="ML15">
 		<input type="checkbox" data-bind="attr : {viaPostal: viaPostal}" name="viaPostal" id="viaPostal"> <label class="text-normal">Ông bà muốn sử dụng phương thức nhận kết quả hồ sơ qua đường bưu điện</label>
 	</div>
 

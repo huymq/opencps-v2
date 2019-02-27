@@ -46,11 +46,15 @@
 		<img src="http://via.placeholder.com/350x150" class="img-rounded">
 		<div class="dropdown">
 			<button class="btn btn-reset dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				<b>${userName}</b>
+				<b id="userNameApplicant">${userName}</b>
 				<span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				<li><a href="/profile"><i class="fa fa-user"></i> Thông tin tài khoản</a></li>
+				<#if userType == 'employee'>
+				<li><a href="/group/cong-xu-ly/profile"><i class="fa fa-user"></i> Thông tin tài khoản</a></li>
+				<#else>
+				<li><a href="/group/cong-tiep-nhan/profile"><i class="fa fa-user"></i> Thông tin tài khoản</a></li>
+				</#if>
 				<li><a href="/c/portal/logout"><i class="fa fa-arrow-right"></i> Đăng xuất</a></li>
 			</ul>
 		</div>
@@ -60,6 +64,30 @@
 
 <script type="text/javascript">
 	$("#btn-register-applicant").click(function () {
-		window.location.href = "http://dangkiemlaprap.mt.gov.vn/web/cong-tiep-nhan/register";
+		window.location.href = "/web/cong-tiep-nhan/register";
 	});
+	$(function () {
+		var userName = $("#userNameApplicant").html();
+		if (userName) {
+			if (userName.indexOf('citizen') !== -1) {
+				userName = userName.replace('citizen', '');
+			}
+			if (userName.indexOf('business') !== -1) {
+				userName = userName.replace('business', '');
+			}
+		}
+		$("#userNameApplicant").html(userName);
+
+		$("ul[class='nav navbar-nav'] > li > a").each(function (index, value) {
+			console.log(value.href);
+			var hrefTmp = value.href;
+			if (hrefTmp && hrefTmp.indexOf('cong-tiep-nhan/quan-ly-ho-so') !== -1) {
+				if ('${(userType)!}' === 'applicant') {
+					value.href = '/group/cong-tiep-nhan/quan-ly-ho-so'
+				} else {
+					value.href = '/group/cong-xu-ly/xu-ly-ho-so'
+				}
+			}
+		});
+	})
 </script>

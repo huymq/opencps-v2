@@ -239,8 +239,6 @@
 				};
 			}
 			
-
-			
 			statusRouteTem.status = id;
 			statusRouteTem.subStatus = idSub;
 			$("#profileStatus li").removeClass('active');
@@ -293,8 +291,6 @@
 			$(".filterField").hide();
 			$("#mainType2").load("${ajax.notificationPaying}&${portletNamespace}dossierUUid="+id+"&${portletNamespace}paymentFileUUid="+refUid+"&${portletNamespace}trans_id="+params.trans_id+"&${portletNamespace}good_code="+params.good_code,function(result){
 			});
-			
-			
 		});
 
 		// View file trong Thành phần hồ sơ
@@ -346,5 +342,40 @@
 			/*modelMain.set("visibleHeader", $('#profileStatus li[dataPk='+id+'] .dossierStatus').text());*/
 			modelMain.set("isInvestigated", false);
 		}); 
+
+		manageDossier.route("/tra-cuu/phieu-tinh-tien", function () {
+			$("#mainType2").html("");
+			$("#mainType1").hide();
+			$(".filterField").hide();
+			$("#mainType2").show();
+			$("#mainType2").load("${ajax.customer_dossier_list_bill}", function (result) {
+				
+			});
+		}); 
+
+		manageDossier.route("/tra-cuu/san-pham-dung-san-xuat", function () {
+			$("#mainType2").html("");
+			$("#mainType1").hide();
+			$(".filterField").hide();
+			$("#mainType2").show();
+			$("#mainType2").load("${ajax.customer_dossier_list_product_stop}", function (result) {
+				
+			});
+		});
+
+		manageDossier.route("/tra-cuu/san-pham-dung-san-xuat/(:id)", function (id) {
+			$("#mainType2").html("");
+			$("#panel_list").show();
+			$("#mainType1").removeClass("col-sm-12").addClass("col-sm-10");
+			$("#mainType1").hide();
+			$("#noInput").hide();
+			$("#mainType2").show();
+			$(".filterField").hide();
+			
+			layout.showIn("#main_section", viewMainList);
+			$("#mainType2").load("${ajax.customer_dossier_product_stop_detail}&${portletNamespace}productId="+id+"",function(result){
+
+			});
+		});
 	</script>
 

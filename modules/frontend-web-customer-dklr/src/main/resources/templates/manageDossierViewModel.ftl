@@ -647,6 +647,14 @@
 			fnLoadStatus("all");
 
 			firstLoadDataSource = true;
+		},
+		filterBill: function(e){
+			e.preventDefault();
+			manageDossier.navigate("/tra-cuu/phieu-tinh-tien");
+		},
+		filterProductStop: function(e){
+			e.preventDefault();
+			manageDossier.navigate("/tra-cuu/san-pham-dung-san-xuat");
 		}
 	});
 

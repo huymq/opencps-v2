@@ -1,7 +1,7 @@
 <v-slide-x-transition>
   <v-layout row wrap class="ml-3 pt-3" style="width: 100%; background-color: #fff;">
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="my-0" style="padding-top: 15px;">Đối tượng</label> <span class="mr-3" style="color: red;">(*)</span>
+    <label class="my-0" style="padding-top: 6px;">Đối tượng</label> <span class="mr-3" style="color: red;">(*)</span>
   </v-flex>
   <v-flex xs12 sm5>
     <v-select
@@ -15,7 +15,7 @@
     ></v-select>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Phương tiện SXLR</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Phương tiện SXLR</label>
   </v-flex>
   <v-flex xs12 sm3 class="pr-3">
     <v-select
@@ -29,7 +29,7 @@
   </v-flex>
   <!-- ---------------------- -->
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Số hồ sơ</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Số hồ sơ</label>
   </v-flex>
   <v-flex xs12 sm2>
     <v-text-field
@@ -40,7 +40,7 @@
     ></v-text-field>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Ngày nộp</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Ngày nộp</label>
   </v-flex>
   <v-flex xs12 sm2 class="pr-3">
 	  	<v-menu
@@ -102,7 +102,7 @@
 
   <!-- ----------------------------- -->
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Số ĐKKT</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Số ĐKKT</label>
   </v-flex>
   <v-flex xs12 sm2>
     <v-text-field
@@ -113,7 +113,7 @@
     ></v-text-field>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Ngày cấp ĐKKT</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Ngày cấp ĐKKT</label>
   </v-flex>
   <v-flex xs12 sm2 class="pr-3">
     <v-menu
@@ -175,7 +175,7 @@
   <!-- -------------------------------- -->
   
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Số biên bản KT</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Số biên bản KT</label>
   </v-flex>
   <v-flex xs12 sm2>
     <v-text-field
@@ -186,7 +186,7 @@
     ></v-text-field>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Ngày kiểm tra</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Ngày kiểm tra</label>
   </v-flex>
   <v-flex xs12 sm2 class="pr-3">
 	  	<v-menu
@@ -247,7 +247,7 @@
   </v-flex>
   <!-- ---------------------------------- -->
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Số chứng chỉ</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Số chứng chỉ</label>
   </v-flex>
   <v-flex xs12 sm2>
     <v-text-field
@@ -258,7 +258,7 @@
     ></v-text-field>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Ngày cấp CC</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Ngày cấp CC</label>
   </v-flex>
   <v-flex xs12 sm2 class="pr-3">
     <v-menu
@@ -318,7 +318,7 @@
     ></v-select>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Số tờ khai HQ</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Số tờ khai HQ</label>
   </v-flex>
   <!-- ------------------------------- -->
   <v-flex xs12 sm2>
@@ -330,7 +330,7 @@
     ></v-text-field>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Ngày tờ khai HQ</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Ngày tờ khai HQ</label>
   </v-flex>
   <v-flex xs12 sm2 class="pr-3">
     <v-menu
@@ -391,7 +391,7 @@
   </v-flex>
   
   <v-flex xs12 sm2 class="text-xs-right">
-  	<label class="mr-3 my-0" style="padding-top: 15px;">Tình trạng CC</label>
+  	<label class="mr-3 my-0" style="padding-top: 6px;">Tình trạng CC</label>
   </v-flex>
   <v-flex xs12 sm2>
   	<v-select
@@ -405,7 +405,7 @@
   	></v-select>
   </v-flex>
   <v-flex xs12 sm2 class="text-xs-right">
-    <label class="mr-3 my-0" style="padding-top: 15px;">Số phiếu</label>
+    <label class="mr-3 my-0" style="padding-top: 6px;">Số phiếu</label>
   </v-flex>
   <v-flex xs12 sm2>
     <v-text-field
@@ -435,7 +435,7 @@
   <v-flex xs12 sm12>
     <v-layout row wrap class="mx-0 px-0 mt-3" style="height: 180px; overflow: auto;">
       <v-flex xs12 sm2 class="text-xs-right">
-        <label class="mr-3 my-0" style="padding-top: 15px;">Địa điểm ĐKKT</label>
+        <label class="mr-3 my-0" style="padding-top: 6px;">Địa điểm ĐKKT</label>
       </v-flex>
       <v-flex xs12 sm4>
         <v-text-field
@@ -459,7 +459,7 @@
       </v-flex>
       <!-- ---------------- -->
       <v-flex xs12 sm2 class="text-xs-right">
-        <label class="mr-3 my-0" style="padding-top: 15px;">Địa điểm ĐKKT</label>
+        <label class="mr-3 my-0" style="padding-top: 6px;">Địa điểm ĐKKT</label>
       </v-flex>
       <v-flex xs12 sm4>
       	<v-select
@@ -487,7 +487,7 @@
       <v-flex xs12 sm6 class="pl-3">
       	<v-layout row wrap>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Nhãn hiệu</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Nhãn hiệu</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -498,7 +498,7 @@
       	  	></v-text-field>
       	  </v-flex>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Mã kiểu loại</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Mã kiểu loại</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -512,7 +512,7 @@
       </v-flex>
 
       <v-flex xs12 sm2 class="text-xs-right">
-        <label class="mr-3 my-0" style="padding-top: 15px;">Đơn vị kiểm tra</label>
+        <label class="mr-3 my-0" style="padding-top: 6px;">Đơn vị kiểm tra</label>
       </v-flex>
       <v-flex xs12 sm4>
         <v-select
@@ -529,7 +529,7 @@
       <v-flex xs12 sm6 class="pl-3">
       	<v-layout row wrap>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Tên thương mại</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Tên thương mại</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -540,7 +540,7 @@
       	  	></v-text-field> 
       	  </v-flex>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Số PIN /Sê ri</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Số PIN /Sê ri</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -554,7 +554,7 @@
       </v-flex>
 
       <v-flex xs12 sm2 class="text-xs-right">
-        <label class="mr-3 my-0" style="padding-top: 15px;">Đăng kiểm viên</label>
+        <label class="mr-3 my-0" style="padding-top: 6px;">Đăng kiểm viên</label>
       </v-flex>
       <v-flex xs12 sm4>
         <v-select
@@ -569,7 +569,7 @@
       <v-flex xs12 sm6 class="pl-3">
       	<v-layout row wrap>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Số khung/ số Vin</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Số khung/ số Vin</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -580,7 +580,7 @@
       	  	></v-text-field>
       	  </v-flex>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Số động cơ</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Số động cơ</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -594,7 +594,7 @@
       </v-flex>
       
       <v-flex xs12 sm2 class="text-xs-right">
-        <label class="mr-3 my-0" style="padding-top: 15px;">Doanh nghiệp</label>
+        <label class="mr-3 my-0" style="padding-top: 6px;">Doanh nghiệp</label>
       </v-flex>
       <v-flex xs12 sm4>
         <v-text-field
@@ -608,7 +608,7 @@
 		<v-flex xs12 sm6 class="pl-3">
       	<v-layout row wrap>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Nước sản xuất</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Nước sản xuất</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -619,7 +619,7 @@
       	  	></v-text-field> 
       	  </v-flex>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Năm sản xuất</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Năm sản xuất</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-select
@@ -634,7 +634,7 @@
       </v-flex>
 
       <v-flex xs12 sm2 class="text-xs-right">
-        <label class="mr-3 my-0" style="padding-top: 15px;">Mã số thuế</label>
+        <label class="mr-3 my-0" style="padding-top: 6px;">Mã số thuế</label>
       </v-flex>
       <v-flex xs12 sm4 class="pl-3">
       	<v-layout row wrap>
@@ -647,7 +647,7 @@
       	  	></v-text-field> 
       	  </v-flex>
       	  <v-flex xs12 sm4 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Số hóa đơn</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Số hóa đơn</label>
       	  </v-flex>
       	  <v-flex xs12 sm4>
       	  	<v-text-field
@@ -667,7 +667,7 @@
       	  <v-flex xs12 sm3>
       	  </v-flex>
       	  <v-flex xs12 sm3 class="text-xs-right">
-      	    <label class="mr-3 my-0" style="padding-top: 15px;">Màu sơn</label>
+      	    <label class="mr-3 my-0" style="padding-top: 6px;">Màu sơn</label>
       	  </v-flex>
       	  <v-flex xs12 sm3>
       	  	<v-text-field
@@ -695,7 +695,7 @@
       </v-flex>
 
       <v-flex xs12 sm2 class="text-xs-right">
-      	<label class="mr-3 my-0" style="padding-top: 15px;">Số BCTN an toàn</label>
+      	<label class="mr-3 my-0" style="padding-top: 6px;">Số BCTN an toàn</label>
       </v-flex>
 
       <v-flex xs12 sm4>
@@ -710,7 +710,7 @@
       <v-flex xs12 sm6 class="pl-3">
         <v-layout row wrap>
           <v-flex xs12 sm3 class="text-xs-right">
-            <label class="mr-3 my-0" style="padding-top: 15px;">Tên nhà máy SX</label>
+            <label class="mr-3 my-0" style="padding-top: 6px;">Tên nhà máy SX</label>
           </v-flex>
           <v-flex xs12 sm9>
           	<v-text-field
@@ -725,7 +725,7 @@
       
 		
       <v-flex xs12 sm2 class="text-xs-right">
-      	<label class="mr-3 my-0" style="padding-top: 15px;">Số BCTN khí thải</label>
+      	<label class="mr-3 my-0" style="padding-top: 6px;">Số BCTN khí thải</label>
       </v-flex>
 
       <v-flex xs12 sm4>
@@ -740,7 +740,7 @@
 	 <v-flex xs12 sm6 class="pl-3">
         <v-layout row wrap>
           <v-flex xs12 sm3 class="text-xs-left">
-            <label class="my-0" style="padding-top: 15px;">Đ.chỉ nhà máy SX</label>
+            <label class="my-0" style="padding-top: 6px;">Đ.chỉ nhà máy SX</label>
           </v-flex>
           <v-flex xs12 sm9>
           	<v-text-field
@@ -754,7 +754,7 @@
       </v-flex>
 
       <v-flex xs12 sm2 class="text-xs-right">
-      	<label class="mr-3 my-0" style="padding-top: 15px;">Số BC COP</label>
+      	<label class="mr-3 my-0" style="padding-top: 6px;">Số BC COP</label>
       </v-flex>
 
       <v-flex xs12 sm4>
@@ -769,7 +769,7 @@
 	   <v-flex xs12 sm6 class="pl-3">
         <v-layout row wrap>
           <v-flex xs12 sm3 class="text-xs-left">
-            <label class="my-0" style="padding-top: 15px;">Tiêu chuẩn khí thải</label>
+            <label class="my-0" style="padding-top: 6px;">Tiêu chuẩn khí thải</label>
           </v-flex>
           <v-flex xs12 sm9>
           	<v-text-field
@@ -783,7 +783,7 @@
       </v-flex>
 
       <v-flex xs12 sm2 class="text-xs-right">
-      	<label class="mr-3 my-0" style="padding-top: 15px;">Phương thức cấp phôi phiếu</label>
+      	<label class="mr-3 my-0" style="padding-top: 6px;">Phương thức cấp phôi phiếu</label>
       </v-flex>
 
       <v-flex xs12 sm4>

@@ -437,7 +437,6 @@
 			<span class="text-uppercase hover-pointer">Kết quả</span>
 			<i class="fa fa-angle-down pull-right hover-pointer" aria-hidden="true" style="font-size: 150%;"></i>
 		</div>
-
 	</div>
 	<div class="content-part collapse in" id="collapseDossierResult">
 		<div class="row-parts-head P0">
@@ -469,7 +468,6 @@
 			<span class="text-uppercase hover-pointer">Tiến trình xử lý</span>
 			<i class="fa fa-angle-down pull-right hover-pointer" aria-hidden="true" style="font-size: 150%;"></i>
 		</div>
-
 	</div>
 	<div class="content-part collapse in" id="collapseDossierPart">
 		<div class="row-parts-head MT5">
@@ -1544,6 +1542,7 @@ var funGenNumberFile = function(arrCount){
 		$(this).attr("data-number",found.length);
 		$(this).html('<span class="number-in-circle" >'+found.length+'</span>');
 		if(found.length > 0){
+			$("#validPart"+partNo).val("1");
 			$(".show-dossierpart-new-tab[data-partno="+partNo+"]").attr('hasFile', 'true');
 		}else {
 			$("#validPart"+partNo).val("0");

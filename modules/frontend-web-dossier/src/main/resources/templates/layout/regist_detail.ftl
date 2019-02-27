@@ -1,7 +1,7 @@
 <!-- TODO detailTemplate page -->
 <div v-if="detailRegistPage" style="width: 100%;">
 	<div class="row-header">
-		<div class="background-triangle-big"> Hồ sơ doanh nghiệp </div>
+		<div class="background-triangle-big"> Thông tin doanh nghiệp trong nước</div>
 		<div class="layout row wrap header_tools row-blue">
 	
 			<div class="flex xs12 text-right" style="margin-left: auto;">
@@ -21,10 +21,10 @@
 	</div>
 	
 	<v-expansion-panel expand class="my-0 opencps-dossier-info">
-		<v-expansion-panel-content v-bind:value="true">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
 		
-		<div slot="header" class="text-bold primary--text">I. Thông tin chung hồ sơ</div>
-		<v-layout wrap class="px-4 pb-2">
+		<div slot="header" class="text-bold primary--text">I. Thông tin chung <i>({{ detailRegistModel.registrationState | registrationState }})</i></div>
+		<v-layout wrap class="px-4 pb-2 pt-2">
 			<v-flex xs12 sm6>
 				<v-layout wrap class="pb-2">
 					<v-flex xs12 sm5 class="text-right text-bold pr-2">
@@ -196,6 +196,25 @@
 						{{detailRegistModel.wardName}}
 					</v-flex>
 				</v-layout>
+				<!-- <v-layout row wrap class="pb-2">
+					<v-flex xs12 sm3 class="text-right text-bold pr-2">
+						Ánh xạ Oracal
+					</v-flex>
+					<v-flex xs12 sm9>
+						<v-select
+						:loading="loadingAnhXaTK"
+						:items="itemsAnhXaOracle"
+						:rules="[() => select.length > 3 || 'Bạn phải nhập ít nhất 3 ký tự để tìm kiếm!']"
+						:search-input.sync="searchAnhXaTK"
+						@change="changeAnhXaTK"
+						v-model="anhXaOracle"
+						item-text="itemName"
+						item-value="itemCode"
+						autocomplete
+						cache-items
+						></v-select>
+					</v-flex>
+				</v-layout> -->
 			</v-flex>
 		</v-layout>
 
@@ -203,9 +222,9 @@
 	</v-expansion-panel>
 
 	<v-expansion-panel expand class="my-0 opencps-dossier-info opencps-dossier-part-style">
-		<v-expansion-panel-content v-bind:value="true">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
 		
-		<div slot="header" class="text-bold primary--text">II. Thành tin doanh nghiệp và các xưởng lắp ráp (nếu có)</div>
+		<div slot="header" class="text-bold primary--text">II. Thông tin doanh nghiệp và các xưởng lắp ráp (nếu có)</div>
 		<v-expansion-panel class="my-0 expansion__list_style">
 	        <v-expansion-panel-content v-for="(item,i) in registForms" v-if="item" :key="item.referenceUid">
 	        <div slot="header" @click="showAlpacaJSFORMRegist(item)">{{i + 1}}. {{item.formName}}</div>
@@ -214,6 +233,279 @@
 	
 	        </v-expansion-panel-content>
 	    </v-expansion-panel>
+
+		</v-expansion-panel-content>
+	</v-expansion-panel>
+
+	<v-expansion-panel expand class="my-0 opencps-dossier-info opencps-dossier-part-style">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
+		
+		<div slot="header" class="text-bold primary--text">III. Cơ sở sản xuất nước ngoài được liên kết</div>
+		<v-layout row wrap class="ml-0">
+			<v-flex xs12 sm12 v-if="!loadingCoSoNuocNgoai_Regis">
+				<v-data-table 
+					:headers="headersCoSoNuocNgoai_Regis"
+					:items="itemsCoSoNuocNgoai_Regis"
+					no-data-text="Không có dữ liệu"
+					hide-actions
+					class="table__overflow ml-0 px-3 py-2"
+					loading="true"
+					hide-actions
+				> 
+					<template slot="headers" slot-scope="props">
+						<tr>
+							<th v-for="header in props.headers" :key="header.text"
+							:class="['column text-xs-center']" v-html="header.text"
+							>
+							</th>
+						</tr>
+					</template>
+					<template slot="items" slot-scope="props">
+						<td style="padding: 8px 0px 8px 0px; width: 3%; " class="text-xs-center">
+							<!-- {{ pageCoSoNuocNgoai * 15 - 15 + props.index + 1 }} -->
+							{{ props.index + 1 }}
+						</td>
+						<td style="padding: 8px;" class="text-xs-center">
+							{{props.item.itemCode}}
+						</td>
+						<td style="padding: 8px; width: 30%;" class="text-xs-center">
+							{{props.item.itemName}}
+						</td>
+						<td style="padding: 8px; width: 40%;" class="text-xs-center">
+							{{props.item.itemDescription}}
+						</td>
+					</template>
+				</v-data-table>
+		  	</v-flex>
+			<v-flex xs12 sm12 class="text-xs-center" v-else>
+			    <v-progress-circular indeterminate v-bind:size="70" v-bind:width="2" color="purple"></v-progress-circular>
+			</v-flex>
+		</v-layout>
+
+		</v-expansion-panel-content>
+	</v-expansion-panel>
+
+	<v-expansion-panel expand class="my-0 opencps-dossier-info opencps-dossier-part-style">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
+		
+		<div slot="header" class="text-bold primary--text">IV. Lịch sử đánh giá COP</div>
+		<v-layout row wrap class="ml-0">
+			<v-flex xs12 sm12 v-if="!loadingLichSuDanhGiaCOP">
+				<v-data-table 
+					:headers="headersLichSuDanhGiaCOP"
+					:items="itemsLichSuDanhGiaCOP"
+					no-data-text="Không có dữ liệu"
+					hide-actions
+					class="table__overflow ml-0 px-3 py-2"
+					loading="true"
+					hide-actions
+				>
+					<template slot="headers" slot-scope="props">
+						<tr>
+							<th v-for="header in props.headers" :key="header.text"
+							:class="['column text-xs-center']" v-html="header.text"
+							>
+							</th>
+						</tr>
+					</template>
+					<template slot="items" slot-scope="props">
+						<td style="padding: 8px 0px 8px 0px; width: 3%; " class="text-xs-center">
+							<!-- {{ pageCoSoNuocNgoai * 15 - 15 + props.index + 1 }} -->
+							{{ props.index + 1 }}
+						</td>
+						<td style="padding: 8px;" class="text-xs-center">
+							{{props.item.itemCode}}
+						</td>
+						<td style="padding: 8px; width: 30%;" class="text-xs-center">
+							{{props.item.itemName}}
+						</td>
+						<td style="padding: 8px; width: 40%;" class="text-xs-center">
+							{{props.item.itemDescription}}
+						</td>
+					</template>
+				</v-data-table>
+		  	</v-flex>
+			<v-flex xs12 sm12 class="text-xs-center" v-else>
+			    <v-progress-circular indeterminate v-bind:size="70" v-bind:width="2" color="purple"></v-progress-circular>
+			</v-flex>
+		</v-layout>
+
+		</v-expansion-panel-content>
+	</v-expansion-panel>
+
+	<v-expansion-panel expand class="my-0 opencps-dossier-info opencps-dossier-part-style">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
+		
+		<div slot="header" class="text-bold primary--text">V. Hồ sơ đến hạn xác nhận hiệu lực</div>
+		<v-layout row wrap class="ml-0">
+			<v-flex xs12 sm12 v-if="!loadingHSDenHanXacNhan">
+				<v-data-table 
+					:headers="headersHSDenHanXacNhan"
+					:items="itemsHSDenHanXacNhan"
+					no-data-text="Không có dữ liệu"
+					hide-actions
+					class="table__overflow ml-0 px-3 py-2"
+					loading="true"
+					hide-actions
+				>
+					<template slot="headers" slot-scope="props">
+						<tr>
+							<th v-for="header in props.headers" :key="header.text"
+							:class="['column text-xs-center']" v-html="header.text"
+							>
+							</th>
+						</tr>
+					</template>
+					<template slot="items" slot-scope="props">
+						<td style="padding: 8px; padding-left: 0px; text-align: center;">
+							{{ props.index + 1 }}
+						</td>
+						<td style="padding: 8px;" class="text-xs-left">
+							{{ props.item.serviceName }} 
+							<br>
+							{{ props.item.applicantName }} 
+						</td>
+						<td style="padding: 8px;" class="text-xs-left">
+							{{ props.item.dossierIdCTN }} 
+							<br v-if="props.item.dossierNo">
+							{{ props.item.dossierNo }} 
+						</td>
+						<td style="padding: 8px;" class="text-xs-left">
+							{{ props.item.submitDate}}
+							<br v-if="props.item.submitDate">
+							{{ props.item.receiveDate}}
+						</td>
+
+						<td style="padding: 8px;" class="text-xs-center">
+
+							<span v-if="props.item.certNo">{{ props.item.certNo }}</span>
+							<span v-else>---</span> <br>
+							<span v-if="props.item.certDate">{{ props.item.certDate }}</span>
+							<span v-else>---</span>
+						</td>
+
+						<td style="padding: 8px;" class="text-xs-left" v-html="props.item.briefNote">
+						</td>
+						<td style="padding: 8px;" class="text-xs-left" v-html="props.item.applicantNote"></td>
+					</template>
+				</v-data-table>
+		  	</v-flex>
+			<v-flex xs12 sm12 class="text-xs-center" v-else>
+			    <v-progress-circular indeterminate v-bind:size="70" v-bind:width="2" color="purple"></v-progress-circular>
+			</v-flex>
+		</v-layout>
+
+		</v-expansion-panel-content>
+	</v-expansion-panel>
+
+	<v-expansion-panel expand class="my-0 opencps-dossier-info opencps-dossier-part-style">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
+		
+		<div slot="header" class="text-bold primary--text">VI. Sản phẩm dừng sản xuất</div>
+		<v-layout row wrap class="ml-0">
+			<v-flex xs12 sm12 v-if="!loadingSpDungSanXuat">
+				<v-data-table 
+					:headers="headersSpDungSanXuat"
+					:items="itemsSpDungSanXuat"
+					no-data-text="Không có dữ liệu"
+					hide-actions
+					class="table__overflow ml-0 px-3 py-2"
+					loading="true"
+					hide-actions
+				>
+					<template slot="headers" slot-scope="props">
+						<tr>
+							<th v-for="header in props.headers" :key="header.text"
+							:class="['column text-xs-center']" v-html="header.text"
+							>
+							</th>
+						</tr>
+					</template>
+					<template slot="items" slot-scope="props">
+						<td style="padding: 8px 0px 8px 0px; width: 3%; " class="text-xs-center">
+							<!-- {{ pageCoSoNuocNgoai * 15 - 15 + props.index + 1 }} -->
+							{{ props.index + 1 }}
+						</td>
+						<td style="padding: 8px;" class="text-xs-center">
+							{{props.item.itemCode}}
+						</td>
+						<td style="padding: 8px; width: 30%;" class="text-xs-center">
+							{{props.item.itemName}}
+						</td>
+						<td style="padding: 8px; width: 40%;" class="text-xs-center">
+							{{props.item.itemDescription}}
+						</td>
+					</template>
+				</v-data-table>
+		  	</v-flex>
+			<v-flex xs12 sm12 class="text-xs-center" v-else>
+			    <v-progress-circular indeterminate v-bind:size="70" v-bind:width="2" color="purple"></v-progress-circular>
+			</v-flex>
+		</v-layout>
+
+		</v-expansion-panel-content>
+	</v-expansion-panel>
+
+	<v-expansion-panel expand class="my-0 opencps-dossier-info opencps-dossier-part-style">
+		<v-expansion-panel-content class="expansion-header-registration" v-bind:value="true">
+		
+		<div slot="header" class="text-bold primary--text">VII. Quản lý phương thức cấp phiếu xuất xưởng</div>
+		<v-layout row wrap class="ml-0">
+			<v-flex xs12 sm12 v-if="!loadingPtCapPhieuXX">
+				<v-data-table 
+					:headers="headersPtCapPhieuXX"
+					:items="itemsPtCapPhieuXX"
+					no-data-text="Không có dữ liệu"
+					hide-actions
+					class="table__overflow ml-0 px-3 py-2"
+					loading="true"
+					hide-actions
+				>
+					<template slot="headers" slot-scope="props">
+						<tr>
+							<th v-for="header in props.headers" :key="header.text"
+							:class="['column text-xs-center']" v-html="header.text"
+							>
+							</th>
+						</tr>
+					</template>
+					<template slot="items" slot-scope="props">
+						<td style="padding: 8px 0px 8px 0px; width: 3%; " class="text-xs-center">
+							<!-- {{ pageCoSoNuocNgoai * 15 - 15 + props.index + 1 }} -->
+							{{ props.index + 1 }}
+						</td>
+						<td style="padding: 8px;" class="text-xs-center">
+							{{props.item.itemCode}}
+						</td>
+						<td style="padding: 8px; width: 30%;" class="text-xs-center">
+							{{props.item.itemName}}
+						</td>
+						<td style="padding: 8px; width: 40%;" class="text-xs-center">
+							{{props.item.itemDescription}}
+						</td>
+					</template>
+				</v-data-table>
+				<div class="pl-5 pt-1 pb-2">
+					<span style="font-weight: bold;">Ghi chú :</span>
+					<p class="pl-4">
+						-  5. Sản lượng (số phiếu đã lấy trong 1 năm, hoặc trong vòng n tháng gần nhất, hoặc từ ngày đến ngày). <br>
+						-  6. Sản lượng trung bình/ tháng trong 1 năm hoặc 6 tháng gần nhất (chỉ tính những tháng phát sinh). <br>
+						-  7. Sản lượng trung bình/ tháng, không tính những tháng đột biến (> 20%, 30%). <br>
+						-  8. Tính thời gian COP gần nhất. <br>
+						-  9. Ngày kiểm tra đột xuất gần nhất, ngày giám sát gần nhất. <br>
+						-  10. Số lần kiểm tra đột xuất không đạt trong vòng 6 tháng hoặc 1 năm gần nhất. <br>
+						-  11. Số lần kiểm tra đột xuất, giám sát trong tháng hiện tại. <br>
+						-  12. Số lần lấy phiếu trong tháng hiện tại. <br>
+						-  13. Ngày đầu tiên trong 1 chu kỳ so với ngày hiện tại. <br>
+						-  14. Số lần kiểm tra trong 1 chu kỳ (đếm lùi từ 1 ngày thuộc tham số đầu vào). <br>
+
+					</p>
+				</div>
+		  	</v-flex>
+			<v-flex xs12 sm12 class="text-xs-center" v-else>
+			    <v-progress-circular indeterminate v-bind:size="70" v-bind:width="2" color="purple"></v-progress-circular>
+			</v-flex>
+		</v-layout>
 
 		</v-expansion-panel-content>
 	</v-expansion-panel>

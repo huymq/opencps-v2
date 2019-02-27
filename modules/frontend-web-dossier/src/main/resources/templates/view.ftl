@@ -25,3 +25,10 @@
 	});
 	
 </script>
+<style>
+	.expansion-header-registration>div.expansion-panel__header {
+		padding: 8px 22px !important;
+		background-color: #eceaea !important;
+		border-bottom: 1px solid #ccc;
+	}
+</style>
