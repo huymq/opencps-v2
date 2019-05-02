@@ -5,14 +5,19 @@
 	<xsd:element name="DataSearchModel">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="parent" type="xsd:string" minOccurs="0" />				
-				<xsd:element name="ancestor" type="xsd:string" minOccurs="0" />				
-				<xsd:element name="level" type="xsd:string" minOccurs="0" />				
-				<xsd:element name="keywords" type="xsd:string" minOccurs="0" />				
-				<xsd:element name="sort" type="xsd:string" minOccurs="0" />				
-				<xsd:element name="order" type="xsd:string" minOccurs="0" />				
-				<xsd:element name="start" type="xsd:int" minOccurs="0" />				
-				<xsd:element name="end" type="xsd:int" minOccurs="0" />				
+				<xsd:element name="parent" type="xsd:string"
+					minOccurs="0" />
+				<xsd:element name="ancestor" type="xsd:string"
+					minOccurs="0" />
+				<xsd:element name="level" type="xsd:string"
+					minOccurs="0" />
+				<xsd:element name="keywords" type="xsd:string"
+					minOccurs="0" />
+				<xsd:element name="sort" type="xsd:string" minOccurs="0" />
+				<xsd:element name="order" type="xsd:string"
+					minOccurs="0" />
+				<xsd:element name="start" type="xsd:int" minOccurs="0" />
+				<xsd:element name="end" type="xsd:int" minOccurs="0" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -37,9 +42,9 @@
 				<xsd:element name="collectionName" type="xsd:string" />
 				<xsd:element name="collectionNameEN" type="xsd:string" />
 				<xsd:element name="description" type="xsd:string" />
-				
+
 				<xsd:element name="status" type="xsd:int" />
-				<xsd:element name="mustSync" type="xsd:int" />				
+				<xsd:element name="mustSync" type="xsd:int" />
 
 			</xsd:sequence>
 		</xsd:complexType>
@@ -116,7 +121,7 @@
 				<xsd:element name="dictCollectionId" type="xsd:long" />
 				<xsd:element name="itemCode" type="xsd:string" />
 				<xsd:element name="itemName" type="xsd:string" />
-				<xsd:element name="itemNameEN" type="xsd:string" />				
+				<xsd:element name="itemNameEN" type="xsd:string" />
 				<xsd:element name="itemDescription" type="xsd:string" />
 				<xsd:element name="parentItemId" type="xsd:long" />
 				<xsd:element name="parentItemCode" type="xsd:string" />
@@ -151,7 +156,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictCollectionTempInputModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -164,12 +169,12 @@
 				<xsd:element name="description" type="xsd:string" />
 				<xsd:element name="status" type="xsd:int" />
 				<xsd:element name="mustSync" type="xsd:int" />
-				
+
 
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictGroupTempInputModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -185,7 +190,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="ParentItemModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -202,7 +207,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictGroupTempModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -220,7 +225,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictGroupTempResults">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -230,7 +235,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictItemTempDetailModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -267,7 +272,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictGroupItemTempResults">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -277,6 +282,6 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 </xsd:schema>
 

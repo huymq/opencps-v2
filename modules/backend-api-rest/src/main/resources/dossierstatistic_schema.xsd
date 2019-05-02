@@ -9,11 +9,14 @@
 				minOccurs="0" />
 			<xsd:element name="receivedCount" type="xsd:int"
 				minOccurs="0" />
-			<xsd:element name="onlineCount" type="xsd:int" minOccurs="0" />
-			<xsd:element name="undueCount" type="xsd:int" minOccurs="0" />
+			<xsd:element name="onlineCount" type="xsd:int"
+				minOccurs="0" />
+			<xsd:element name="undueCount" type="xsd:int"
+				minOccurs="0" />
 			<xsd:element name="overdueCount" type="xsd:int"
 				minOccurs="0" />
-			<xsd:element name="ontimeCount" type="xsd:int" minOccurs="0" />
+			<xsd:element name="ontimeCount" type="xsd:int"
+				minOccurs="0" />
 			<xsd:element name="overtimeCount" type="xsd:int"
 				minOccurs="0" />
 			<xsd:element name="govAgencyCode" type="xsd:string"
@@ -58,7 +61,8 @@
 					minOccurs="0" />
 				<xsd:element name="onlineCount" type="xsd:int"
 					minOccurs="0" />
-				<xsd:element name="undueCount" type="xsd:int" minOccurs="0" />
+				<xsd:element name="undueCount" type="xsd:int"
+					minOccurs="0" />
 				<xsd:element name="overdueCount" type="xsd:int"
 					minOccurs="0" />
 				<xsd:element name="ontimeCount" type="xsd:int"

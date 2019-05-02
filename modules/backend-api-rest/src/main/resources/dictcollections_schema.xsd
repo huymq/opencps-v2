@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://benchresources.in/cdm/Player" xmlns:tns="http://benchresources.in/cdm/Player"
+	targetNamespace="http://benchresources.in/cdm/Player"
+	xmlns:tns="http://benchresources.in/cdm/Player"
 	elementFormDefault="qualified">
 
 	<!-- DictCollectionModel -->
@@ -39,7 +40,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictGroupModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -54,7 +55,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictGroupResults">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -64,7 +65,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="ParentItemModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -78,7 +79,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictItemListModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -94,8 +95,8 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
-	
+
+
 	<xsd:element name="DictItemDetailModel">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -116,7 +117,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="DictItemResults">
 		<xsd:complexType>
 			<xsd:sequence>

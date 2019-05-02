@@ -5,11 +5,13 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<!-- default -->
-				<xsd:element name="keyword" type="xsd:string" minOccurs="0" />
+				<xsd:element name="keyword" type="xsd:string"
+					minOccurs="0" />
 				<xsd:element name="start" type="xsd:int" minOccurs="0" />
 				<xsd:element name="end" type="xsd:int" minOccurs="0" />
 				<xsd:element name="sort" type="xsd:string" minOccurs="0" />
-				<xsd:element name="order" type="xsd:string" minOccurs="0" />
+				<xsd:element name="order" type="xsd:string"
+					minOccurs="0" />
 				<xsd:element name="code" type="xsd:string" minOccurs="0" />
 				<xsd:element name="auto" type="xsd:string" minOccurs="0" />
 			</xsd:sequence>
@@ -20,8 +22,8 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="total" type="xsd:int" minOccurs="0" />
-				<xsd:element name="data" type="ActionModel" minOccurs="0"
-					maxOccurs="unbounded" />
+				<xsd:element name="data" type="ActionModel"
+					minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -34,7 +36,8 @@
 				minOccurs="0" />
 			<xsd:element name="actionName" type="xsd:string"
 				minOccurs="0" />
-			<xsd:element name="preStepCode" type="xsd:int" minOccurs="0" />
+			<xsd:element name="preStepCode" type="xsd:int"
+				minOccurs="0" />
 			<xsd:element name="postStepCode" type="xsd:string"
 				minOccurs="0" />
 			<xsd:element name="autoEvent" type="xsd:string"
@@ -45,15 +48,16 @@
 				minOccurs="0" />
 			<xsd:element name="assignUserId" type="xsd:int"
 				minOccurs="0" />
-			<xsd:element name="toUsers" type="UserModel" minOccurs="0"
-				maxOccurs="unbounded" />
+			<xsd:element name="toUsers" type="UserModel"
+				minOccurs="0" maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="UserModel">
 		<xsd:sequence>
 			<xsd:element name="userId" type="xsd:int" minOccurs="0" />
-			<xsd:element name="userName" type="xsd:string" minOccurs="0" />
+			<xsd:element name="userName" type="xsd:string"
+				minOccurs="0" />
 			<xsd:element name="moderator" type="xsd:string"
 				minOccurs="0" />
 		</xsd:sequence>
@@ -90,12 +94,16 @@
 				minOccurs="0" />
 			<xsd:element name="rollbackable" type="xsd:string"
 				minOccurs="0" />
-			<xsd:element name="stepCode" type="xsd:string" minOccurs="0" />
-			<xsd:element name="stepName" type="xsd:string" minOccurs="0" />
+			<xsd:element name="stepCode" type="xsd:string"
+				minOccurs="0" />
+			<xsd:element name="stepName" type="xsd:string"
+				minOccurs="0" />
 			<xsd:element name="stepInstruction" type="xsd:string"
 				minOccurs="0" />
-			<xsd:element name="payload" type="xsd:string" minOccurs="0" />
-			<xsd:element name="dueDate" type="xsd:string" minOccurs="0" />
+			<xsd:element name="payload" type="xsd:string"
+				minOccurs="0" />
+			<xsd:element name="dueDate" type="xsd:string"
+				minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -120,8 +128,10 @@
 				<xsd:element name="userId" type="xsd:int" minOccurs="0" />
 				<xsd:element name="userName" type="xsd:string"
 					minOccurs="0" />
-				<xsd:element name="email" type="xsd:string" minOccurs="0" />
-				<xsd:element name="telNo" type="xsd:string" minOccurs="0" />
+				<xsd:element name="email" type="xsd:string"
+					minOccurs="0" />
+				<xsd:element name="telNo" type="xsd:string"
+					minOccurs="0" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>

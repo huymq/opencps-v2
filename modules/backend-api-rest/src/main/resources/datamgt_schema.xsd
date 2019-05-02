@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://benchresources.in/cdm/Player" xmlns:tns="http://benchresources.in/cdm/Player"
+	targetNamespace="http://benchresources.in/cdm/Player"
+	xmlns:tns="http://benchresources.in/cdm/Player"
 	elementFormDefault="qualified">
 
 	<!-- Dossier Model -->

@@ -14,7 +14,7 @@
 				<xsd:element name="collectionName" type="xsd:string" />
 				<xsd:element name="collectionNameEN" type="xsd:string" />
 				<xsd:element name="description" type="xsd:string" />
-				<xsd:element name="dataForm" type="xsd:string" />				
+				<xsd:element name="dataForm" type="xsd:string" />
 
 			</xsd:sequence>
 		</xsd:complexType>
