@@ -46,4 +46,9 @@ public class ProcessPluginLocalServiceImpl
 	public List<ProcessPlugin> getProcessPlugins(long serviceProcessId, String stepCode) {
 		return processPluginPersistence.findBySC_SPID(stepCode, serviceProcessId);
 	}
+
+	public List<ProcessPlugin> getBySC_SPID_ARUN(long serviceProcessId, String stepCode, boolean autoRun) {
+		return processPluginPersistence.findBySC_SPID_ARUN(stepCode, serviceProcessId, autoRun);
+	}
+
 }

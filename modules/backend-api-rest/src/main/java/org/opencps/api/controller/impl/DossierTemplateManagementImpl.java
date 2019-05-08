@@ -35,6 +35,8 @@ import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil;
 
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
@@ -150,10 +152,12 @@ public class DossierTemplateManagementImpl implements DossierTemplateManagement 
 
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(DossierTemplateManagementImpl.class);
 	@Override
 	public Response getDossierTemplateDetail(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext, String id) {
-		DossierTemplateActions actions = new DossierTemplateActionsImpl();
+		long start = System.currentTimeMillis();
+		//DossierTemplateActions actions = new DossierTemplateActionsImpl();
 		long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
 
 		DossierTemplateDetailModel result = new DossierTemplateDetailModel();
@@ -163,18 +167,25 @@ public class DossierTemplateManagementImpl implements DossierTemplateManagement 
 			long dossierTemplateId = GetterUtil.getLong(id);
 
 			DossierTemplate dossierTemplate = null;
-			try {
-				dossierTemplate = actions.getDossierTemplate(dossierTemplateId);
-			} catch (Exception e) {
-				dossierTemplate = actions.getDossierTemplate(groupId, id);
+			if (dossierTemplateId > 0) {
+				dossierTemplate = DossierTemplateLocalServiceUtil.getDossierTemplate(dossierTemplateId);
+			} else {
+				dossierTemplate = DossierTemplateLocalServiceUtil.getByTemplateNo(groupId, id);
 			}
-
+			
+//			_log.info("Part1: "+ (System.currentTimeMillis() - start));
+//			try {
+//				dossierTemplate = actions.getDossierTemplate(dossierTemplateId);
+//			} catch (Exception e) {
+//				dossierTemplate = actions.getDossierTemplate(groupId, id);
+//			}
+//			_log.info("Part2: "+ (System.currentTimeMillis() - start));
 			if (Validator.isNull(dossierTemplate)) {
 				throw new NotFoundException("NotFoundException");
 			}
 
 			result = DossierTemplateUtils.mappingForTemplateGetDetail(dossierTemplate);
-
+			_log.info("Part3: "+ (System.currentTimeMillis() - start));
 			return Response.status(200).entity(result).build();
 
 		} catch (Exception e) {

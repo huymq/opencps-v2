@@ -87,9 +87,9 @@ public class DossierContentGenerator {
 
 	}
 
-	public static String getBriefNote(long groupId, long dossierId, String briefNotePattern) {
+	public static String getBriefNote(Dossier dossier, String briefNotePattern) {
 
-		Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
+		//Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
 
 		String briefNote = StringPool.BLANK;
 
@@ -122,7 +122,7 @@ public class DossierContentGenerator {
 					String dataKey = textSplit[0];
 					String fileTemplateNo = textSplit[1];
 					
-					DossierFile dossierFile = DossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
+					DossierFile dossierFile = DossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossier.getDossierId(),
 							fileTemplateNo, false, new DossierFileComparator(false, "createDate", Date.class));
 					
 					

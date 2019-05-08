@@ -15,7 +15,18 @@
 package com.fds.vr.business.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.fds.vr.business.model.VRCOPProductionPlantEquipment;
 import com.fds.vr.business.service.base.VRCOPProductionPlantEquipmentLocalServiceBaseImpl;
 
 /**
@@ -40,4 +51,26 @@ public class VRCOPProductionPlantEquipmentLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRCOPProductionPlantEquipmentLocalServiceUtil} to access the vrcop production plant equipment local service.
 	 */
+	public List<VRCOPProductionPlantEquipment> findBycopReportRepositoryID(long mtCore, long copReportRepositoryID) throws PortalException, SystemException {
+		try {
+			return vrcopProductionPlantEquipmentPersistence.findBycopReportRepositoryID(mtCore, copReportRepositoryID);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCOPProductionPlantEquipment>();
+		
+	}
+
+
+	public List<VRCOPProductionPlantEquipment> findBycopReportNo(long mtCore, String copReportNo) throws PortalException, SystemException {
+		try {
+			return vrcopProductionPlantEquipmentPersistence.findBycopReportNo(mtCore, copReportNo);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCOPProductionPlantEquipment>();
+		
+	}
+	
+	private Log _log = LogFactoryUtil.getLog(VRCOPProductionPlantEquipmentLocalServiceImpl.class);
 }

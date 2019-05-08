@@ -1,8 +1,5 @@
 package com.fds.vr.business.action.util;
 
-import org.opencps.dossiermgt.model.Dossier;
-import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
-
 public class DossierStatisticUtils {
 	
 	public void getKeyValue(String templateKey) {

@@ -15,7 +15,18 @@
 package com.fds.vr.business.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.fds.vr.business.model.VRIssueVehiclecertificate;
 import com.fds.vr.business.service.base.VRIssueVehiclecertificateLocalServiceBaseImpl;
 
 /**
@@ -40,4 +51,39 @@ public class VRIssueVehiclecertificateLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRIssueVehiclecertificateLocalServiceUtil} to access the vr issue vehiclecertificate local service.
 	 */
+	public List<VRIssueVehiclecertificate> findBydossierId(long mtCore, long dossierId) throws PortalException, SystemException {
+		try {
+			return vrIssueVehiclecertificatePersistence.findBydossierId(mtCore, dossierId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRIssueVehiclecertificate>();
+		
+	}
+
+
+	public List<VRIssueVehiclecertificate> findByissueId(long mtCore, long issueId) throws PortalException, SystemException {
+		try {
+			return vrIssueVehiclecertificatePersistence.findByissueId(mtCore, issueId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRIssueVehiclecertificate>();
+		
+	}
+	
+	public List<VRIssueVehiclecertificate> findBycertificateId(long mtCore, long dossierId, long certificateId) throws PortalException, SystemException {
+		try {
+			return vrIssueVehiclecertificatePersistence.findBycertificateId(mtCore, dossierId, certificateId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRIssueVehiclecertificate>();
+		
+	}
+	
+
+	
+	private Log _log = LogFactoryUtil.getLog(VRIssueVehiclecertificateLocalServiceImpl.class);
+	
 }

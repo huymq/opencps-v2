@@ -34,6 +34,7 @@ import org.opencps.dossiermgt.exception.NoSuchDossierPartException;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
+import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.base.DossierFileLocalServiceBaseImpl;
 import org.opencps.dossiermgt.service.comparator.DossierFileComparator;
 import org.opencps.usermgt.action.ApplicantActions;
@@ -590,10 +591,8 @@ public class DossierFileLocalServiceImpl extends DossierFileLocalServiceBaseImpl
 
 		// User user =
 		// userPersistence.findByPrimaryKey(serviceContext.getUserId());
+		long now = System.currentTimeMillis();
 		DossierFile dossierFile = dossierFilePersistence.findByDID_REF(dossierId, referenceUid);
-
-		// dossierFileLocalService.getDossierFileByReferenceUid(dossierId,
-		// referenceUid);
 
 		String jrxmlTemplate = dossierFile.getFormReport();
 
@@ -621,16 +620,16 @@ public class DossierFileLocalServiceImpl extends DossierFileLocalServiceBaseImpl
 			serviceContextFile.setCompanyId(companyId);
 			serviceContextFile.setScopeGroupId(groupId);
 			
-			_log.info("NEW CODE FILES_FROM_FORM_UPDATEDDDDD");
+			//_log.info("NEW CODE FILES_FROM_FORM_UPDATEDDDDD: "+(System.currentTimeMillis() - now));
 			DossierFileUtils fileUtils = new DossierFileUtils();
 			
-			FileEntry fileEntry = fileUtils.uploadFileEntry(userId, groupId, formData, "FORM_FILE_DATA_STORE",
+			fileUtils.uploadFileEntry(userId, groupId, formData, "FORM_FILE_DATA_STORE",
 					serviceContextFile);
-			
-			String urlFile = fileUtils.getFileContent(fileEntry.getFileEntryId());
-			
-			_log.info(urlFile);
-
+			//FileEntry fileEntry = fileUtils.uploadFileEntry(userId, groupId, formData, "FORM_FILE_DATA_STORE",
+			//		serviceContextFile);
+			//String urlFile = fileUtils.getFileContent(fileEntry.getFileEntryId());
+			//_log.info(urlFile);
+			//_log.info("SEND TO UPLOAD FILE ENTRY END: "+(System.currentTimeMillis() - now));
 			
 		} catch (Exception e) {
 			_log.error(e);
@@ -638,6 +637,28 @@ public class DossierFileLocalServiceImpl extends DossierFileLocalServiceBaseImpl
 		
 		dossierFile.setIsNew(true);
 
+		long userActionId = serviceContext.getUserId();
+		User userAction = null;
+		if (userActionId != 0) {
+			userAction = userLocalService.getUser(userActionId);
+		}
+		if (userActionId != dossierFile.getUserId()) {
+			// add new Dossier File
+			
+			long dossierFileId = counterLocalService.increment(DossierFile.class.getName());
+			dossierFile.setDossierFileId(dossierFileId);
+			dossierFile.setCreateDate(new Date());
+			dossierFile.setModifiedDate(new Date());
+			dossierFile.setUserId(userActionId);
+			dossierFile.setUserName(Validator.isNotNull(userAction) ? userAction.getFullName() : StringPool.BLANK);
+			dossierFile.setReferenceUid(PortalUUIDUtil.generate());
+			dossierFile.setIsNew(true);
+			dossierFile.setOriginal(true);			
+			
+			DossierFileLocalServiceUtil.addDossierFile(dossierFile);
+		}
+		
+		
 		// Binhth add message bus to processing jasper file
 		Message message = new Message();
 
@@ -651,7 +672,7 @@ public class DossierFileLocalServiceImpl extends DossierFileLocalServiceBaseImpl
 		message.put("msgToEngine", msgData);
 		MessageBusUtil.sendMessage("jasper/engine/out/destination", message);
 
-		_log.info("SEND TO CREATED FILE MODEL");
+		_log.info("SEND TO CREATED FILE MODEL END: "+(System.currentTimeMillis() - now));
 		
 		return dossierFilePersistence.update(dossierFile);
 	}
@@ -993,8 +1014,13 @@ public class DossierFileLocalServiceImpl extends DossierFileLocalServiceBaseImpl
 
 	public DossierFile getDossierFileByDID_FTNO_DPT_First(long dossierId, String fileTemplateNo, int dossierPartType,
 			boolean removed, OrderByComparator orderByComparator) throws NoSuchDossierFileException {
-		return dossierFilePersistence.findByDID_FTNO_DPT_First(dossierId, fileTemplateNo, dossierPartType, removed,
-				orderByComparator);
+		try {
+			return dossierFilePersistence.findByDID_FTNO_DPT_First(dossierId, fileTemplateNo, dossierPartType, removed,
+					orderByComparator);
+		} catch (NoSuchDossierFileException e) {
+			_log.debug(e);
+			return null;
+		}
 	}
 
 	public List<DossierFile> getDossierFileByDID_FTNO(long dossierId, String fileTemplateNo, boolean removed) {
@@ -1021,6 +1047,11 @@ public class DossierFileLocalServiceImpl extends DossierFileLocalServiceBaseImpl
 			int dossierPartType, long fileEntryId, boolean removed) {
 		return dossierFilePersistence.findByDID_FTNO_DPT_NOT_NULL_FID(dossierId, fileTemplateNo, dossierPartType,
 				fileEntryId, removed);
+	}
+
+	public int countDossierFileByDID_FTNO_DPT_NOT_NULL_FID(long dossierId, String fileTemplateNo,
+			int dossierPartType, long fileEntryId, boolean removed) {
+		return dossierFilePersistence.countByDID_FTNO_DPT_NOT_NULL_FID(dossierId, fileTemplateNo, dossierPartType, fileEntryId, removed);
 	}
 
 	public List<DossierFile> getDossierFileByDID_FTNO_DPT_NOT_NULL_FID(long dossierId, String fileTemplateNo,
@@ -1053,6 +1084,10 @@ public class DossierFileLocalServiceImpl extends DossierFileLocalServiceBaseImpl
 	//Get dossierFile follow fileEntryId
 	public DossierFile getByFileEntryId(long fileEntryId) {
 		return dossierFilePersistence.fetchByFILE_ID(fileEntryId);
+	}
+
+	public List<DossierFile> getByTemplateNoAndIsNew(long dossierId, boolean isNew, String[] fileTemplateNoArr) {
+		return dossierFilePersistence.findByDID_ISN_TEMP(dossierId, isNew, fileTemplateNoArr);
 	}
 
 	public static final String CLASS_NAME = DossierFile.class.getName();

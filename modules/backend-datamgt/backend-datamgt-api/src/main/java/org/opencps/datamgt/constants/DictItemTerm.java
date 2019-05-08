@@ -63,6 +63,10 @@ public class DictItemTerm {
 	public static final String META_DATA = "metaData";
 	
 	public static final String IS_GLOBAL = "isGlobal";
+
+	public static final String PARENT_ITEM_NAME = "parentItemName";
+	
+	public static final String PARENT_ITEM_NAME_EN = "parentItemNameEN";
 	
 	//sortable
 	public static final String DICT_ITEM_ID_SORTABLE = "dictItemId_sortable";
@@ -100,6 +104,10 @@ public class DictItemTerm {
 	public static final String LEVEL_SORTABLE = "level_sortable";
 	
 	public static final String META_DATA_SORTABLE = "metaData_sortable";
+
+	public static final String PARENT_ITEM_NAME_SORTABLE = "parentItemName_sortable";
+	
+	public static final String PARENT_ITEM_NAME_EN_SORTABLE = "parentItemNameEN_sortable";
 	
 	public DictItemTerm() {
 

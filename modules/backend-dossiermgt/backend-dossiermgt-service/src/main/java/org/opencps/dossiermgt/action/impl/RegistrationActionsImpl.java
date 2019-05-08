@@ -1,6 +1,7 @@
 package org.opencps.dossiermgt.action.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 public class RegistrationActionsImpl implements RegistrationActions {
@@ -39,16 +41,19 @@ public class RegistrationActionsImpl implements RegistrationActions {
 			String applicantIdNo, String applicantIdDate, String address, String cityCode, String cityName,
 			String districtCode, String districtName, String wardCode, String wardName, String contactName,
 			String contactTelNo, String contactEmail, String govAgencyCode, String govAgencyName, int registrationState,
-			String registrationClass, String representativeEnterprise, ServiceContext serviceContext)
+			String registrationClass, String representativeEnterprise, int markasdeleted, String remarks, ServiceContext serviceContext)
 			throws SystemException, PortalException {
 		List<Registration> listRegistration = RegistrationLocalServiceUtil.getRegistrationByGID_UID(groupId,
 				serviceContext.getUserId());
 		_log.info("listRegistration: "+listRegistration.size());
+		// registration moi nhat se thiet lap flag markasdeleted = 1; Chi khi duyet moi chuyen ve gia tri 0;
+		markasdeleted = 1; 
 		if (listRegistration.size() == 0) {
 			return RegistrationLocalServiceUtil.insert(groupId, companyId, applicantName, applicantIdType,
 					applicantIdNo, applicantIdDate, address, cityCode, cityName, districtCode, districtName, wardCode,
-					wardName, contactName, contactTelNo, contactEmail, govAgencyCode, govAgencyName, 0, "",
-					representativeEnterprise, serviceContext);
+					wardName, contactName, contactTelNo, contactEmail, govAgencyCode, govAgencyName, 0, 
+					Validator.isNotNull(registrationClass) ? registrationClass.toString(): StringPool.BLANK,
+					representativeEnterprise, markasdeleted, remarks, serviceContext);
 		} else {
 			Registration registration = listRegistration.get(0);
 			int state = registration.getRegistrationState();
@@ -58,7 +63,8 @@ public class RegistrationActionsImpl implements RegistrationActions {
 				return RegistrationLocalServiceUtil.insert(groupId, companyId, applicantName, applicantIdType,
 						applicantIdNo, applicantIdDate, address, cityCode, cityName, districtCode, districtName,
 						wardCode, wardName, contactName, contactTelNo, contactEmail, govAgencyCode, govAgencyName, 0,
-						"", representativeEnterprise, serviceContext);
+						Validator.isNotNull(registrationClass) ? registrationClass.toString() : StringPool.BLANK,
+						representativeEnterprise, markasdeleted, remarks, serviceContext);
 			} else {
 				return registration;
 			}
@@ -72,24 +78,26 @@ public class RegistrationActionsImpl implements RegistrationActions {
 			String cityName, String districtCode, String districtName, String wardCode, String wardName,
 			String contactName, String contactTelNo, String contactEmail, String govAgencyCode, String govAgencyName,
 			int registrationState, String registrationClass, String representativeEnterprise,
+			int markasdeleted, String remarks, 
 			ServiceContext serviceContext) throws PortalException {
 
 		int start = -1, end = -1;
 
 		long userId = serviceContext.getUserId();
 
-		List<RegistrationForm> lstRegistrationForm = RegistrationFormLocalServiceUtil.getRegistrationForms(start, end);
-
 		List<RegistrationForm> lstRegistrationFormchange = new ArrayList<RegistrationForm>();
-
-		// changeType removed in registrationForm
-		for (RegistrationForm registrationForm : lstRegistrationForm) {
-				registrationForm.setIsNew(true);
-				RegistrationForm registrationFormChanged = RegistrationFormLocalServiceUtil
-						.updateRegistrationForm(registrationForm);
-				lstRegistrationFormchange.add(registrationFormChanged);
+		
+		List<RegistrationForm> lstRegistrationForm = RegistrationFormLocalServiceUtil.findByG_REGID_ISNEW(registrationId, true);
+		// changeType IsNew in registrationForm
+		if  (lstRegistrationForm != null && lstRegistrationForm.size() > 0 && registrationState == 2) {
+			for (RegistrationForm registrationForm : lstRegistrationForm) {
+					registrationForm.setIsNew(false);
+					registrationForm.setModifiedDate(new Date());
+					RegistrationForm registrationFormChanged = RegistrationFormLocalServiceUtil
+							.updateRegistrationForm(registrationForm);
+					lstRegistrationFormchange.add(registrationFormChanged);
+			}
 		}
-
 		// add registrationLog
 		String content = "";
 		RegistrationLogActions registrationLogActions = new RegistrationLogActionsImpl();
@@ -101,16 +109,31 @@ public class RegistrationActionsImpl implements RegistrationActions {
 			content = String.valueOf(Integer.valueOf(lstRegistrationLog.get(0).getContent()) + 1);
 		}
 
-		if (Validator.isNotNull(lstRegistrationFormchange)) {
-			if (registrationState == 2 || registrationState == 3) {
-				addLog("", groupId, userId, registrationId, content, lstRegistrationFormchange);
+		if (registrationState == 2 || registrationState == 3) {			
+			addLog("", groupId, userId, registrationId, content, lstRegistrationFormchange);
+		}
+	
+		if (registrationState == 2) {			
+			// Find all Registrations with exacted applicantIdNo: update markasdeleted from 0 to 1
+			// Registration moi nhat khi duoc duyet se chuyen flag markasdeleted ve gia tri 0;
+			List<Registration> oldReg =  RegistrationLocalServiceUtil.findByREG_APPNO_markasdeleted(groupId, applicantIdNo, 0);
+			if (oldReg != null && oldReg.size() > 0) {
+				for (Registration oldregistration : oldReg) {
+					oldregistration.setMarkasdeleted(1);
+					RegistrationLocalServiceUtil.updateRegistration(oldregistration);
+				}
 			}
+			markasdeleted = 0;	
+			remarks = StringPool.BLANK; // reset
+			
+		} else {
+			markasdeleted = 1;
 		}
 
 		return RegistrationLocalServiceUtil.updateRegistration(groupId, registrationId, applicantName, applicantIdType,
 				applicantIdNo, applicantIdDate, address, cityCode, cityName, districtCode, districtName, wardCode,
 				wardName, contactName, contactTelNo, contactEmail, govAgencyCode, govAgencyName, registrationState,
-				registrationClass, representativeEnterprise, serviceContext);
+				registrationClass, representativeEnterprise, markasdeleted, remarks, serviceContext);
 
 	}
 
@@ -189,15 +212,7 @@ public class RegistrationActionsImpl implements RegistrationActions {
 		return result;
 	}
 
-//	@Override
-//	public Registration updateSubmitting(long registrationId, boolean submitting) {
-//		Registration model = new RegistrationImpl();
-//		model.setSubmitting(submitting);
-//		model.setRegistrationId(registrationId);
-//		return RegistrationLocalServiceUtil.updateRegistration(model);
-//	}
 
-	//18
 	@Override
 	public JSONObject getFormDataByFormNo(long userId, long companyId, LinkedHashMap<String, Object> params, Sort[] object, int start,
 			int end, ServiceContext serviceContext) {

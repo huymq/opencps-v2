@@ -6,8 +6,6 @@ import com.fds.vr.business.action.impl.DictItemUtil;
 import com.fds.vr.business.action.impl.ILCertificateActionsImpl;
 import com.fds.vr.business.action.impl.VRActionsImpl;
 import com.fds.vr.business.action.util.ConvertFormatDate;
-import com.fds.vr.business.model.ILCertificate;
-import com.fds.vr.business.model.ILVehicleCustomsBorderGuard;
 import com.fds.vr.business.model.VRReport;
 import com.fds.vr.business.service.VRReportLocalServiceUtil;
 import com.fds.vr.ilcertificate.model.ILCBGuardModel;
@@ -251,6 +249,11 @@ public class VRRestApplication extends Application {
 			@PathParam("type") String type) {
 
 		long groupId = GetterUtil.getLong(header.getHeaderString(Field.GROUP_ID));
+		groupId = 55301; //fixed;
+		String collectionCode = code;
+		String parentItemCode = type; 
+		String level = "2"; 
+		String OrderBy = "name"; 
 
 		JSONObject resp = JSONFactoryUtil.createJSONObject();
 
@@ -259,10 +262,14 @@ public class VRRestApplication extends Application {
 		long dictCollectionId = dictUtil.getCollectionId(code, groupId);
 
 		try {
+  
 			List<DictItem> items = DictItemLocalServiceUtil.findByF_dictCollectionId(dictCollectionId);
 
-			JSONArray itemsJson = dictUtil.getDictItem(items, type);
+			// Cach cu: B1. lay toan bo danh sach theo CollectionCode; B2.Loc danh sach theo Ma nhom (type)
+			//JSONArray itemsJson = dictUtil.getDictItem(items, type);
 
+			// Cach moi: Lay danh sach theo ma cha parentItemCode va CollectionCode.			
+			JSONArray itemsJson = dictUtil.getDictItemByCollection_Parent_Level_OrderBy(items, groupId, collectionCode, parentItemCode, level, OrderBy );
 			resp.put("Items", itemsJson);
 			resp.put("Total", itemsJson.length());
 
@@ -557,237 +564,237 @@ public class VRRestApplication extends Application {
 
 	/** Process search result - START */
 	// Search document acceptable
-	@GET
-	@Path("/certDoc")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getDocAccept(@Context HttpHeaders header, @QueryParam("keywords") String keywords,
-			@QueryParam("serviceCode") String serviceCode, @QueryParam("govAgencyCode") String govAgencyCode,
-			@QueryParam("routeCode") String routeCode, @QueryParam("fromDate") String fromDate,
-			@QueryParam("toDate") String toDate, @QueryParam("start") int start, @QueryParam("limit") int limit) {
-
-		ILCertificateActions actions = new ILCertificateActionsImpl();
-
-		try {
-			// Process key search
-			String keySearch = StringPool.BLANK;
-			String serviceSearch = StringPool.BLANK;
-			String govCodeSearch = StringPool.BLANK;
-			String routeCodeSearch = StringPool.BLANK;
-			String fromDateSearch = StringPool.BLANK;
-			String toDateSearch = StringPool.BLANK;
-			if (Validator.isNotNull(keywords)) {
-				keySearch = keywords.toLowerCase() + "%";
-			}
-			if (Validator.isNotNull(serviceCode)) {
-				if (serviceCode.contains(StringPool.COMMA)) {
-					String[] serviceSplit = StringUtil.split(serviceCode, StringPool.COMMA);
-					if (serviceSplit != null && serviceSplit.length > 0) {
-						StringBuilder sb = new StringBuilder();
-						int lenghtService = serviceSplit.length;
-						for (int i = 0; i < lenghtService; i++) {
-							if (i == 0) {
-								sb.append(StringPool.APOSTROPHE);
-								sb.append(serviceSplit[i]);
-								sb.append(StringPool.APOSTROPHE);
-							} else {
-								sb.append(StringPool.COMMA);
-								sb.append(StringPool.APOSTROPHE);
-								sb.append(serviceSplit[i]);
-								sb.append(StringPool.APOSTROPHE);
-							}
-						}
-						serviceSearch = sb.toString();
-					}
-				} else {
-					serviceSearch = StringPool.APOSTROPHE + serviceCode.toLowerCase() + StringPool.APOSTROPHE;
-				}
-			}
-			_log.info("serviceSearch: " + serviceSearch);
-			if (Validator.isNotNull(govAgencyCode)) {
-				govCodeSearch = govAgencyCode.toLowerCase();
-			}
-			if (Validator.isNotNull(routeCode)) {
-				routeCodeSearch = routeCode.toLowerCase();
-			}
-			if (Validator.isNotNull(fromDate)) {
-				fromDate = ConvertFormatDate.formatDateSQL(fromDate);
-			}
-			if (Validator.isNotNull(toDate)) {
-				toDateSearch = ConvertFormatDate.formatDateSQL(toDate);
-			}
-
-			JSONObject jsonData = actions.getDocAcceptList(keySearch, serviceSearch, govCodeSearch, routeCodeSearch,
-					fromDateSearch, toDateSearch, start, limit);
-
-			ILCertificateResultModel result = new ILCertificateResultModel();
-			// List<ILCertificateModel> certModelList =
-			// ILCertificateUtils.mappingToResultCertificate(certList);
-			if (jsonData != null && jsonData.getInt("total") > 0) {
-				result.setTotal(jsonData.getInt("total"));
-				result.getData().addAll(
-						ILCertificateUtils.mappingToResultCertificate((List<ILCertificate>) jsonData.get("data")));
-			} else {
-				result.setTotal(0);
-			}
-
-			return Response.status(200).entity(result).build();
-
-		} catch (Exception e) {
-			_log.error(e);
-			return Response.status(500).entity(e.getMessage()).build();
-
-		}
-
-	}
+//	@GET
+//	@Path("/certDoc")
+//	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//	public Response getDocAccept(@Context HttpHeaders header, @QueryParam("keywords") String keywords,
+//			@QueryParam("serviceCode") String serviceCode, @QueryParam("govAgencyCode") String govAgencyCode,
+//			@QueryParam("routeCode") String routeCode, @QueryParam("fromDate") String fromDate,
+//			@QueryParam("toDate") String toDate, @QueryParam("start") int start, @QueryParam("limit") int limit) {
+//
+//		ILCertificateActions actions = new ILCertificateActionsImpl();
+//
+//		try {
+//			// Process key search
+//			String keySearch = StringPool.BLANK;
+//			String serviceSearch = StringPool.BLANK;
+//			String govCodeSearch = StringPool.BLANK;
+//			String routeCodeSearch = StringPool.BLANK;
+//			String fromDateSearch = StringPool.BLANK;
+//			String toDateSearch = StringPool.BLANK;
+//			if (Validator.isNotNull(keywords)) {
+//				keySearch = keywords.toLowerCase() + "%";
+//			}
+//			if (Validator.isNotNull(serviceCode)) {
+//				if (serviceCode.contains(StringPool.COMMA)) {
+//					String[] serviceSplit = StringUtil.split(serviceCode, StringPool.COMMA);
+//					if (serviceSplit != null && serviceSplit.length > 0) {
+//						StringBuilder sb = new StringBuilder();
+//						int lenghtService = serviceSplit.length;
+//						for (int i = 0; i < lenghtService; i++) {
+//							if (i == 0) {
+//								sb.append(StringPool.APOSTROPHE);
+//								sb.append(serviceSplit[i]);
+//								sb.append(StringPool.APOSTROPHE);
+//							} else {
+//								sb.append(StringPool.COMMA);
+//								sb.append(StringPool.APOSTROPHE);
+//								sb.append(serviceSplit[i]);
+//								sb.append(StringPool.APOSTROPHE);
+//							}
+//						}
+//						serviceSearch = sb.toString();
+//					}
+//				} else {
+//					serviceSearch = StringPool.APOSTROPHE + serviceCode.toLowerCase() + StringPool.APOSTROPHE;
+//				}
+//			}
+//			_log.info("serviceSearch: " + serviceSearch);
+//			if (Validator.isNotNull(govAgencyCode)) {
+//				govCodeSearch = govAgencyCode.toLowerCase();
+//			}
+//			if (Validator.isNotNull(routeCode)) {
+//				routeCodeSearch = routeCode.toLowerCase();
+//			}
+//			if (Validator.isNotNull(fromDate)) {
+//				fromDate = ConvertFormatDate.formatDateSQL(fromDate);
+//			}
+//			if (Validator.isNotNull(toDate)) {
+//				toDateSearch = ConvertFormatDate.formatDateSQL(toDate);
+//			}
+//
+//			JSONObject jsonData = actions.getDocAcceptList(keySearch, serviceSearch, govCodeSearch, routeCodeSearch,
+//					fromDateSearch, toDateSearch, start, limit);
+//
+//			ILCertificateResultModel result = new ILCertificateResultModel();
+//			// List<ILCertificateModel> certModelList =
+//			// ILCertificateUtils.mappingToResultCertificate(certList);
+//			if (jsonData != null && jsonData.getInt("total") > 0) {
+//				result.setTotal(jsonData.getInt("total"));
+//				result.getData().addAll(
+//						ILCertificateUtils.mappingToResultCertificate((List<ILCertificate>) jsonData.get("data")));
+//			} else {
+//				result.setTotal(0);
+//			}
+//
+//			return Response.status(200).entity(result).build();
+//
+//		} catch (Exception e) {
+//			_log.error(e);
+//			return Response.status(500).entity(e.getMessage()).build();
+//
+//		}
+//
+//	}
 
 	/** Process search result - END */
 
 	// Get detail certificate info
-	@GET
-	@Path("/certDoc/{id}")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getDetailCert(@Context HttpHeaders header, @PathParam("id") String id) {
+//	@GET
+//	@Path("/certDoc/{id}")
+//	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//	public Response getDetailCert(@Context HttpHeaders header, @PathParam("id") String id) {
+//
+//		ILCertificateActions actions = new ILCertificateActionsImpl();
+//		long certificateId = Long.valueOf(id);
+//
+//		try {
+//			// Process key search
+//
+//			ILCertificate certInfo = actions.getDetailCert(certificateId);
+//
+//			ILCertificateModel result = ILCertificateUtils.mappingToDetailCertificate(certInfo);
+//
+//			return Response.status(200).entity(result).build();
+//
+//		} catch (Exception e) {
+//			_log.error(e);
+//			return Response.status(500).entity(e.getMessage()).build();
+//
+//		}
+//
+//	}
 
-		ILCertificateActions actions = new ILCertificateActionsImpl();
-		long certificateId = Long.valueOf(id);
+//	@GET
+//	@Path("/certDoc/borderGuard/{registrationNumber}")
+//	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//	public Response getBorderGuardList(@Context HttpHeaders header,
+//			@PathParam("registrationNumber") String registrationNumber) {
+//
+//		ILCertificateActions actions = new ILCertificateActionsImpl();
+//
+//		try {
+//			// Process key search
+//			List<ILVehicleCustomsBorderGuard> cbGuardList = actions.getBorderGuardList(registrationNumber);
+//			ILCBGuardResultModel result = new ILCBGuardResultModel();
+//
+//			if (cbGuardList != null && cbGuardList.size() > 0) {
+//				result.setRegistrationNumber(registrationNumber);
+//				result.getData().addAll(ILCertificateUtils.mappingToResultCBGuard(cbGuardList));
+//			} else {
+//				result.setRegistrationNumber(registrationNumber);
+//			}
+//			return Response.status(200).entity(result).build();
+//
+//		} catch (Exception e) {
+//			_log.error(e);
+//			return Response.status(500).entity(e.getMessage()).build();
+//
+//		}
+//
+//	}
 
-		try {
-			// Process key search
+//	@POST
+//	@Path("/certDoc/borderGuard/{registrationNumber}")
+//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//	public Response addCustomBorderGuard(@Context HttpHeaders header,
+//			@PathParam("registrationNumber") String registrationNumber,
+//			@FormParam("expImpGateType") String expImpGateType, @FormParam("expImpGate") String expImpGate,
+//			@FormParam("driverName") String driverName, @FormParam("driverLicenceNo") String driverLicenceNo,
+//			@FormParam("registrationDate") String registrationDate) {
+//
+//		ILCertificateActions actions = new ILCertificateActionsImpl();
+//
+//		try {
+//			Date regDate = null;
+//			_log.info("registrationDate:" + registrationDate);
+//			if (Validator.isNotNull(registrationDate)) {
+//				regDate = ConvertFormatDate.parseStringToDate(registrationDate, ConvertFormatDate._NORMAL_DATE);
+//				_log.info("regDate:" + regDate);
+//			}
+//			ILVehicleCustomsBorderGuard cbGuardInput = actions.addCustomBorderGuard(registrationNumber, expImpGateType,
+//					expImpGate, driverName, driverLicenceNo, regDate);
+//
+//			ILCBGuardModel result = ILCertificateUtils.mappingToDetailCBGuard(cbGuardInput);
+//
+//			return Response.status(200).entity(result).build();
+//
+//		} catch (Exception e) {
+//			_log.error(e);
+//			return Response.status(500).entity(e.getMessage()).build();
+//
+//		}
+//
+//	}
 
-			ILCertificate certInfo = actions.getDetailCert(certificateId);
-
-			ILCertificateModel result = ILCertificateUtils.mappingToDetailCertificate(certInfo);
-
-			return Response.status(200).entity(result).build();
-
-		} catch (Exception e) {
-			_log.error(e);
-			return Response.status(500).entity(e.getMessage()).build();
-
-		}
-
-	}
-
-	@GET
-	@Path("/certDoc/borderGuard/{registrationNumber}")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getBorderGuardList(@Context HttpHeaders header,
-			@PathParam("registrationNumber") String registrationNumber) {
-
-		ILCertificateActions actions = new ILCertificateActionsImpl();
-
-		try {
-			// Process key search
-			List<ILVehicleCustomsBorderGuard> cbGuardList = actions.getBorderGuardList(registrationNumber);
-			ILCBGuardResultModel result = new ILCBGuardResultModel();
-
-			if (cbGuardList != null && cbGuardList.size() > 0) {
-				result.setRegistrationNumber(registrationNumber);
-				result.getData().addAll(ILCertificateUtils.mappingToResultCBGuard(cbGuardList));
-			} else {
-				result.setRegistrationNumber(registrationNumber);
-			}
-			return Response.status(200).entity(result).build();
-
-		} catch (Exception e) {
-			_log.error(e);
-			return Response.status(500).entity(e.getMessage()).build();
-
-		}
-
-	}
-
-	@POST
-	@Path("/certDoc/borderGuard/{registrationNumber}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response addCustomBorderGuard(@Context HttpHeaders header,
-			@PathParam("registrationNumber") String registrationNumber,
-			@FormParam("expImpGateType") String expImpGateType, @FormParam("expImpGate") String expImpGate,
-			@FormParam("driverName") String driverName, @FormParam("driverLicenceNo") String driverLicenceNo,
-			@FormParam("registrationDate") String registrationDate) {
-
-		ILCertificateActions actions = new ILCertificateActionsImpl();
-
-		try {
-			Date regDate = null;
-			_log.info("registrationDate:" + registrationDate);
-			if (Validator.isNotNull(registrationDate)) {
-				regDate = ConvertFormatDate.parseStringToDate(registrationDate, ConvertFormatDate._NORMAL_DATE);
-				_log.info("regDate:" + regDate);
-			}
-			ILVehicleCustomsBorderGuard cbGuardInput = actions.addCustomBorderGuard(registrationNumber, expImpGateType,
-					expImpGate, driverName, driverLicenceNo, regDate);
-
-			ILCBGuardModel result = ILCertificateUtils.mappingToDetailCBGuard(cbGuardInput);
-
-			return Response.status(200).entity(result).build();
-
-		} catch (Exception e) {
-			_log.error(e);
-			return Response.status(500).entity(e.getMessage()).build();
-
-		}
-
-	}
-
-	@GET
-	@Path("/certDoc/applicant")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getCertByApplicant(@Context HttpHeaders header, @QueryParam("applicantIdNo") String applicantIdNo,
-			@QueryParam("registrationNumber") String registrationNumber,
-			@QueryParam("serviceCode") String serviceCode) {
-
-		ILCertificateActions actions = new ILCertificateActionsImpl();
-
-		try {
-			// Process key search
-			String applicant = StringPool.BLANK;
-			String regSearch = StringPool.BLANK;
-			String serviceSearch = StringPool.BLANK;
-
-			if (Validator.isNotNull(applicantIdNo)) {
-				applicant = applicantIdNo.toLowerCase();
-			}
-			_log.info("applicantIdNo: " + applicantIdNo);
-			_log.info("applicant: " + applicant);
-			if (Validator.isNotNull(serviceCode)) {
-				serviceSearch = serviceCode.toLowerCase();
-			}
-			_log.info("serviceCode: " + serviceCode);
-			_log.info("serviceSearch: " + serviceSearch);
-			if (Validator.isNotNull(registrationNumber)) {
-				regSearch = registrationNumber.toLowerCase();
-				_log.info("registrationNumber: " + registrationNumber);
-				_log.info("regSearch: " + regSearch);
-				ILCertificate certInfo = actions.getCertByValidFrom(serviceSearch, applicantIdNo, registrationNumber);
-				ILCertificateModel result = null;
-				if (certInfo != null) {
-					result = ILCertificateUtils.mappingToDetailCertificate(certInfo);
-				}
-
-				return Response.status(200).entity(result).build();
-			} else {
-				JSONObject jsonData = actions.getCertByApplicant(serviceSearch, applicant);
-				ILCertificateResultModel result = new ILCertificateResultModel();
-				// List<ILCertificateModel> certModelList =
-				// ILCertificateUtils.mappingToResultCertificate(certList);
-				if (jsonData != null && jsonData.getInt("total") > 0) {
-					result.setTotal(jsonData.getInt("total"));
-					result.getData().addAll(
-							ILCertificateUtils.mappingToResultCertificate((List<ILCertificate>) jsonData.get("data")));
-				} else {
-					result.setTotal(0);
-				}
-				return Response.status(200).entity(result).build();
-			}
-
-		} catch (Exception e) {
-			_log.error(e);
-			return Response.status(500).entity(e.getMessage()).build();
-
-		}
-	}
+//	@GET
+//	@Path("/certDoc/applicant")
+//	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//	public Response getCertByApplicant(@Context HttpHeaders header, @QueryParam("applicantIdNo") String applicantIdNo,
+//			@QueryParam("registrationNumber") String registrationNumber,
+//			@QueryParam("serviceCode") String serviceCode) {
+//
+//		ILCertificateActions actions = new ILCertificateActionsImpl();
+//
+//		try {
+//			// Process key search
+//			String applicant = StringPool.BLANK;
+//			String regSearch = StringPool.BLANK;
+//			String serviceSearch = StringPool.BLANK;
+//
+//			if (Validator.isNotNull(applicantIdNo)) {
+//				applicant = applicantIdNo.toLowerCase();
+//			}
+//			_log.info("applicantIdNo: " + applicantIdNo);
+//			_log.info("applicant: " + applicant);
+//			if (Validator.isNotNull(serviceCode)) {
+//				serviceSearch = serviceCode.toLowerCase();
+//			}
+//			_log.info("serviceCode: " + serviceCode);
+//			_log.info("serviceSearch: " + serviceSearch);
+//			if (Validator.isNotNull(registrationNumber)) {
+//				regSearch = registrationNumber.toLowerCase();
+//				_log.info("registrationNumber: " + registrationNumber);
+//				_log.info("regSearch: " + regSearch);
+//				ILCertificate certInfo = actions.getCertByValidFrom(serviceSearch, applicantIdNo, registrationNumber);
+//				ILCertificateModel result = null;
+//				if (certInfo != null) {
+//					result = ILCertificateUtils.mappingToDetailCertificate(certInfo);
+//				}
+//
+//				return Response.status(200).entity(result).build();
+//			} else {
+//				JSONObject jsonData = actions.getCertByApplicant(serviceSearch, applicant);
+//				ILCertificateResultModel result = new ILCertificateResultModel();
+//				// List<ILCertificateModel> certModelList =
+//				// ILCertificateUtils.mappingToResultCertificate(certList);
+//				if (jsonData != null && jsonData.getInt("total") > 0) {
+//					result.setTotal(jsonData.getInt("total"));
+//					result.getData().addAll(
+//							ILCertificateUtils.mappingToResultCertificate((List<ILCertificate>) jsonData.get("data")));
+//				} else {
+//					result.setTotal(0);
+//				}
+//				return Response.status(200).entity(result).build();
+//			}
+//
+//		} catch (Exception e) {
+//			_log.error(e);
+//			return Response.status(500).entity(e.getMessage()).build();
+//
+//		}
+//	}
 
 	@GET
 	@Produces("text/plain")

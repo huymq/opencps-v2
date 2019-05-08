@@ -123,48 +123,44 @@ public class DataManagementUtils {
 		List<DictItemModel> results = new ArrayList<>();
 
 		try {
-
 			DictItemModel ett = null;
 
-			for (Document document : listDocument) {
-				ett = new DictItemModel();
+			if (listDocument != null && listDocument.size() > 0) {
+				for (Document document : listDocument) {
+					ett = new DictItemModel();
 
-				ett.setDictItemId(Long.valueOf(document.get("entryClassPK")));
-				ett.setItemCode(document.get(DictItemTerm.ITEM_CODE));
-				ett.setItemName(document.get(DictItemTerm.ITEM_NAME));
-				ett.setItemNameEN(document.get(DictItemTerm.ITEM_NAME_EN));
-				ett.setItemDescription(document.get(DictItemTerm.ITEM_DESCRIPTION));
-				ett.setLevel(Integer.valueOf(document.get(DictItemTerm.LEVEL)));
-				ett.setSibling(Integer.valueOf(document.get(DictItemTerm.LEVEL)));
-				ett.setTreeIndex(document.get(DictItemTerm.TREE_INDEX));
+					ett.setDictItemId(Long.valueOf(document.get("entryClassPK")));
+					ett.setItemCode(document.get(DictItemTerm.ITEM_CODE));
+					ett.setItemName(document.get(DictItemTerm.ITEM_NAME));
+					ett.setItemNameEN(document.get(DictItemTerm.ITEM_NAME_EN));
+					ett.setItemDescription(document.get(DictItemTerm.ITEM_DESCRIPTION));
+					ett.setLevel(Integer.valueOf(document.get(DictItemTerm.LEVEL)));
+					ett.setSibling(Integer.valueOf(document.get(DictItemTerm.LEVEL)));
+					ett.setTreeIndex(document.get(DictItemTerm.TREE_INDEX));
 
-				ett.setCreateDate(Validator.isNotNull(document.get(DictItemTerm.CREATE_DATE)) ? APIDateTimeUtils
-						.convertDateToString(document.getDate(DictItemTerm.CREATE_DATE), APIDateTimeUtils._TIMESTAMP)
-						: StringPool.BLANK);
-				ett.setModifiedDate(
-						Validator.isNotNull(document.get("modified")) ? APIDateTimeUtils.convertDateToString(
-								document.getDate("modified"), APIDateTimeUtils._TIMESTAMP) : StringPool.BLANK);
-				
-				
+					ett.setCreateDate(Validator.isNotNull(document.get(DictItemTerm.CREATE_DATE)) ? APIDateTimeUtils
+							.convertDateToString(document.getDate(DictItemTerm.CREATE_DATE), APIDateTimeUtils._TIMESTAMP)
+							: StringPool.BLANK);
+					ett.setModifiedDate(
+							Validator.isNotNull(document.get("modified")) ? APIDateTimeUtils.convertDateToString(
+									document.getDate("modified"), APIDateTimeUtils._TIMESTAMP) : StringPool.BLANK);
 
-				DictItem parentItem = DictItemLocalServiceUtil
-						.fetchDictItem(Long.valueOf(document.get(DictItemTerm.PARENT_ITEM_ID)));
+					//DictItem parentItem = DictItemLocalServiceUtil
+					//		.fetchDictItem(Long.valueOf(document.get(DictItemTerm.PARENT_ITEM_ID)));
 
-				ParentItem parentItemModel = new ParentItem();
+					ParentItem parentItemModel = new ParentItem();
+					if (Validator.isNotNull(document.get(DictItemTerm.PARENT_ITEM_CODE))) {
+						parentItemModel.setItemCode(document.get(DictItemTerm.PARENT_ITEM_CODE));
+						parentItemModel.setItemName(document.get(DictItemTerm.PARENT_ITEM_NAME));
+						parentItemModel.setItemNameEN(document.get(DictItemTerm.PARENT_ITEM_NAME_EN));
 
-				if (Validator.isNotNull(parentItem)) {
+					}
 
-					parentItemModel.setItemCode(parentItem.getItemCode());
-					parentItemModel.setItemName(parentItem.getItemName());
-					parentItemModel.setItemNameEN(parentItem.getItemNameEN());
+					ett.getParentItem().add(parentItemModel);
 
+					results.add(ett);
 				}
-
-				ett.getParentItem().add(parentItemModel);
-
-				results.add(ett);
 			}
-
 		} catch (Exception e) {
 			_log.error(e);
 		}

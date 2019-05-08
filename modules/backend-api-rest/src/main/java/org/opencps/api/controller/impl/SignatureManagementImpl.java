@@ -19,16 +19,12 @@ import org.opencps.auth.api.BackendAuthImpl;
 import org.opencps.auth.api.exception.NotFoundException;
 import org.opencps.auth.api.exception.UnauthenticationException;
 import org.opencps.auth.api.exception.UnauthorizationException;
-import org.opencps.dossiermgt.action.DossierActions;
-import org.opencps.dossiermgt.action.impl.DossierActionsImpl;
 import org.opencps.dossiermgt.model.Deliverable;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.ProcessAction;
-import org.opencps.dossiermgt.model.ProcessOption;
 import org.opencps.dossiermgt.model.ProcessStep;
-import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.scheduler.InvokeREST;
 import org.opencps.dossiermgt.scheduler.RESTFulConfiguration;
 import org.opencps.dossiermgt.service.DeliverableLocalServiceUtil;
@@ -36,9 +32,7 @@ import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.dossiermgt.service.ProcessActionLocalServiceUtil;
-import org.opencps.dossiermgt.service.ProcessOptionLocalServiceUtil;
 import org.opencps.dossiermgt.service.ProcessStepLocalServiceUtil;
-import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
@@ -60,10 +54,6 @@ import com.liferay.portal.kernel.util.Validator;
 public class SignatureManagementImpl implements SignatureManagement{
 
 	Log _log = LogFactoryUtil.getLog(SignatureManagementImpl.class.getName());
-//	private static final String TYPE_KYSO = "1135, 1158, 1160";
-//	private static final String TYPE_DONGDAU = "1137, 1162";
-	private static final String TYPE_KYSO = "1135, 1158, 1160, 1129, 1130, 1153";
-	private static final String TYPE_DONGDAU = "1137, 1160, 1162";
 
 	@Override
 	public Response updateDossierFileBySignature(HttpServletRequest request, HttpHeaders header, Company company,
@@ -83,44 +73,19 @@ public class SignatureManagementImpl implements SignatureManagement{
 			String sign = input.getSign();
 			String signFieldName = input.getSignFieldName();
 			String fileName = input.getFileName();
-//			_log.info("sign: "+sign);
-//			_log.info("signFieldName: "+signFieldName);
-//			_log.info("fileName: "+fileName);
-			String actionCode = input.getActionCode();
-			String actionUser = input.getActionUser();
-			String actionNote = input.getActionNote();
-			long assignUserId = Long.valueOf(input.getAssignUserId());
-			String subUsers = input.getSubUsers();
-//			_log.info("actionCode: "+actionCode);
-//			_log.info("actionUser: "+actionUser);
-//			_log.info("actionNote: "+actionNote);
-//			_log.info("assignUserId: "+assignUserId);
-//			_log.info("subUsers: "+subUsers);
-	
+
 			JSONObject signatureCompleted = callSignatureSync(groupId, user, id, sign, signFieldName, fileName,
 					serviceContext);
 	
 			if (signatureCompleted.getInt(RESTFulConfiguration.STATUS) == HttpURLConnection.HTTP_OK) {
-	//			long fileEntryId = Long.valueOf(input.getFileEntryId());
 				_log.info("fileEntryId: "+fileEntryId);
 				String message = signatureCompleted.getString(RESTFulConfiguration.MESSAGE);
-	//			_log.info("message: "+message);
 				JSONObject jsonData = JSONFactoryUtil.createJSONObject(message);
-	//			_log.info("jsonData: "+jsonData.toJSONString());
-	//			String fullPath = String.valueOf(jsonData.get("fullPath"));
-	//			_log.info("fullPath: "+fullPath);
 				String signedFilePath = jsonData.getString("signedFile");
 				File fileSigned = new File(signedFilePath);
-	//			_log.info("TEST long file: "+fileSigned.length());
-	//			_log.info("TEST file sign: "+fileSigned.lastModified());
-	//			long modifiedLong = fileSigned.lastModified();
-	//			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-	//			_log.info("TEST file modifiedDate: "+sdf.format(modifiedLong));
-	//			_log.info("fileSigned Path: "+fileSigned.getAbsolutePath());
-	//			_log.info("fileSigned Name: "+fileSigned.getName());
+
 				DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.fetchDLFileEntry(fileEntryId);
 	//			_log.info("dlFileEntry: "+dlFileEntry.getFileName());
-	
 				DLAppLocalServiceUtil.updateFileEntry(user.getUserId(), dlFileEntry.getFileEntryId(), dlFileEntry.getTitle(),
 						dlFileEntry.getMimeType(), dlFileEntry.getTitle(), dlFileEntry.getDescription(),
 						StringPool.BLANK, true, fileSigned, serviceContext);
@@ -135,24 +100,7 @@ public class SignatureManagementImpl implements SignatureManagement{
 //					_log.info("actionNote: "+actionNote);
 //					_log.info("assignUserId: "+assignUserId);
 //					_log.info("subUsers: "+subUsers);
-					DossierActions dossierAction = new DossierActionsImpl();
-					if (TYPE_KYSO.contains(actionCode)) {
-						dossierAction.doAction(groupId, dossierId, dossier.getReferenceUid(), actionCode,
-								0L, actionUser, actionNote, assignUserId, user.getUserId(), subUsers,
-								serviceContext);
-					} else if(TYPE_DONGDAU.contains(actionCode)) {
-						ProcessOption option = getProcessOption(dossier.getServiceCode(), dossier.getGovAgencyCode(),
-								dossier.getDossierTemplateNo(), groupId);
-	
-						ProcessAction action = getProcessAction(groupId, dossier.getDossierId(), dossier.getReferenceUid(),
-								input.getActionCode(), option.getServiceProcessId());
-	
-						dossierAction.doAction(groupId, dossierId, dossier.getReferenceUid(), actionCode,
-								action.getProcessActionId(), actionUser, actionNote, assignUserId, user.getUserId(), subUsers,
-								serviceContext);
-					} else {
-						//TODO
-					}
+					
 					// Update deliverable with deliverableType
 					DossierFile dossierFile = DossierFileLocalServiceUtil.getByFileEntryId(fileEntryId);
 					if (dossierFile != null) {
@@ -250,7 +198,7 @@ public class SignatureManagementImpl implements SignatureManagement{
 						}
 						
 						results = JSONFactoryUtil.createJSONObject(hashComputed.getString(RESTFulConfiguration.MESSAGE));
-						_log.info("XXXXXXXXXresults: "+results);
+						_log.info("getHashComputedBySignature results: "+results);
 					} else {
 						results = JSONFactoryUtil.createJSONObject();
 						results.put("msg", "fileEntryId");
@@ -258,13 +206,6 @@ public class SignatureManagementImpl implements SignatureManagement{
 					break;
 				}
 			}
-
-//			results = JSONFactoryUtil.createJSONObject(hashComputed.getString(RESTFulConfiguration.MESSAGE));
-//			_log.info("results: "+results);
-			
-			
-			_log.info("*******results: "+results.toJSONString());
-
 			return Response.status(200).entity(JSONFactoryUtil.looseSerialize(results)).build();
 
 		} catch (Exception e) {
@@ -321,15 +262,6 @@ public class SignatureManagementImpl implements SignatureManagement{
 
 		return resPostHashComputed;
 
-	}
-
-	private ProcessOption getProcessOption(String serviceInfoCode, String govAgencyCode, String dossierTemplateNo,
-			long groupId) throws PortalException {
-
-		ServiceConfig config = ServiceConfigLocalServiceUtil.getBySICodeAndGAC(groupId, serviceInfoCode, govAgencyCode);
-
-		return ProcessOptionLocalServiceUtil.getByDTPLNoAndServiceCF(groupId, dossierTemplateNo,
-				config.getServiceConfigId());
 	}
 
 	protected ProcessAction getProcessAction(long groupId, long dossierId, String refId, String actionCode,

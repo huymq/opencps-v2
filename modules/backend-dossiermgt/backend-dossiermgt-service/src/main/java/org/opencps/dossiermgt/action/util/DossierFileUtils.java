@@ -53,22 +53,19 @@ public class DossierFileUtils {
 	
 	public  FileEntry uploadFileEntry(long userId, long groupId, String sourceFile, String rootFolderName,
 			ServiceContext serviceContext) throws Exception {
-		
+
 		DLFolder dlFolder = getFolder(serviceContext.getUserId(), groupId, serviceContext, rootFolderName);
 
 		serviceContext.setAddGroupPermissions(true);
 		serviceContext.setAddGuestPermissions(true);
 
 		String fileName = System.currentTimeMillis() + PwdGenerator.getPassword(5) + EXTEND_FILE;
-
-		_log.info("**FILE**URL**" + serviceContext.getUserAgent());
-		_log.info("**FILE**URL**" + serviceContext.getUserId());
+		//_log.info("**FILE**URL**" + serviceContext.getUserId());
 
 		FileEntry fileEntry = DLAppServiceUtil.addFileEntry(groupId, dlFolder.getFolderId(), fileName, EXTEND_FILE,
 				fileName, "UPLOAD_FILE_FORM",
 				StringPool.BLANK, FileUtil.getBytes(new ByteArrayInputStream(sourceFile.getBytes())), serviceContext);
-		
-		
+
 		return fileEntry;
 	}
 	
@@ -121,11 +118,7 @@ public class DossierFileUtils {
 			throws Exception {
 
 		Calendar cal = Calendar.getInstance();
-		
-		
 
-		_log.info("**FILE**URL**" + serviceContext.getUserAgent());
-		_log.info("**FILE**URL**" + serviceContext.getUserId());
 		User user =
 				UserLocalServiceUtil.getUser(serviceContext.getUserId());
 			PermissionChecker checker =

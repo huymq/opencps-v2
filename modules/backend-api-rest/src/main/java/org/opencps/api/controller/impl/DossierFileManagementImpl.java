@@ -656,9 +656,9 @@ public class DossierFileManagementImpl implements DossierFileManagement {
 			Locale locale, User user, ServiceContext serviceContext, long id, String referenceUid, String formdata) {
 
 		BackendAuth auth = new BackendAuthImpl();
-
 		long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
 
+		//long now = System.currentTimeMillis();
 		try {
 
 			if (!auth.isAuth(serviceContext)) {
@@ -666,16 +666,15 @@ public class DossierFileManagementImpl implements DossierFileManagement {
 			}
 
 			DossierFileActions action = new DossierFileActionsImpl();
-
 			DossierFile dossierFile = action.updateDossierFileFormData(groupId, id, referenceUid, formdata,
 					serviceContext);
-
+			//_log.info("SEND TO CREATED FILE MODEL 2: "+(System.currentTimeMillis() - now));
 			DossierFileModel result = DossierFileUtils.mappingToDossierFileModel(dossierFile);
-
+			//_log.info("SEND TO CREATED FILE MODEL 3: "+(System.currentTimeMillis() - now));
 			return Response.status(200).entity(result).build();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			_log.error(e);
 			return processException(e);
 		}
 	}

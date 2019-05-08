@@ -54,6 +54,7 @@ import org.opencps.synchronization.service.DictItemTempLocalServiceUtil;
 import com.liferay.asset.kernel.exception.DuplicateCategoryException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.NoSuchUserException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -75,6 +76,7 @@ public class DataManagementImpl implements DataManagement {
 
 	Log _log = LogFactoryUtil.getLog(DataManagementImpl.class);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Response getDictCollection(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, DataSearchModel query) {
@@ -494,6 +496,7 @@ public class DataManagementImpl implements DataManagement {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Response getDictgroups(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, String code, DataSearchModel query) {
@@ -792,6 +795,7 @@ public class DataManagementImpl implements DataManagement {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Response getDictgroupsDictItems(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext, String code, String groupCode, boolean full) {
@@ -1102,6 +1106,7 @@ public class DataManagementImpl implements DataManagement {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Response getDictItems(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, String code, DataSearchModel query) {
@@ -1587,7 +1592,6 @@ public class DataManagementImpl implements DataManagement {
 	public Response deleteMetaDataOfDictItem(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext, String code, String itemCode, String key,
 			String body) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -1613,8 +1617,7 @@ public class DataManagementImpl implements DataManagement {
 				value = jsonMetaData.getString(key);
 
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				_log.error(e);
 			}
 
 			return Response.status(200).entity(value).build();
@@ -1636,7 +1639,6 @@ public class DataManagementImpl implements DataManagement {
 	public Response updateMetaDataOfDictItem(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext, String code, String itemCode,
 			DictItemInputModel input) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -1763,7 +1765,7 @@ public class DataManagementImpl implements DataManagement {
 	public Response updateOrCreateNewDictItemByItemCode(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext, String code, String itemCode,
 			DictItemInputModel input, long modifiedDateTime) {
-		// TODO Auto-generated method stub
+
 		DictcollectionInterface dictItemDataUtil = new DictCollectionActions();
 		DictItemModel dictItemModel = new DictItemModel();
 		DictCollectionTempInterface dictItemDataTempUtil = new org.opencps.synchronization.action.impl.DictCollectionActions();
@@ -1911,7 +1913,7 @@ public class DataManagementImpl implements DataManagement {
 	public Response updateOrCreateNewDictCollection(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext, String code, DictCollectionInputModel input,
 			long modifiedDateTime) {
-		// TODO Auto-generated method stub
+
 		DictcollectionInterface dictItemDataUtil = new DictCollectionActions();
 		DictCollectionModel dictCollectionModel = new DictCollectionModel();
 		DictCollectionTempInterface dictItemDataTempUtil = new org.opencps.synchronization.action.impl.DictCollectionActions();
@@ -2007,7 +2009,7 @@ public class DataManagementImpl implements DataManagement {
 	public Response getSyncDictCollections(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext,
 			org.opencps.api.datamgtsync.model.DataSearchModel query) {
-		// TODO Auto-generated method stub
+
 		int start = QueryUtil.ALL_POS;
 		int end = QueryUtil.ALL_POS;
 
@@ -2053,7 +2055,7 @@ public class DataManagementImpl implements DataManagement {
 	@Override
 	public Response getSyncDictItems(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, org.opencps.api.datamgtsync.model.DataSearchModel query) {
-		// TODO Auto-generated method stub
+
 		int start = QueryUtil.ALL_POS;
 		int end = QueryUtil.ALL_POS;
 
@@ -2095,11 +2097,159 @@ public class DataManagementImpl implements DataManagement {
 			return Response.status(404).entity(error).build();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Response getDictItemsByCollection_Level_OrderBy(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
+			User user, ServiceContext serviceContext, String collectionCode, DataSearchModel query) {
+		DictcollectionInterface dictItemDataUtil = new DictCollectionActions();
+		DictItemResults result = new DictItemResults();
+		SearchContext searchContext = new SearchContext();
+		searchContext.setCompanyId(company.getCompanyId());
+
+		String level = query.getLevel();
+		String OrderBy = query.getOrder();
+		try {
+			long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
+			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+
+			JSONObject jsonData = JSONFactoryUtil.createJSONObject();
+
+			
+			JSONArray arrReturn = JSONFactoryUtil.createJSONArray();
+
+			List<DictItem> items = DictItemLocalServiceUtil.findByCollection_Level_OrderBy(groupId, collectionCode, level, OrderBy);
+			if (items != null) {
+				_log.info("SIZE: "+items.size());
+				for (DictItem di : items) {
+					JSONObject ob = JSONFactoryUtil.createJSONObject();
+
+					ob.put(di.getItemCode(), di.getItemName());
+
+					arrReturn.put(ob);
+				}
+			}			
+
+			jsonData.put("Items", arrReturn);			
+			
+			return Response.status(200).entity(JSONFactoryUtil.looseSerialize(jsonData)).build();
+
+		} catch (Exception e) {
+			_log.error("@GET: " + e);
+			ErrorMsg error = new ErrorMsg();
+
+			error.setMessage("not found!");
+			error.setCode(404);
+			error.setDescription("not found!");
+
+			return Response.status(404).entity(error).build();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Response getDictItemsByCollection_Group_Level_OrderBy(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
+			User user, ServiceContext serviceContext, String collectionCode, String groupCode, DataSearchModel query) {
+		DictcollectionInterface dictItemDataUtil = new DictCollectionActions();
+		DictItemResults result = new DictItemResults();
+		SearchContext searchContext = new SearchContext();
+		searchContext.setCompanyId(company.getCompanyId());
+ 		
+		String level = query.getLevel();
+		String OrderBy = query.getOrder();
+		try {
+			long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
+			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+
+			JSONObject jsonData = JSONFactoryUtil.createJSONObject();
+
+			
+			JSONArray arrReturn = JSONFactoryUtil.createJSONArray();
+
+			List<DictItem> items = DictItemLocalServiceUtil.findByCollection_Group_Level_OrderBy(groupId, collectionCode, groupCode, level, OrderBy);
+			if (items != null) {
+				_log.info("SIZE: "+items.size());
+				for (DictItem di : items) {
+					JSONObject ob = JSONFactoryUtil.createJSONObject();
+
+					ob.put(di.getItemCode(), di.getItemName());
+
+					arrReturn.put(ob);
+				}
+			}			
+
+			jsonData.put("Items", arrReturn);			
+			
+			return Response.status(200).entity(JSONFactoryUtil.looseSerialize(jsonData)).build();
+
+		} catch (Exception e) {
+			_log.error("@GET: " + e);
+			ErrorMsg error = new ErrorMsg();
+
+			error.setMessage("not found!");
+			error.setCode(404);
+			error.setDescription("not found!");
+
+			return Response.status(404).entity(error).build();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Response getDictItemsByCollection_Parent_Level_OrderBy(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
+			User user, ServiceContext serviceContext, String collectionCode, DataSearchModel query) {
+		DictcollectionInterface dictItemDataUtil = new DictCollectionActions();
+		DictItemResults result = new DictItemResults();
+		SearchContext searchContext = new SearchContext();
+		searchContext.setCompanyId(company.getCompanyId());
+		
+		String parentItemCode = query.getParent();
+		String level = query.getLevel();
+		String OrderBy = query.getOrder();
+ 
+		try {
+			long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
+			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+
+			JSONObject jsonData = JSONFactoryUtil.createJSONObject();
+
+			
+			JSONArray arrReturn = JSONFactoryUtil.createJSONArray();
+
+			List<DictItem> items = DictItemLocalServiceUtil.findByCollection_Parent_Level_OrderBy(groupId, collectionCode, parentItemCode, level, OrderBy);
+			if (items != null) {
+				_log.info("SIZE: "+items.size());
+				for (DictItem di : items) {
+					JSONObject ob = JSONFactoryUtil.createJSONObject();
+
+					ob.put(di.getItemCode(), di.getItemName());
+
+					arrReturn.put(ob);
+				}
+				
+				////////////// TODO
+			}			
+
+			jsonData.put("Items", arrReturn);
+			
+			return Response.status(200).entity(JSONFactoryUtil.looseSerialize(jsonData)).build();
+
+		} catch (Exception e) {
+			_log.error("@GET: " + e);
+			ErrorMsg error = new ErrorMsg();
+
+			error.setMessage("not found!");
+			error.setCode(404);
+			error.setDescription("not found!");
+
+			return Response.status(404).entity(error).build();
+		}
+	}
 
 	@Override
 	public Response getSyncDictGroups(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, org.opencps.api.datamgtsync.model.DataSearchModel query) {
-		// TODO Auto-generated method stub
+
 		int start = QueryUtil.ALL_POS;
 		int end = QueryUtil.ALL_POS;
 
@@ -2146,7 +2296,7 @@ public class DataManagementImpl implements DataManagement {
 	public Response updateOrCreateNewDictgroups(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext, String code, String groupCode,
 			DictGroupInputModel input, long modifiedDateTime) {
-		// TODO Auto-generated method stub
+
 		DictcollectionInterface dictItemDataUtil = new DictCollectionActions();
 		Groups dictGroupModel = new Groups();
 		DictCollectionTempInterface dictItemDataTempUtil = new org.opencps.synchronization.action.impl.DictCollectionActions();
@@ -2240,7 +2390,7 @@ public class DataManagementImpl implements DataManagement {
 	public Response getSyncDictgroupsDictItems(HttpServletRequest request, HttpHeaders header, Company company,
 			Locale locale, User user, ServiceContext serviceContext,
 			org.opencps.api.datamgtsync.model.DataSearchModel query) {
-		// TODO Auto-generated method stub
+
 		int start = QueryUtil.ALL_POS;
 		int end = QueryUtil.ALL_POS;
 

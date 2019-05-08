@@ -106,10 +106,8 @@ public class DossierRequestUDLocalServiceImpl
 
 		}
 		
-		dossierRequestUDPersistence.update(dossierRequest);
-		
-		return dossierRequest;
-		
+		return dossierRequestUDPersistence.update(dossierRequest);
+
 	}
 	
 	public DossierRequestUD getByDossierAndType(long dossierId, String type) {

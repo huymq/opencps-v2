@@ -82,7 +82,7 @@ public class RegistrationFormActionsImpl implements RegistrationFormActions {
 				RegistrationFormLocalServiceUtil.addRegistrationForm(groupId, companyId, registrationId, referenceUid,
 						registrationTemplates.getFormNo(), registrationTemplates.getFormName(),
 						registrationTemplates.getSampleData(), registrationTemplates.getFormScript(),
-						registrationTemplates.getFormReport(), 0, false, false, serviceContext);
+						registrationTemplates.getFormReport(), 0, true, false, serviceContext);
 			}
 		}
 	}
@@ -95,29 +95,6 @@ public class RegistrationFormActionsImpl implements RegistrationFormActions {
         List<RegistrationForm> registrationForms = RegistrationFormLocalServiceUtil.getFormsbyRegId(
                 groupId, oldRegistrationId);
         
-//        List<RegistrationTemplates> lstRegistrationTemplate = RegistrationTemplatesLocalServiceUtil
-//				.getRegistrationTemplatesbyGroupId(groupId);
-
-        // add registrationForm
-//        if (registrationForms != null && registrationForms.size() > 0) {
-//	        for (RegistrationForm registrationForm : registrationForms) {
-//	            if(!registrationForm.getRemoved()) {
-//	            	if (lstRegistrationTemplate != null && lstRegistrationTemplate.size() > 0) {
-//		                for (RegistrationTemplates registrationTemplates : lstRegistrationTemplate) {
-//		        			// create referenceUid
-//		        			String referenceUid = UUID.randomUUID().toString();
-//		        			_log.info("referenceUid: "+referenceUid);
-//		
-//		        			RegistrationFormLocalServiceUtil.addRegistrationForm(groupId, registrationForm.getCompanyId(), newRegistrationId, referenceUid,
-//		        					registrationTemplates.getFormNo(), registrationTemplates.getFormName(),
-//		        					registrationForm.getFormData(), registrationTemplates.getFormScript(),
-//		        					registrationTemplates.getFormReport(), 0, false, false, serviceContext);
-//		        		}
-//	            	}
-//	            }
-//	        }
-//        }
-
         // add test registrationForm
         if (registrationForms != null && registrationForms.size() > 0) {
 	        for (RegistrationForm registrationForm : registrationForms) {

@@ -137,26 +137,20 @@ public class DossierActionLocalServiceImpl extends DossierActionLocalServiceBase
 			// Add DossierActionId to Dossier
 
 			// TODO add Indexer for Dossier after update DossierAction
-			Dossier dossier = dossierPersistence.fetchByPrimaryKey(dossierId);
-			dossier.setDossierActionId(dossierActionId);
-			dossierPersistence.update(dossier);
-
-			Indexer<Dossier> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
-
-			try {
-				indexer.reindex(dossier);
-			} catch (SearchException e) {
-				e.printStackTrace();
-			}
-			
-			
+			//Dossier dossier = dossierPersistence.fetchByPrimaryKey(dossierId);
+			//dossier.setDossierActionId(dossierActionId);
+			//dossierPersistence.update(dossier);
+			//Indexer<Dossier> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
+			//try {
+			//	indexer.reindex(dossier);
+			//} catch (SearchException e) {
+			//	e.printStackTrace();
+			//}
 		} else {
 
 		}
 
-		dossierActionPersistence.update(object);
-
-		return object;
+		return dossierActionPersistence.update(object);
 	}
 
 	@Indexable(type = IndexableType.DELETE)
@@ -175,10 +169,8 @@ public class DossierActionLocalServiceImpl extends DossierActionLocalServiceBase
 		Date now = new Date();
 
 		action.setModifiedDate(now);
+		return dossierActionPersistence.update(action);
 
-		dossierActionPersistence.update(action);
-
-		return action;
 	}
 
 	@Indexable(type = IndexableType.REINDEX)

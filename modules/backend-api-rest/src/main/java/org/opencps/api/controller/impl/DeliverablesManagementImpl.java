@@ -1,6 +1,7 @@
 package org.opencps.api.controller.impl;
 
 import java.io.File;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,9 @@ import org.opencps.dossiermgt.constants.DossierTerm;
 import org.opencps.dossiermgt.model.Deliverable;
 import org.opencps.dossiermgt.model.DeliverableLog;
 import org.opencps.dossiermgt.model.DossierFile;
+import org.opencps.dossiermgt.service.DeliverableLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
+import org.opencps.dossiermgt.listenner.DeliverableListenner;
 
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
@@ -744,6 +747,46 @@ public class DeliverablesManagementImpl implements DeliverablesManagement {
 		}
 	}
 
+	@Override
+	public Response updateVRTechnicalSpecByDeliverableCode(HttpServletRequest request, HttpHeaders header, Company company,
+			Locale locale, User user, ServiceContext serviceContext, String deliverableCode) {
+		BackendAuth auth = new BackendAuthImpl();
+
+		try {
+
+			// Check user is login
+			if (!auth.isAuth(serviceContext)) {
+				throw new UnauthenticationException();
+			}
+			
+
+			long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
+			_log.info("groupId: "+groupId +"*deliverableCode*: "+ deliverableCode);
+			
+
+			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+			params.put(Field.GROUP_ID, String.valueOf(groupId));
+			params.put(DeliverableTerm.DELIVERABLE_CODE, deliverableCode);
+			
+			DeliverableActions actions = new DeliverableActionsImpl();
+//			DeliverableResultModel results = new DeliverableResultModel();
+			JSONObject results = JSONFactoryUtil.createJSONObject();
+			
+			Deliverable objDeliverable = DeliverableLocalServiceUtil.getByCode(deliverableCode);
+			objDeliverable.setModifiedDate(new Date());
+			DeliverableLocalServiceUtil.updateDeliverable(objDeliverable);
+
+			//TODO
+			results.put("data", deliverableCode);
+
+			results.put("result", "updateVRTechnicalSpecByDeliverableCode is done. DeliverableListenner running...");
+
+			return Response.status(200).entity(JSONFactoryUtil.looseSerialize(results)).build();
+
+		} catch (Exception e) {
+			return processException(e);
+		}
+	}
 	private Response processException(Exception e) {
 		ErrorMsg error = new ErrorMsg();
 

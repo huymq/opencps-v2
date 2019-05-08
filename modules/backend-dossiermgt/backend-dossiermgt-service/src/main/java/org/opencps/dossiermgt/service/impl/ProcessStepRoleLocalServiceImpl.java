@@ -60,6 +60,10 @@ public class ProcessStepRoleLocalServiceImpl extends ProcessStepRoleLocalService
 		return processStepRolePersistence.findByP_S_ID(processStepId);
 	}
 
+	public List<ProcessStepRole> findByP_RID(long roleId) {
+		return processStepRolePersistence.findByP_RID(roleId);
+	}
+
 	public ProcessStepRole updateProcessStepRole(long processStepId, long roleId, boolean moderator, String condition) {
 		ProcessStepRolePK pk = new ProcessStepRolePK(processStepId, roleId);
 

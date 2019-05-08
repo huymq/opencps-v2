@@ -14,14 +14,19 @@
 
 package com.fds.vr.business.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 
-import org.opencps.dossiermgt.model.DossierFile;
-import org.opencps.dossiermgt.model.Registration;
-
+import com.fds.vr.business.model.VRDossierFile;
 import com.fds.vr.business.model.VRInspectionStandard;
+import com.fds.vr.business.model.VRRegistration;
 import com.fds.vr.business.service.base.VRInspectionStandardLocalServiceBaseImpl;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -49,7 +54,7 @@ public class VRInspectionStandardLocalServiceImpl
 	 */
 
 	public VRInspectionStandard updateInspectionStandard(LinkedHashMap<String, String> mapValues,
-			long vrVehicleCertificateId, Date modifiedDate, Registration registration, DossierFile dossierFile) {
+			long vrVehicleCertificateId, Date modifiedDate, VRRegistration registration, VRDossierFile dossierFile) {
 		
 		Date now = new Date();
 
@@ -59,16 +64,37 @@ public class VRInspectionStandardLocalServiceImpl
 
 		/// Add audit fields
 		object.setSyncDate(now);
+		object.setModifyDate(modifiedDate);
 
 		// Add other fields
 		object.setVehicleCertificateId(vrVehicleCertificateId);
 		// TODO
-		object.setCertificateRecordId(2222222);
-		object.setInspectionRecordId(333333);
-		//
-		object.setModule(mapValues.get(""));
-		object.setModifyDate(modifiedDate);
+		
+		
 
 		return vrInspectionStandardPersistence.update(object);
 	}
+	
+	public List<VRInspectionStandard> findByvehicleCertificateId(long vehicleCertificateId, long markupstatus) throws PortalException, SystemException {
+		try {
+			return vrInspectionStandardPersistence.findByvehicleCertificateId(vehicleCertificateId, markupstatus);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRInspectionStandard>();
+		
+	}
+
+
+	public List<VRInspectionStandard> findByDeliverableCode(String deliverableCode) throws PortalException, SystemException {
+		try {
+			return vrInspectionStandardPersistence.findByDeliverableCode(deliverableCode);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRInspectionStandard>();
+		
+	}
+	
+	private Log _log = LogFactoryUtil.getLog(VRInspectionStandardLocalServiceImpl.class);
 }

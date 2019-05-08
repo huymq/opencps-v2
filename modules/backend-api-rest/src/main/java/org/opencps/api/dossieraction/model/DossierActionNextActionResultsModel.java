@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 public class DossierActionNextActionResultsModel {
 
     protected Integer total;
-    protected List<DossierActionNextActionModel> data;
+    protected List<DossierNextActionModel> data;
 
     /**
      * Gets the value of the total property.
@@ -93,9 +93,9 @@ public class DossierActionNextActionResultsModel {
      * 
      * 
      */
-    public List<DossierActionNextActionModel> getData() {
+    public List<DossierNextActionModel> getData() {
         if (data == null) {
-            data = new ArrayList<DossierActionNextActionModel>();
+            data = new ArrayList<DossierNextActionModel>();
         }
         return this.data;
     }

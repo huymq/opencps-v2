@@ -17,9 +17,6 @@ package com.fds.vr.business.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.opencps.dossiermgt.model.Deliverable;
-
-import com.fds.vr.business.action.impl.VROutputDBActionsImpl;
 import com.fds.vr.business.model.VRSyncDate;
 import com.fds.vr.business.service.base.VRSyncDateLocalServiceBaseImpl;
 import com.liferay.portal.kernel.log.Log;

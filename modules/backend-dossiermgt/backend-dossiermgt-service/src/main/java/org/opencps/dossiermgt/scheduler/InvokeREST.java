@@ -120,6 +120,7 @@ public class InvokeREST {
 				postData.append('=');
 				postData.append(java.net.URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
 			}
+			//_log.info("postData: "+JSONFactoryUtil.looseSerialize(postData));
 
 			byte[] postDataBytes = postData.toString().getBytes("UTF-8");
 

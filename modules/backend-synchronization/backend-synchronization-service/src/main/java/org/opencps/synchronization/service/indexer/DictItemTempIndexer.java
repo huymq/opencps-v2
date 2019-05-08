@@ -5,6 +5,11 @@ import java.util.Locale;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 
+import org.opencps.datamgt.constants.DictItemTerm;
+import org.opencps.datamgt.model.DictCollection;
+import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
+import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.synchronization.constants.DictItemTempTerm;
 import org.opencps.synchronization.model.DictCollectionTemp;
 import org.opencps.synchronization.model.DictItemTemp;
@@ -73,31 +78,26 @@ public class DictItemTempIndexer extends BaseIndexer<DictItemTemp> {
 		document.addTextSortable(DictItemTempTerm.META_DATA, dictItem.getMetaData());
 		document.addNumber(DictItemTempTerm.STATUS, dictItem.getStatus());
 		
-		long dictCollectionId = dictItem.getDictCollectionId();
-		
-		DictCollectionTemp dictCollection = DictCollectionTempLocalServiceUtil.fetchDictCollectionTemp(dictCollectionId);
-		
+		DictCollection dictCollection = DictCollectionLocalServiceUtil.fetchDictCollection(dictItem.getDictCollectionId());
 		if(Validator.isNotNull(dictCollection)){
 			document.addTextSortable(DictItemTempTerm.DICT_COLLECTION_CODE, dictCollection.getCollectionCode());
 		}
 		
 		String parentCode = StringPool.BLANK;
-		
+		String parentItemName = StringPool.BLANK;
+		String parentItemNameEN = StringPool.BLANK;
 		if(dictItem.getParentItemId() > 0){
-			
-			DictItemTemp parentItem = DictItemTempLocalServiceUtil.fetchDictItemTemp(dictItem.getParentItemId());
-			
+			DictItem parentItem = DictItemLocalServiceUtil.fetchDictItem(dictItem.getParentItemId());
 			if (Validator.isNotNull(parentItem) && Validator.isNotNull(parentItem.getItemCode())) {
 				parentCode = parentItem.getItemCode();
-			} else {
-				_log.info(parentItem.getItemCode());
+				parentItemName = parentItem.getItemName();
+				parentItemNameEN = parentItem.getItemNameEN();
 			}
-			
-		}  else {
-			parentCode = "0";
 		}
 		
 		document.addTextSortable(DictItemTempTerm.PARENT_ITEM_CODE, parentCode);
+		document.addTextSortable(DictItemTerm.PARENT_ITEM_NAME, parentItemName);
+		document.addTextSortable(DictItemTerm.PARENT_ITEM_NAME_EN, parentItemNameEN);
 		
 		document.setSortableTextFields(new String[]{DictItemTempTerm.TREE_INDEX});
 		

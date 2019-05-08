@@ -14,11 +14,15 @@ import org.opencps.dossiermgt.model.DossierAction;
 import org.opencps.dossiermgt.model.DossierRequestUD;
 import org.opencps.dossiermgt.model.PaymentFile;
 import org.opencps.dossiermgt.model.ProcessAction;
+import org.opencps.dossiermgt.model.ProcessOption;
+import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.service.DossierActionLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierRequestUDLocalServiceUtil;
 import org.opencps.dossiermgt.service.PaymentFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.ProcessActionLocalServiceUtil;
+import org.opencps.dossiermgt.service.ProcessOptionLocalServiceUtil;
+import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -107,6 +111,17 @@ public class TimerScheduler extends BaseSchedulerEntryMessageListener {
 				boolean flag = false;
 				if (dRegUD != null && dRegUD.getStatusReg() == 3) {
 					for (ProcessAction processAction : lstProcessAction) {
+						String serviceCode = dossier.getServiceCode();
+						String govAgencyCode = dossier.getGovAgencyCode();
+						String dossierTempNo = dossier.getDossierTemplateNo();
+						ProcessOption option = null;
+						ServiceConfig config = ServiceConfigLocalServiceUtil.getBySICodeAndGAC(dossier.getGroupId(), 
+								serviceCode, govAgencyCode);
+						if (config != null) {
+							option = ProcessOptionLocalServiceUtil.getByDTPLNoAndServiceCF(dossier.getGroupId(), 
+									dossierTempNo,
+									config.getServiceConfigId());
+						}
 
 						if (processAction.getAutoEvent().contains("timmer")) {
 							
@@ -127,9 +142,8 @@ public class TimerScheduler extends BaseSchedulerEntryMessageListener {
 
 								flag = true;
 
-								dossierActions.doAction(dossier.getGroupId(), dossier.getDossierId(),
-										dossier.getReferenceUid(), processAction.getActionCode(),
-										processAction.getProcessActionId(), userActionName, StringPool.BLANK,
+								dossierActions.doAction(dossier.getGroupId(), dossier, option, processAction,
+										processAction.getActionCode(), userActionName, StringPool.BLANK,
 										processAction.getAssignUserId(), systemUser.getUserId(), StringPool.BLANK,
 										serviceContext);
 							}
@@ -141,7 +155,17 @@ public class TimerScheduler extends BaseSchedulerEntryMessageListener {
 					}
 				} else {
 					for (ProcessAction processAction : lstProcessAction) {
-
+						String serviceCode = dossier.getServiceCode();
+						String govAgencyCode = dossier.getGovAgencyCode();
+						String dossierTempNo = dossier.getDossierTemplateNo();
+						ProcessOption option = null;
+						ServiceConfig config = ServiceConfigLocalServiceUtil.getBySICodeAndGAC(dossier.getGroupId(), 
+								serviceCode, govAgencyCode);
+						if (config != null) {
+							option = ProcessOptionLocalServiceUtil.getByDTPLNoAndServiceCF(dossier.getGroupId(), 
+									dossierTempNo,
+									config.getServiceConfigId());
+						}
 						if (processAction.getAutoEvent().contains("timmer")) {
 							
 							String perConditionStr = processAction.getPreCondition();
@@ -161,9 +185,8 @@ public class TimerScheduler extends BaseSchedulerEntryMessageListener {
 
 								flag = true;
 
-								dossierActions.doAction(dossier.getGroupId(), dossier.getDossierId(),
-										dossier.getReferenceUid(), processAction.getActionCode(),
-										processAction.getProcessActionId(), userActionName, processAction.getActionName(),
+								dossierActions.doAction(dossier.getGroupId(), dossier, option, processAction,
+										processAction.getActionCode(), userActionName, processAction.getActionName(),
 										processAction.getAssignUserId(), systemUser.getUserId(), StringPool.BLANK,
 										serviceContext);
 							}

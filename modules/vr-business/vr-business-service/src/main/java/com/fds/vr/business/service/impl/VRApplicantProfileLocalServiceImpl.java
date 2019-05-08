@@ -16,9 +16,18 @@ package com.fds.vr.business.service.impl;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import com.fds.vr.business.model.VRApplicantProfile;
+import com.fds.vr.business.model.VRRPDossierStatistics;
 import com.fds.vr.business.service.base.VRApplicantProfileLocalServiceBaseImpl;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -105,5 +114,77 @@ public class VRApplicantProfileLocalServiceImpl
 
 		return vrApplicantProfilePersistence.update(object);
 	}
+	
+	public List<VRApplicantProfile> findBymappingStatus(long mtCore, String mappingStatus)  throws SystemException {
+		try {
+			return vrApplicantProfilePersistence.findBymappingStatus(mtCore, mappingStatus);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRApplicantProfile>();
+		
+	}
+	
+	public List<VRApplicantProfile> findByapplicantCode(long mtCore, String applicantCode)  throws SystemException {
+		try {
+			return vrApplicantProfilePersistence.findByapplicantCode(mtCore, applicantCode);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRApplicantProfile>();
+		
+	}
+
+	public List<VRApplicantProfile> findBymappingMA_CTY(long mtCore, String mappingMA_CTY)  throws SystemException {
+		try {
+			return vrApplicantProfilePersistence.findBymappingMA_CTY(mtCore, mappingMA_CTY);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRApplicantProfile>();
+		
+	}
+
+	public List<VRApplicantProfile> findBymappingTEN_CTY(long mtCore, String mappingTEN_CTY)  throws SystemException {
+		try {
+			return vrApplicantProfilePersistence.findBymappingTEN_CTY(mtCore, mappingTEN_CTY);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRApplicantProfile>();
+		
+	}
+
+	public List<VRApplicantProfile> findByapplicantRegion(long mtCore, String applicantRegion) throws SystemException {
+		try {
+			return vrApplicantProfilePersistence.findByapplicantRegion(mtCore, applicantRegion);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRApplicantProfile>();
+		
+	}
+
+	public List<VRApplicantProfile> findByapplicantCity(long mtCore, String applicantCity) throws SystemException {
+		try {
+			return vrApplicantProfilePersistence.findByapplicantCity(mtCore, applicantCity);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRApplicantProfile>();
+		
+	}
+
+	public List<VRApplicantProfile> findByapplicantStatus(long mtCore, String applicantStatus) throws SystemException {
+		try {
+			return vrApplicantProfilePersistence.findByapplicantStatus(mtCore, applicantStatus);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRApplicantProfile>();
+		
+	}
+	
+	private Log _log = LogFactoryUtil.getLog(VRApplicantProfileLocalServiceImpl.class);
 
 }

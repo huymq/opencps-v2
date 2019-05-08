@@ -2,11 +2,15 @@ package org.opencps.datamgt.service.persistence.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -39,31 +43,35 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 			session = openSession();
 			
 			StringBuilder query = new StringBuilder();
-			query.append("SELECT {opencps_dictitem.*} FROM opencps_dictitem ");
-			if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
+			query.append("SELECT * FROM opencps_dictitem ");
+			if (Validator.isNull(level)) {
+				// bo qua
+			} else if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
 				// bo qua INNER JOIN parentItem
 			} else {
 				query.append("INNER JOIN opencps_dictitem parent  ");
 				query.append("ON opencps_dictitem.dictCollectionId = parent.dictCollectionId  ");
 				query.append("AND opencps_dictitem.parentItemId = parent.dictItemId  ");
-				if (Validator.isNotNull(level)) {
-					query.append("AND parent.level <   " + level);
+				if (Validator.isNotNull(level) && Long.parseLong(level.trim()) > 0) {
+					query.append("AND parent.level < " + level +" ");
 				} else {
-					query.append("AND parent.level = 1  ");
+					query.append("AND parent.level in (0, 1)  ");
 				}
 			}			
 			
 			query.append("INNER JOIN opencps_dictcollection collection  ");
 			query.append("ON opencps_dictitem.dictCollectionId = collection.dictCollectionId  ");
-			query.append("AND collection.collectionCode in (" + collectionCode + ")  ");
+			query.append("AND collection.collectionCode in ('" + collectionCode + "')  ");
 			query.append("WHERE  1=1 ");
 			if (groupId > 0 ) {
-				query.append(" and opencps_dictitem.groupId =   " + groupId);
+				query.append(" and opencps_dictitem.groupId =   " + groupId +" ");
 			} else { 
 				query.append(" and opencps_dictitem.groupId = 55301  ");	
 			}
 			
-			if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
+			if (Validator.isNull(level)) {
+				// bo qua
+			} else if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
 				query.append(" and opencps_dictitem.level = 0  ");
 			} else {
 				query.append(" and opencps_dictitem.parentItemId > 0  ");
@@ -102,18 +110,20 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 			session = openSession();
 			
 			StringBuilder query = new StringBuilder();
-			query.append("SELECT {opencps_dictitem.*} FROM opencps_dictitem ");
-			if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
+			query.append("SELECT * FROM opencps_dictitem ");
+			if (Validator.isNull(level)) {
+				// bo qua
+			} else if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
 				// bo qua INNER JOIN parentItem
 			} else {
 				query.append("INNER JOIN opencps_dictitem parent  ");
 				query.append("ON opencps_dictitem.dictCollectionId = parent.dictCollectionId  ");
 				query.append("AND opencps_dictitem.parentItemId = parent.dictItemId  ");
-				if (Validator.isNotNull(level)) {
-					query.append("AND parent.level <   " + level);
+				if (Validator.isNotNull(level) && Long.parseLong(level.trim()) > 0) {
+					query.append("AND parent.level < " + level +" ");
 				} else {
-					query.append("AND parent.level = 1  ");
-				}				
+					query.append("AND parent.level in (0, 1)  ");
+				}			
 				
 				String parentFilter = StringPool.BLANK;
 				if (Validator.isNotNull(parentItemCode)) {
@@ -139,15 +149,17 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 			
 			query.append("INNER JOIN opencps_dictcollection collection  ");
 			query.append("ON opencps_dictitem.dictCollectionId = collection.dictCollectionId  ");
-			query.append("AND collection.collectionCode in (" + collectionCode + ")  ");
+			query.append("AND collection.collectionCode in ('" + collectionCode + "')  ");
 			query.append("WHERE  1=1 ");
 			if (groupId > 0 ) {
-				query.append(" and opencps_dictitem.groupId =   " + groupId);
+				query.append(" and opencps_dictitem.groupId =   " + groupId +" ");
 			} else { 
 				query.append(" and opencps_dictitem.groupId = 55301  ");	
 			}
 			
-			if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
+			if (Validator.isNull(level)) {
+				// bo qua
+			} else if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
 				query.append(" and opencps_dictitem.level = 0  ");
 			} else {
 				query.append(" and opencps_dictitem.parentItemId > 0  ");
@@ -187,23 +199,25 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 			session = openSession();
 			
 			StringBuilder query = new StringBuilder();
-			query.append("SELECT {opencps_dictitem.*} FROM opencps_dictitem ");
-			if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
+			query.append("SELECT * FROM opencps_dictitem ");
+			if (Validator.isNull(level)) {
+				// bo qua
+			} else if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
 				// bo qua INNER JOIN parentItem
 			} else {
 				query.append("INNER JOIN opencps_dictitem parent  ");
 				query.append("ON opencps_dictitem.dictCollectionId = parent.dictCollectionId  ");
 				query.append("AND opencps_dictitem.parentItemId = parent.dictItemId  ");
-				if (Validator.isNotNull(level)) {
-					query.append("AND parent.level <   " + level);
+				if (Validator.isNotNull(level) && Long.parseLong(level.trim()) > 0) {
+					query.append("AND parent.level < " + level +" ");
 				} else {
-					query.append("AND parent.level = 1  ");
+					query.append("AND parent.level in (0, 1)  ");
 				}	
 			}			
 
 			query.append("INNER JOIN opencps_dictcollection collection  ");
 			query.append("ON opencps_dictitem.dictCollectionId = collection.dictCollectionId  ");
-			query.append("AND collection.collectionCode in (" + collectionCode + ")  ");
+			query.append("AND collection.collectionCode in ('" + collectionCode + "')  ");
 			
 			query.append("INNER JOIN opencps_dictgroup dictgroup  ");
 			query.append("ON opencps_dictitem.dictCollectionId = dictgroup.dictCollectionId  ");
@@ -218,9 +232,9 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 					for (int i = 0; i < arrGroupCode.length; i++) {
 						if (Validator.isNotNull(arrGroupCode[i])) {
 							if (Validator.isNotNull(groupCodeFilter)) {
-								groupCodeFilter = groupCodeFilter + " OR  " + "itemgroup.dictGroupName in ("+arrGroupCode[i].trim()+") ";
+								groupCodeFilter = groupCodeFilter + " OR  " + "itemgroup.dictGroupName in ('"+arrGroupCode[i].trim()+"' ) ";
 							} else {
-								groupCodeFilter = " AND ( "  + "itemgroup.dictGroupName in ("+arrGroupCode[i].trim()+") ";
+								groupCodeFilter = " AND ( "  + "itemgroup.dictGroupName in ('"+arrGroupCode[i].trim()+"' ) ";
 							}
 							
 						}
@@ -234,12 +248,14 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 			
 			query.append("WHERE  1=1 ");
 			if (groupId > 0 ) {
-				query.append(" and opencps_dictitem.groupId =   " + groupId);
+				query.append(" and opencps_dictitem.groupId =   " + groupId +" ");
 			} else { 
 				query.append(" and opencps_dictitem.groupId = 55301  ");	
 			}
 			
-			if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
+			if (Validator.isNull(level)) {
+				// bo qua
+			} else if ((Validator.isNotNull(level)) && level.equalsIgnoreCase("0")){
 				query.append(" and opencps_dictitem.level = 0  ");
 			} else {
 				query.append(" and opencps_dictitem.parentItemId > 0  ");
@@ -258,7 +274,7 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 			q.setCacheable(false);
 			q.addEntity(DictItemImpl.TABLE_NAME, DictItemImpl.class);
 			
-			log.info("=========findByCollection_Parent_Level_OrderBy===" + query.toString() );
+			log.info("=========findByCollection_Group_Level_OrderBy===" + query.toString() );
 			QueryPos qPos = QueryPos.getInstance(q);
 			
 			
@@ -272,30 +288,5 @@ public class DictItemFinderImpl extends DictItemFinderBaseImpl implements DictIt
 		return new ArrayList<DictItem>();
 	}
 	
-	/*
-	public List<DictItem> findCustomSLQ_GroupName_AlterName123(String groupName, String alterName) {
-		Session session = null;
-		try {
-			session = openSession();
-			 //get sql query return in default.xml
-            String query=CustomSQLUtil.get(getClass(),"getAllProduct");
-			SQLQuery q = session.createSQLQuery(query.toString());
-			q.setCacheable(false);
-			q.addEntity(DictItemImpl.TABLE_NAME, DictItemImpl.class);
-			
-			log.info("=========findByGroupName_AlterName123===" + query.toString() );
-			QueryPos qPos = QueryPos.getInstance(q);
-			qPos.add(alterName);
-			qPos.add(groupName);
-			
-			return (List<DictItem>) QueryUtil.list(q, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
-		} catch (Exception e) {
-			log.error(e);
-		} finally {
-			closeSession(session);
-		}
-		
-		return new ArrayList<DictItem>();
-	}	
-	 */
+	
 }

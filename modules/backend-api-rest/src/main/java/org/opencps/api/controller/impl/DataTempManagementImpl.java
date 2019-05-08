@@ -1272,6 +1272,8 @@ public class DataTempManagementImpl implements DataTempManagement {
 		SearchContext searchContext = new SearchContext();
 		searchContext.setCompanyId(company.getCompanyId());
 
+		long startTime = System.currentTimeMillis();
+		_log.info("START Time: "+ startTime);
 		try {
 
 			if (Validator.isNull(query.getEnd())) {
@@ -1296,14 +1298,14 @@ public class DataTempManagementImpl implements DataTempManagement {
 
 			Sort[] sorts = new Sort[] {
 					SortFactoryUtil.create(query.getSort() + "_sortable", Sort.STRING_TYPE, false) };
-
+			_log.info("START Part1: "+ (System.currentTimeMillis()- startTime));
 			JSONObject jsonData = dictItemDataUtil.getDictItemsTemp(user.getUserId(), company.getCompanyId(), groupId,
 					params, sorts, query.getStart(), query.getEnd(), serviceContext);
-
+			_log.info("START Part2: "+ (System.currentTimeMillis()- startTime));
 			result.setTotal(jsonData.getLong("total"));
 			result.getDictItemTempModel()
 					.addAll(DataTempManagementUtils.mapperDictItemTempModelList((List<Document>) jsonData.get("data")));
-
+			_log.info("START Part3: "+ (System.currentTimeMillis()- startTime));
 			return Response.status(200).entity(result).build();
 
 		} catch (Exception e) {

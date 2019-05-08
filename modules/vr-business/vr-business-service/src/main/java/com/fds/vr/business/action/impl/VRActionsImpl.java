@@ -13,14 +13,14 @@ import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictGroupLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemGroupLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
-import org.opencps.dossiermgt.model.DossierFile;
-import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 
 import com.fds.vr.business.action.VRActions;
 import com.fds.vr.business.constant.VRKeys;
 import com.fds.vr.business.model.VRConfigTechSpec;
+import com.fds.vr.business.model.VRDossierFile;
 import com.fds.vr.business.model.VRLimitConfigTechSpec;
 import com.fds.vr.business.service.VRConfigTechSpecLocalServiceUtil;
+import com.fds.vr.business.service.VRDossierFileLocalServiceUtil;
 import com.fds.vr.business.service.VRLimitConfigTechSpecLocalServiceUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -60,51 +60,56 @@ public class VRActionsImpl implements VRActions {
 			for (DictItemGroup dg : danhSachNhomThongSoKTChiTiet) {
 
 				DictItem dictItem = DictItemLocalServiceUtil.getDictItem(dg.getDictItemId());
+				if (dg.getDictItemId() > 0 && dictItem != null && dictItem.getItemCode().length() > 0 ) {
+					_log.info("vehicleClass====" + vehicleClass + "===========dictItem.getItemCode()====" + dictItem.getItemCode() + "============module===="+ module );
+					List<VRConfigTechSpec> configTechSpecs = VRConfigTechSpecLocalServiceUtil.getByVCSC(vehicleClass,
+							dictItem.getItemCode().trim(), module);
+					JSONObject jsonTechSpec = JSONFactoryUtil.createJSONObject();
 
-				List<VRConfigTechSpec> configTechSpecs = VRConfigTechSpecLocalServiceUtil.getByVCSC(vehicleClass,
-						dictItem.getItemCode(), module);
-				JSONObject jsonTechSpec = JSONFactoryUtil.createJSONObject();
+					jsonTechSpec.put("key", dictItem.getItemCode());
+					jsonTechSpec.put("type", "label");
+					jsonTechSpec.put("title", dictItem.getItemName());
+					jsonTechSpec.put("required", false);
+					jsonTechSpec.put("Reference", false);
+					jsonTechSpec.put("placeholder", dictItem.getItemDescription());
+					jsonTechSpec.put("datasource", StringPool.BLANK);
+					jsonTechSpec.put("value", StringPool.BLANK);
 
-				jsonTechSpec.put("key", dictItem.getItemCode());
-				jsonTechSpec.put("type", "label");
-				jsonTechSpec.put("title", dictItem.getItemName());
-				jsonTechSpec.put("required", false);
-				jsonTechSpec.put("Reference", false);
-				jsonTechSpec.put("placeholder", dictItem.getItemDescription());
-				jsonTechSpec.put("datasource", StringPool.BLANK);
-				jsonTechSpec.put("value", StringPool.BLANK);
+					if (configTechSpecs != null && configTechSpecs.size() > 0 ) {
+						JSONArray items = JSONFactoryUtil.createJSONArray();
 
-				JSONArray items = JSONFactoryUtil.createJSONArray();
+						for (VRConfigTechSpec vrConfig : configTechSpecs) {
+							JSONObject techspec = JSONFactoryUtil.createJSONObject();
 
-				for (VRConfigTechSpec vrConfig : configTechSpecs) {
-					JSONObject techspec = JSONFactoryUtil.createJSONObject();
+							techspec.put("key", vrConfig.getSpecificationCode());
 
-					techspec.put("key", vrConfig.getSpecificationCode());
+							techspec.put("type", vrConfig.getSpecificationEntryType());
 
-					techspec.put("type", vrConfig.getSpecificationEntryType());
+							techspec.put("title", vrConfig.getSpecificationDisplayName());
 
-					techspec.put("title", vrConfig.getSpecificationDisplayName());
+							techspec.put("required", vrConfig.getSpecificationMandatory());
 
-					techspec.put("required", vrConfig.getSpecificationMandatory());
+							techspec.put("Reference", false);
 
-					techspec.put("Reference", false);
+							techspec.put("value", StringPool.BLANK);
 
-					techspec.put("value", StringPool.BLANK);
+							techspec.put("standard", vrConfig.getSpecificationStandard());
+							techspec.put("basicunit", vrConfig.getSpecificationBasicUnit());
+							techspec.put("placeholder", vrConfig.getSpecificationEntryPlaceholder());
+							if (Validator.isNotNull(vrConfig.getSpecificationDataCollectionId())) {
+								techspec.put("datasource",
+										getDataSource(vrConfig.getSpecificationDataCollectionId(), groupId, vehicleClass));
+							}
 
-					techspec.put("standard", vrConfig.getSpecificationStandard());
-					techspec.put("basicunit", vrConfig.getSpecificationBasicUnit());
-					techspec.put("placeholder", vrConfig.getSpecificationEntryPlaceholder());
-					if (Validator.isNotNull(vrConfig.getSpecificationDataCollectionId())) {
-						techspec.put("datasource",
-								getDataSource(vrConfig.getSpecificationDataCollectionId(), groupId, vehicleClass));
+							items.put(techspec);
+						}
+
+						jsonTechSpec.put("items", items);
+
+						techSpecArr.put(jsonTechSpec);
 					}
-
-					items.put(techspec);
-				}
-
-				jsonTechSpec.put("items", items);
-
-				techSpecArr.put(jsonTechSpec);
+					
+				}				
 			}
 
 			if (dossierFileId != 0) {
@@ -116,9 +121,7 @@ public class VRActionsImpl implements VRActions {
 			returnObj.put("content", techSpecArr);
 
 		} catch (Exception e) {
-			_log.error(e);
-			// returnObj.put("status", HttpsURLConnection.HTTP_OK);
-			// returnObj.put("content", techSpecArr);
+			_log.error(e);			
 		}
 
 		return returnObj;
@@ -198,13 +201,13 @@ public class VRActionsImpl implements VRActions {
 					String result = StringPool.BLANK;
 					String resultTD = StringPool.BLANK;
 
-					DossierFile dossierFile = null;
+					VRDossierFile dossierFile = null;
 
 					String formData = StringPool.BLANK;
 
 					if (dossierFileId > 0) {
 
-						dossierFile = DossierFileLocalServiceUtil.fetchDossierFile(dossierFileId);
+						dossierFile = VRDossierFileLocalServiceUtil.fetchVRDossierFile(dossierFileId);
 
 					}
 					
@@ -219,7 +222,7 @@ public class VRActionsImpl implements VRActions {
 						//_log.info("==========================2");
 						if (Validator.isNotNull(fileTemplateNo)) {
 							try {
-								dossierFile = DossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
+								dossierFile = VRDossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
 										fileTemplateNo, false, OrderByComparatorFactoryUtil
 												.create("opencps_dossierFile", "createDate", false));
 
@@ -408,11 +411,11 @@ public class VRActionsImpl implements VRActions {
 						String result = StringPool.BLANK;
 						String resultTD = StringPool.BLANK;
 	
-						DossierFile dossierFile = null;
+						VRDossierFile dossierFile = null;
 						String formData = StringPool.BLANK;
 
 						if (dossierFileId > 0) {
-							dossierFile = DossierFileLocalServiceUtil.fetchDossierFile(dossierFileId);
+							dossierFile = VRDossierFileLocalServiceUtil.fetchVRDossierFile(dossierFileId);
 						}
 						
 						_log.info("========================== dossierFileId = " + dossierFileId+ " |fileTemplateNo: "+fileTemplateNo);
@@ -423,7 +426,7 @@ public class VRActionsImpl implements VRActions {
 							if (Validator.isNull(formData)) {
 								if (Validator.isNotNull(fileTemplateNo)) {
 									try {
-										dossierFile = DossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
+										dossierFile = VRDossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
 												fileTemplateNo, false, OrderByComparatorFactoryUtil
 														.create("opencps_dossierFile", "createDate", false));
 		
@@ -442,7 +445,7 @@ public class VRActionsImpl implements VRActions {
 							//_log.info("==========================2");
 							if (Validator.isNotNull(fileTemplateNo)) {
 								try {
-									dossierFile = DossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
+									dossierFile = VRDossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
 											fileTemplateNo, false, OrderByComparatorFactoryUtil
 													.create("opencps_dossierFile", "createDate", false));
 	
@@ -538,7 +541,7 @@ public class VRActionsImpl implements VRActions {
 
 		JSONArray output = JSONFactoryUtil.createJSONArray();
 
-		org.opencps.dossiermgt.model.DossierFile dossierFile = getDossierFile(dossierFileId);
+		VRDossierFile dossierFile = getDossierFile(dossierFileId);
 
 		JSONObject formData = null;
 
@@ -604,13 +607,13 @@ public class VRActionsImpl implements VRActions {
 		return output;
 	}
 
-	private org.opencps.dossiermgt.model.DossierFile getDossierFile(long dossierFileId) {
+	private VRDossierFile getDossierFile(long dossierFileId) {
 
-		org.opencps.dossiermgt.model.DossierFile dossierFile = null;
+		VRDossierFile dossierFile = null;
 
 		if (dossierFileId != 0) {
 			try {
-				dossierFile = DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
+				dossierFile = VRDossierFileLocalServiceUtil.getVRDossierFile(dossierFileId);
 			} catch (Exception e) {
 				_log.error(e);
 			}

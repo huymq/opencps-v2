@@ -15,7 +15,18 @@
 package com.fds.vr.business.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.fds.vr.business.model.VRProductionPlantEquipment;
 import com.fds.vr.business.service.base.VRProductionPlantEquipmentLocalServiceBaseImpl;
 
 /**
@@ -40,4 +51,18 @@ public class VRProductionPlantEquipmentLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRProductionPlantEquipmentLocalServiceUtil} to access the vr production plant equipment local service.
 	 */
+	
+	public List<VRProductionPlantEquipment> findByproductPlantID(long mtCore, long productPlantID) throws PortalException, SystemException {
+		try {
+			return vrProductionPlantEquipmentPersistence.findByproductPlantID(mtCore, productPlantID);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRProductionPlantEquipment>();
+		
+	}
+
+
+	
+	private Log _log = LogFactoryUtil.getLog(VRProductionPlantEquipmentLocalServiceImpl.class);
 }

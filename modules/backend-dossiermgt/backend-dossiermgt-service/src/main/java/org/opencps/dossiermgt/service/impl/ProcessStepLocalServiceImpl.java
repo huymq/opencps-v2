@@ -376,4 +376,8 @@ public class ProcessStepLocalServiceImpl extends ProcessStepLocalServiceBaseImpl
 	public List<ProcessStep> getProcessStepbyServiceProcessId(long serviceProcessId) {
 		return processStepPersistence.findByS_P_ID(serviceProcessId);
 	}
+
+	public List<ProcessStep> getProcessStepbyUserId(long userId) {
+		return processStepFinder.findProcessStepByUserId(userId);
+	}
 }

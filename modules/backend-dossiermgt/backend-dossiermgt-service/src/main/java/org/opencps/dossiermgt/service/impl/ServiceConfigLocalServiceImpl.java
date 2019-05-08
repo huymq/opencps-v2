@@ -458,6 +458,11 @@ public class ServiceConfigLocalServiceImpl extends ServiceConfigLocalServiceBase
 		return IndexSearcherHelperUtil.searchCount(searchContext, booleanQuery);
 	}
 
+	// LamTV_Process get list ServiceConfig by ServiceInfo
+	public List<ServiceConfig> getByServiceInfo(long groupId, long serviceInfoId) {
+		return serviceConfigPersistence.findByF_GID_SID(groupId, serviceInfoId);
+	}
+
 	public static final String CLASS_NAME = ServiceConfig.class.getName();
 
 }

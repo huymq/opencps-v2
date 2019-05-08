@@ -15,7 +15,15 @@
 package com.fds.vr.business.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.fds.vr.business.model.VRInputStampbook;
 import com.fds.vr.business.service.base.VRInputStampbookLocalServiceBaseImpl;
 
 /**
@@ -40,4 +48,80 @@ public class VRInputStampbookLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRInputStampbookLocalServiceUtil} to access the vr input stampbook local service.
 	 */
+	
+	public VRInputStampbook updateInputStambook(long id, long mtCore, long inputSheetId, 
+			long bookId, String vehicleClass, String stampType, 
+			String stampShortNo, long serialStartNo, String serialEndNo, 
+			long subTotalInDocument, long subTotalQuantities, long units, 
+			long unitPrice, long totalAmount, long totalInUse, long totalNotUsed, 
+			long sum1, long sum2, long sum3, String remark)
+		throws PortalException, SystemException {
+		
+		VRInputStampbook inputStambook = null;
+		
+		if(id > 0) {
+			inputStambook = vrInputStampbookPersistence.findByPrimaryKey(id);
+		} else {
+			id = counterLocalService.increment(VRInputStampbook.class.getName());
+			inputStambook = vrInputStampbookPersistence.create(id);
+		}
+		
+		inputStambook.setModifyDate(new Date());
+		inputStambook.setMtCore(mtCore);
+		inputStambook.setInputSheetId(inputSheetId);
+		inputStambook.setBookId(bookId);
+		inputStambook.setVehicleClass(vehicleClass);
+		inputStambook.setStampType(stampType);
+		inputStambook.setStampShortNo(stampShortNo);
+		inputStambook.setSerialStartNo(serialStartNo);
+		inputStambook.setSerialEndNo(serialEndNo);
+		inputStambook.setSubTotalInDocument(subTotalInDocument);
+		inputStambook.setSubTotalQuantities(subTotalQuantities);
+		inputStambook.setUnits(units);
+		inputStambook.setUnitPrice(unitPrice);
+		inputStambook.setTotalAmount(totalAmount);
+		inputStambook.setTotalInUse(totalInUse);
+		inputStambook.setTotalNotUsed(totalNotUsed);
+		inputStambook.setSum1(sum1);
+		inputStambook.setSum2(sum2);
+		inputStambook.setSum3(sum3);
+		inputStambook.setRemark(remark);
+		
+		return vrInputStampbookPersistence.update(inputStambook);
+		
+	}
+	
+	public List<VRInputStampbook> findByInputSheetId(long mtCore, long inputSheetId) throws PortalException, SystemException {
+		try {
+			return vrInputStampbookPersistence.findByInputSheetId(mtCore, inputSheetId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRInputStampbook>();
+		
+	}
+
+
+	public List<VRInputStampbook> findByInputSheetIdAndBookId(long mtCore, long inputSheetId, long bookId) throws PortalException, SystemException {
+		try {
+			return vrInputStampbookPersistence.findByInputSheetIdAndBookId(mtCore, inputSheetId, bookId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRInputStampbook>();
+		
+	}
+	
+	public List<VRInputStampbook> findByInputSheetIdAndBookIdAndStampType(long mtCore, long inputSheetId, long bookId, String stampType) throws PortalException, SystemException {
+		try {
+			return vrInputStampbookPersistence.findByInputSheetIdAndBookIdAndStampType(mtCore, inputSheetId, bookId, stampType);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRInputStampbook>();
+		
+	}
+	
+	
+	private Log _log = LogFactoryUtil.getLog(VRInputStampbookLocalServiceImpl.class);
 }

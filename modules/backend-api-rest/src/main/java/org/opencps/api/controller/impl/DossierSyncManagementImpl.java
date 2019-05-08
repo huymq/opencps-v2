@@ -73,11 +73,11 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 public class DossierSyncManagementImpl implements DossierSyncManagement {
-	private final String baseUrl = "http://localhost:8080/o/rest/v2/";
+	/*private final String baseUrl = "http://localhost:8080/o/rest/v2/";
 	private final String username = "test@liferay.com";
 	private final String password = "test";
-	//private final String serectKey = "OPENCPSV2";
-
+	private final String serectKey = "OPENCPSV2";
+*/
 	@Override
 	public Response getDossierSyncs(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, String serverNo) {
@@ -568,7 +568,7 @@ public class DossierSyncManagementImpl implements DossierSyncManagement {
 
 		return params;
 	}
-
+/*
 	@Deprecated
 	private void doSync(long groupId, String actionCode, String actionUser, String actionNote, long assignUserId,
 			String refId, long clientDossierActionId, long dossierSyncId) {
@@ -648,7 +648,7 @@ public class DossierSyncManagementImpl implements DossierSyncManagement {
 
 		}
 	}
-
+*/
 	protected ProcessAction getProcessAction(long groupId, long dossierId, String refId, String actionCode,
 			long serviceProcessId) throws PortalException {
 
@@ -698,7 +698,7 @@ public class DossierSyncManagementImpl implements DossierSyncManagement {
 
 		return dossier;
 	}
-
+/*
 	private void resetDossier(long groupId, String refId) {
 		try {
 			String path = "dossiers/" + refId + "/reset";
@@ -744,7 +744,7 @@ public class DossierSyncManagementImpl implements DossierSyncManagement {
 
 		}
 	}
-
+*/
 	Log _log = LogFactoryUtil.getLog(DossierSyncManagementImpl.class.getName());
 
 }

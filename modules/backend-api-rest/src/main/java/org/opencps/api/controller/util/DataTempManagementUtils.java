@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.opencps.api.datamgt.model.ParentItem;
 import org.opencps.api.datatempmgt.model.DictCollectionTempModel;
 import org.opencps.api.datatempmgt.model.DictGroupItemTempModel;
 import org.opencps.api.datatempmgt.model.DictGroupTempModel;
@@ -12,6 +13,7 @@ import org.opencps.api.datatempmgt.model.DictItemTempModel;
 import org.opencps.api.datatempmgt.model.ParentItemModel;
 import org.opencps.auth.utils.APIDateTimeUtils;
 import org.opencps.datamgt.constants.DictItemGroupTerm;
+import org.opencps.datamgt.constants.DictItemTerm;
 import org.opencps.synchronization.action.DictCollectionTempInterface;
 import org.opencps.synchronization.constants.DictCollectionTempTerm;
 import org.opencps.synchronization.constants.DictGroupTempTerm;
@@ -221,6 +223,7 @@ public class DataTempManagementUtils {
 				ett.setLevel(Integer.valueOf(document.get(DictItemTempTerm.LEVEL)));
 				ett.setSibling(Integer.valueOf(document.get(DictItemTempTerm.LEVEL)));
 				ett.setTreeIndex(document.get(DictItemTempTerm.TREE_INDEX));
+				ett.setParentItemId(GetterUtil.getLong(document.get(DictItemTempTerm.PARENT_ITEM_ID)));
 
 				ett.setCreateDate(Validator.isNotNull(document.get(DictItemTempTerm.CREATE_DATE)) ? APIDateTimeUtils
 						.convertDateToString(document.getDate(DictItemTempTerm.CREATE_DATE), APIDateTimeUtils._TIMESTAMP)
@@ -229,20 +232,17 @@ public class DataTempManagementUtils {
 						Validator.isNotNull(document.get("modified")) ? APIDateTimeUtils.convertDateToString(
 								document.getDate("modified"), APIDateTimeUtils._TIMESTAMP) : StringPool.BLANK);
 
-				DictItemTemp parentItem = DictItemTempLocalServiceUtil
-						.fetchDictItemTemp(Long.valueOf(document.get(DictItemTempTerm.PARENT_ITEM_ID)));
+				//DictItemTemp parentItem = DictItemTempLocalServiceUtil
+				//		.fetchDictItemTemp(Long.valueOf(document.get(DictItemTempTerm.PARENT_ITEM_ID)));
 
 				ParentItemModel parentItemModel = new ParentItemModel();
-				
-				ett.setParentItemId(GetterUtil.getLong(document.get(DictItemTempTerm.PARENT_ITEM_ID)));
-				
-				if (Validator.isNotNull(parentItem)) {
-
-					parentItemModel.setItemCode(parentItem.getItemCode());
-					parentItemModel.setItemName(parentItem.getItemName());
-					parentItemModel.setItemNameEN(parentItem.getItemNameEN());
+				if (Validator.isNotNull(document.get(DictItemTerm.PARENT_ITEM_CODE))) {
+					parentItemModel.setItemCode(document.get(DictItemTerm.PARENT_ITEM_CODE));
+					parentItemModel.setItemName(document.get(DictItemTerm.PARENT_ITEM_NAME));
+					parentItemModel.setItemNameEN(document.get(DictItemTerm.PARENT_ITEM_NAME_EN));
 
 				}
+				//ett.getParentItem().add(parentItemModel);
 
 				results.add(ett);
 			}

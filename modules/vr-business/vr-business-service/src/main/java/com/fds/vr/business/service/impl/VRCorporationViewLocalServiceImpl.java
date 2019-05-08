@@ -15,7 +15,17 @@
 package com.fds.vr.business.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.fds.vr.business.model.VRCorporationView;
 import com.fds.vr.business.service.base.VRCorporationViewLocalServiceBaseImpl;
 
 /**
@@ -40,4 +50,68 @@ public class VRCorporationViewLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRCorporationViewLocalServiceUtil} to access the vr corporation view local service.
 	 */
+	
+	public List<VRCorporationView> findByInspectorId(long inspectorId) throws PortalException, SystemException {
+		try {
+			return vrCorporationViewPersistence.findByInspectorId(inspectorId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCorporationView>();
+		
+	}
+
+
+	public List<VRCorporationView> findByCorporationId(String corporationId) throws PortalException, SystemException {
+		try {
+			return vrCorporationViewPersistence.findByCorporationId(corporationId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCorporationView>();
+		
+	}
+	
+	public List<VRCorporationView> findByInspectorIdCorporationId(String corporationId, long inspectorId) throws PortalException, SystemException {
+		try {
+			return vrCorporationViewPersistence.findByInspectorIdCorporationId(corporationId, inspectorId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCorporationView>();
+		
+	}
+	
+	public List<VRCorporationView> findByIsLeader(int isLeader) throws PortalException, SystemException {
+		try {
+			return vrCorporationViewPersistence.findByIsLeader(isLeader);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCorporationView>();
+		
+	}
+	
+	public VRCorporationView findByInspectorIdCorporationIdIsLeader(String corporationId, long inspectorId, int isLeader) throws PortalException, SystemException {
+		try {
+			return vrCorporationViewPersistence.findByInspectorIdCorporationIdIsLeader(inspectorId, corporationId, isLeader);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return null;
+		
+	}
+	
+	public VRCorporationView findByCorporationIdAndIsLeader(String corporationId, int isLeader) throws PortalException, SystemException {
+		try {
+			return vrCorporationViewPersistence.findByCorporationIdAndIsLeader(corporationId, isLeader);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return null;
+		
+	}
+	
+	
+	private Log _log = LogFactoryUtil.getLog(VRRPDossierStatisticsLocalServiceImpl.class);
 }

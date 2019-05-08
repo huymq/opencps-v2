@@ -17,6 +17,7 @@ import org.opencps.api.dossier.model.ListContacts;
 import org.opencps.api.dossieraction.model.DossierActionNextActionResultsModel;
 import org.opencps.api.dossieraction.model.DossierActionResultsModel;
 import org.opencps.api.dossieraction.model.DossierActionSearchModel;
+import org.opencps.api.dossieraction.model.DossierDetailNextActionModel;
 import org.opencps.auth.api.BackendAuth;
 import org.opencps.auth.api.BackendAuthImpl;
 import org.opencps.auth.api.exception.UnauthenticationException;
@@ -31,6 +32,7 @@ import org.opencps.dossiermgt.action.impl.DeliverableActionsImpl;
 import org.opencps.dossiermgt.action.impl.DossierActionsImpl;
 import org.opencps.dossiermgt.constants.DossierActionTerm;
 import org.opencps.dossiermgt.constants.DossierTerm;
+import org.opencps.dossiermgt.constants.ProcessActionTerm;
 import org.opencps.dossiermgt.model.Deliverable;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierAction;
@@ -59,7 +61,6 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.SortFactoryUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -135,31 +136,26 @@ public class DossierActionManagementImpl implements DossierActionManagement {
 	@Override
 	public Response getListActions(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, DossierActionSearchModel query, String id) {
-		// TODO Auto-generated method stub
 
 		DossierActions actions = new DossierActionsImpl();
 		DossierActionNextActionResultsModel result = new DossierActionNextActionResultsModel();
-
+		long now = System.currentTimeMillis();
 		try {
 			long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
 			long dossierId = GetterUtil.getLong(id);
-
 			long userId = user.getUserId();
 
 			Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
 
-			long dossierActionId = dossier.getDossierActionId();
-
-			List<DossierActionUser> dossierActionUsers = DossierActionUserLocalServiceUtil.getListUser(dossierActionId);
+			List<DossierActionUser> dossierActionUsers = DossierActionUserLocalServiceUtil
+					.getListUser(dossier.getDossierActionId());
 
 			_log.info("userId___" + userId);
-			_log.info("dossierActionId___" + dossierActionId);
 			_log.info("dossierActionUsers___size()" + dossierActionUsers.size());
 
 			boolean hasPermission = false;
-			
-			_log.info("isSpecial(dossier)__" + isSpecial(dossier));
-
+			//_log.info("isSpecial(dossier)__" + isSpecial(dossier));
+			_log.info("Part1: "+(System.currentTimeMillis() - now));
 			if (isSpecial(dossier)) {
 				for (DossierActionUser actionUser : dossierActionUsers) {
 					if (actionUser.getUserId() == userId && actionUser.getModerator() == 1) {
@@ -181,6 +177,7 @@ public class DossierActionManagementImpl implements DossierActionManagement {
 				
 				hasPermission = isInUserAction || hasPermisson(dossier, userId);
 			}
+			_log.info("Part2: "+(System.currentTimeMillis() - now));
 
 			if (!hasPermission) {
 				result.setTotal(0);
@@ -189,7 +186,7 @@ public class DossierActionManagementImpl implements DossierActionManagement {
 			}
 
 			String referenceUid = StringPool.BLANK;
-
+			_log.info("Part2.1: "+(System.currentTimeMillis() - now));
 			if (dossierId == 0) {
 				referenceUid = id;
 			}
@@ -213,18 +210,19 @@ public class DossierActionManagementImpl implements DossierActionManagement {
 			Sort[] sorts = new Sort[] { SortFactoryUtil.create(query.getSort() + "_sortable", Sort.STRING_TYPE,
 					GetterUtil.getBoolean(query.getOrder())) };
 
-			JSONArray jsonData = actions.getNextActions(user.getUserId(), company.getCompanyId(), groupId, params,
+			JSONArray jsonData = actions.getNextActionList(user.getUserId(), company.getCompanyId(), groupId, params,
 					sorts, query.getStart(), query.getEnd(), serviceContext);
-
+			_log.info("Part3: "+(System.currentTimeMillis() - now));
 			result.setTotal(jsonData.length());
-			result.getData().addAll(DossierActionUtils.mappingToDoListReadNextActions(jsonData));
+			result.getData().addAll(DossierActionUtils.mappingToNextActions(jsonData));
 			// result.getData()
 			// .addAll(DossierActionUtils.mappingToDoListActions((List<ProcessAction>)
 			// jsonData.get("data")));
-
+			_log.info("Part4: "+(System.currentTimeMillis() - now));
 			return Response.status(200).entity(result).build();
 
 		} catch (Exception e) {
+			_log.error(e);
 			ErrorMsg error = new ErrorMsg();
 
 			if (e instanceof UnauthenticationException) {
@@ -472,6 +470,44 @@ public class DossierActionManagementImpl implements DossierActionManagement {
 			return Response.status(HttpURLConnection.HTTP_INTERNAL_ERROR).entity(e).build();
 		}
 
+	}
+
+	@Override
+	public Response getActionDetail(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
+			User user, ServiceContext serviceContext, DossierActionSearchModel query, String id, String actionId) {
+		try {
+			long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
+			long dossierId = GetterUtil.getLong(id);
+			_log.info("groupId: "+groupId+ "| dossierId: "+dossierId+ "| actionId: "+actionId);
+
+			if (query.getEnd() == 0) {
+				query.setStart(-1);
+				query.setEnd(-1);
+			}
+
+			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+
+			params.put(Field.GROUP_ID, String.valueOf(groupId));
+			params.put(DossierTerm.DOSSIER_ID, String.valueOf(dossierId));
+			params.put(ProcessActionTerm.PROCESS_ACTION_ID, actionId);
+			params.put(DossierActionTerm.ACTION_CODE, query.getActionCode());
+			params.put(DossierActionTerm.AUTO, query.getAuto());
+
+			Sort[] sorts = new Sort[] { SortFactoryUtil.create(query.getSort() + "_sortable", Sort.STRING_TYPE,
+					GetterUtil.getBoolean(query.getOrder())) };
+
+			DossierActions actions = new DossierActionsImpl();
+
+			JSONObject jsonData = actions.getDetailNextActions(user.getUserId(), company.getCompanyId(), groupId, params,
+					sorts, query.getStart(), query.getEnd(), serviceContext);
+
+			DossierDetailNextActionModel result = DossierActionUtils.mappingToDetailNextActions(jsonData);
+			return Response.status(200).entity(result).build();
+
+		} catch (Exception e) {
+			_log.error(e);
+			return Response.status(HttpURLConnection.HTTP_INTERNAL_ERROR).entity(e.getMessage()).build();
+		}
 	}
 
 }

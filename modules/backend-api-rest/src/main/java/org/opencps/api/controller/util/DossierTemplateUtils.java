@@ -68,32 +68,32 @@ public class DossierTemplateUtils {
 
 		try {
 
-			List<DossierPart> dossierParts = new ArrayList<DossierPart>();
-
-			dossierParts = DossierPartLocalServiceUtil.getByTemplateNo(dossierTemplate.getGroupId(),
+			List<DossierPart> dossierParts = DossierPartLocalServiceUtil.getByTemplateNo(dossierTemplate.getGroupId(),
 					dossierTemplate.getTemplateNo());
 
-			for (DossierPart dp : dossierParts) {
-				DossierTemplatePartDataModel elm = new DossierTemplatePartDataModel();
+			if (dossierParts != null && dossierParts.size() > 0) {
+				for (DossierPart dp : dossierParts) {
+					DossierTemplatePartDataModel elm = new DossierTemplatePartDataModel();
 
-				elm.setPartNo(dp.getPartNo());
-				elm.setPartName(dp.getPartName());
-				elm.setPartTip(dp.getPartTip());
-				elm.setPartType(dp.getPartType());
-				elm.setMultiple(Boolean.toString(dp.getMultiple()));
-				elm.setRequired(Boolean.toString(dp.getRequired()));
-				elm.setEsign(Boolean.toString(dp.getESign()));
-				elm.setFileTemplateNo(dp.getFileTemplateNo());
+					elm.setPartNo(dp.getPartNo());
+					elm.setPartName(dp.getPartName());
+					elm.setPartTip(dp.getPartTip());
+					elm.setPartType(dp.getPartType());
+					elm.setMultiple(Boolean.toString(dp.getMultiple()));
+					elm.setRequired(Boolean.toString(dp.getRequired()));
+					elm.setEsign(Boolean.toString(dp.getESign()));
+					elm.setFileTemplateNo(dp.getFileTemplateNo());
 
-				boolean hasForm = false;
+					boolean hasForm = false;
 
-				if (Validator.isNotNull(dp.getFormScript())) {
-					hasForm = true;
+					if (Validator.isNotNull(dp.getFormScript())) {
+						hasForm = true;
+					}
+
+					elm.setHasForm(Boolean.toString(hasForm));
+
+					inputs.add(elm);
 				}
-
-				elm.setHasForm(Boolean.toString(hasForm));
-
-				inputs.add(elm);
 			}
 
 		} catch (Exception e) {

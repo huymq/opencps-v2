@@ -14,16 +14,23 @@
 
 package com.fds.vr.business.service.impl;
 
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import aQute.bnd.annotation.ProviderType;
 
 import com.fds.vr.business.model.VRRPDossierStatistics;
 import com.fds.vr.business.service.base.VRRPDossierStatisticsLocalServiceBaseImpl;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
-
-import org.opencps.dossiermgt.model.Dossier;
-import org.opencps.dossiermgt.model.DossierRequestUD;
-import org.opencps.dossiermgt.service.DossierRequestUDLocalServiceUtil;
 
 /**
  * The implementation of the vrrp dossier statistics local service.
@@ -47,67 +54,64 @@ public class VRRPDossierStatisticsLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRRPDossierStatisticsLocalServiceUtil} to access the vrrp dossier statistics local service.
 	 */
-	
-	
-	
-	public VRRPDossierStatistics initStatistic(Dossier dossier) {
-		
-		long id = CounterLocalServiceUtil.increment(VRRPDossierStatistics.class.getName());
-		
-		VRRPDossierStatistics dossierStatistics = vrrpDossierStatisticsPersistence.create(id);
-		
-		dossierStatistics.setDossierid((int)dossier.getDossierId());
-		dossierStatistics.setDossierno(dossier.getDossierNo());
-		
-		vrrpDossierStatisticsPersistence.update(dossierStatistics);
-		
-		return dossierStatistics;
-	}
-	
-	public VRRPDossierStatistics updateDossierDateTime(long id, Dossier dossier) {
-		VRRPDossierStatistics dossierStatistics = vrrpDossierStatisticsPersistence.fetchByPrimaryKey(id);
-		
-		if (Validator.isNotNull(dossierStatistics)) {
-			//sending date
-			if (Validator.isNull(dossierStatistics.getDossiersendingdate()) && Validator.isNotNull(dossier.getSubmitDate())) {
-				dossierStatistics.setDossiersendingdate(dossier.getSubmitDate());
-			}
-			
-			//receiving date
-			if (Validator.isNull(dossierStatistics.getDossierreceivingdate()) && Validator.isNotNull(dossier.getReceiveDate())) {
-				dossierStatistics.setDossierreceivingdate(dossier.getReceiveDate());
-			}
-			
-			//the first time request
-			if (Validator.isNull(dossierStatistics.getDossierfirstupdatingdate())) {
-				if(dossier.getDossierStatus().contentEquals("waiting")) {
-					dossierStatistics.setDossierfirstupdatingdate(dossier.getModifiedDate());
-				}
-			}
-			
-			//dossierendorsementdate
-			if (Validator.isNull(dossierStatistics.getDossierfirstupdatingdate())) {
-				DossierRequestUD dossierRequestUD = DossierRequestUDLocalServiceUtil.getByDossierAndType(dossier.getDossierId(), "submitting");
-				
-				if (Validator.isNotNull(dossierRequestUD)) {
-					dossierStatistics.setDossierfirstupdatingdate(dossierRequestUD.getCreateDate());
-				}
-			}
-			
-			//dossiersubmittingdate
-			if (Validator.isNull(dossierStatistics.getDossiersubmittingdate())) {
-				if(dossier.getDossierStatus().contentEquals("processing")) {
-					dossierStatistics.setDossierfirstupdatingdate(dossier.getModifiedDate());
-				}
-			}
-			
-			//dossierfirstcertificatesigndate
-			// TODO ngay ky giai chung nhan 
-			
+	public List<VRRPDossierStatistics> findByDossierIdCTN(long dossierid, String dossierIdCTN) throws PortalException, SystemException {
+		try {
+			return vrrpDossierStatisticsPersistence.findByDossierIdCTN(dossierid, dossierIdCTN);
+		} catch (Exception e) {
+			_log.error(e);
 		}
+		return new ArrayList<VRRPDossierStatistics>();
 		
-		vrrpDossierStatisticsPersistence.update(dossierStatistics);
-
-		return dossierStatistics;
 	}
+
+	public List<VRRPDossierStatistics> findByDossierId(long dossierid) {
+		try {
+			return vrrpDossierStatisticsPersistence.findByDossierId(dossierid);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public List<VRRPDossierStatistics> findByDossierNo(String DossierNo) throws PortalException, SystemException {
+		try {
+			return vrrpDossierStatisticsPersistence.findByDossierNo(DossierNo);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRRPDossierStatistics>();
+		
+	}
+	
+	public List<VRRPDossierStatistics> findByApplicantNo(String applicantNo) throws PortalException, SystemException {
+		try {
+			return vrrpDossierStatisticsPersistence.findByApplicantNo(applicantNo);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRRPDossierStatistics>();
+		
+	}
+	
+	public List<VRRPDossierStatistics> findByCorporationId(String corporationId) throws PortalException, SystemException {
+		try {
+			return vrrpDossierStatisticsPersistence.findByCorporationId(corporationId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRRPDossierStatistics>();
+		
+	}
+	
+	public List<VRRPDossierStatistics> findByInspectorcode(String inspectorcode) throws PortalException, SystemException {
+		try {
+			return vrrpDossierStatisticsPersistence.findByInspectorcode(inspectorcode);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRRPDossierStatistics>();
+		
+	}
+	
+	
+	private Log _log = LogFactoryUtil.getLog(VRRPDossierStatisticsLocalServiceImpl.class);
 }

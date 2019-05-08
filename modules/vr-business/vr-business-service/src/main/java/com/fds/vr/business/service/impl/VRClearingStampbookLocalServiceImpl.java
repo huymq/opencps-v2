@@ -15,8 +15,20 @@
 package com.fds.vr.business.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.fds.vr.business.model.VRClearingStampbook;
 import com.fds.vr.business.service.base.VRClearingStampbookLocalServiceBaseImpl;
+import com.fds.vr.business.service.base.VROutputSheetDetailsLocalServiceBaseImpl;
 
 /**
  * The implementation of the vr clearing stampbook local service.
@@ -40,4 +52,144 @@ public class VRClearingStampbookLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRClearingStampbookLocalServiceUtil} to access the vr clearing stampbook local service.
 	 */
+	
+	public VRClearingStampbook updateClearingStambook(long id, long mtCore, long debitNoteId, 
+			long inputSheetId, long outputSheetId, long bookId, long certificateId, String certificateNumber,
+			Date certificateDate, String vehicleClass, String stampType, String stampShortNo, String serialStartNo,
+			String serialEndNo, long subTotalInDocument, long subTotalQuantities, long vehiclePrice,
+			long unitPrice, long totalAmount, long totalInUse, long totalNotUsed, long totalLost,
+			long totalCancelled, long totalReturned, String remark)
+		throws PortalException, SystemException {
+		
+		VRClearingStampbook clearingStambook = null;
+		
+		if(id > 0) {
+			clearingStambook = vrClearingStampbookPersistence.findByPrimaryKey(id);
+		} else {
+			id = counterLocalService.increment(VRClearingStampbook.class.getName());
+			clearingStambook = vrClearingStampbookPersistence.create(id);
+		}
+		
+		clearingStambook.setModifyDate(new Date());
+		clearingStambook.setMtCore(mtCore);
+		clearingStambook.setDebitNoteId(debitNoteId);
+		clearingStambook.setInputSheetId(inputSheetId);
+		clearingStambook.setOutputSheetId(outputSheetId);
+		clearingStambook.setBookId(bookId);
+		clearingStambook.setCertificateId(certificateId);
+		clearingStambook.setCertificateNumber(certificateNumber);
+		clearingStambook.setCertificateDate(certificateDate);
+		clearingStambook.setVehicleClass(vehicleClass);
+		clearingStambook.setStampType(stampType);
+		clearingStambook.setStampShortNo(stampShortNo);
+		clearingStambook.setSerialStartNo(serialStartNo);
+		clearingStambook.setSerialEndNo(serialEndNo);
+		clearingStambook.setSubTotalInDocument(subTotalInDocument);
+		clearingStambook.setSubTotalQuantities(subTotalQuantities);
+		clearingStambook.setVehiclePrice(vehiclePrice);
+		clearingStambook.setUnitPrice(unitPrice);
+		clearingStambook.setTotalAmount(totalAmount);
+		clearingStambook.setTotalInUse(totalInUse);
+		clearingStambook.setTotalNotUsed(totalNotUsed);
+		clearingStambook.setTotalLost(totalLost);
+		clearingStambook.setTotalCancelled(totalCancelled);
+		clearingStambook.setTotalReturned(totalReturned);
+		clearingStambook.setRemark(remark);
+		
+		return vrClearingStampbookPersistence.update(clearingStambook);
+		
+	}
+	
+	public List<VRClearingStampbook> findByInputSheetId(long mtCore, long inputSheetId) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findByInputSheetId(mtCore, inputSheetId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+
+
+	public List<VRClearingStampbook> findByInputSheetIdAndBookId(long mtCore, long inputSheetId, long bookId) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findByInputSheetIdAndBookId(mtCore, inputSheetId, bookId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	
+	public List<VRClearingStampbook> findByOutputSheetId(long mtCore, long outputSheetId) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findByOutputSheetId(mtCore, outputSheetId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	
+	public List<VRClearingStampbook> findByOutputSheetIdAndBookId(long mtCore, long outputSheetId, long bookId) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findByOutputSheetIdAndBookId(mtCore, outputSheetId, bookId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	
+	public List<VRClearingStampbook> findByInputSheetIdAndBookIdAndStampType(long mtCore, long inputSheetId, long bookId, String stampType) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findByInputSheetIdAndBookIdAndStampType(mtCore, inputSheetId, bookId, stampType);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	
+	public List<VRClearingStampbook> findByOutputSheetIdAndBookIdAndStampType(long mtCore, long outputSheetId, long bookId, String stampType) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findByOutputSheetIdAndBookIdAndStampType(mtCore, outputSheetId, bookId, stampType);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	
+	public List<VRClearingStampbook> findBycertificateId(long mtCore, long certificateId) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findBycertificateId(mtCore, certificateId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	
+	public List<VRClearingStampbook> findBycertificateNumber(long mtCore, String certificateNumber) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findBycertificateNumber(mtCore, certificateNumber);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	
+	public List<VRClearingStampbook> findBydebitNoteId(long mtCore, long debitNoteId) throws PortalException, SystemException {
+		try {
+			return vrClearingStampbookPersistence.findBydebitNoteId(mtCore, debitNoteId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRClearingStampbook>();
+		
+	}
+	private Log _log = LogFactoryUtil.getLog(VRClearingStampbookLocalServiceImpl.class);
+
 }

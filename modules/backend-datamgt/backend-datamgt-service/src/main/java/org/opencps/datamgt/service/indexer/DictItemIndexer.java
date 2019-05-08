@@ -73,32 +73,27 @@ public class DictItemIndexer extends BaseIndexer<DictItem> {
 		document.addNumberSortable(DictItemTerm.LEVEL, dictItem.getLevel());
 		document.addTextSortable(DictItemTerm.META_DATA, dictItem.getMetaData());
 		
-		long dictCollectionId = dictItem.getDictCollectionId();
-		
-		DictCollection dictCollection = DictCollectionLocalServiceUtil.fetchDictCollection(dictCollectionId);
-		
+		DictCollection dictCollection = DictCollectionLocalServiceUtil.fetchDictCollection(dictItem.getDictCollectionId());
 		if(Validator.isNotNull(dictCollection)){
 			document.addTextSortable(DictItemTerm.DICT_COLLECTION_CODE, dictCollection.getCollectionCode());
 		}
 		
 		String parentCode = StringPool.BLANK;
-		
+		String parentItemName = StringPool.BLANK;
+		String parentItemNameEN = StringPool.BLANK;
 		if(dictItem.getParentItemId() > 0){
-			
 			DictItem parentItem = DictItemLocalServiceUtil.fetchDictItem(dictItem.getParentItemId());
-			
 			if (Validator.isNotNull(parentItem) && Validator.isNotNull(parentItem.getItemCode())) {
 				parentCode = parentItem.getItemCode();
-			} else {
-				_log.info(parentItem.getItemCode());
+				parentItemName = parentItem.getItemName();
+				parentItemNameEN = parentItem.getItemNameEN();
 			}
-			
-		}  else {
-			parentCode = "0";
 		}
 		
 		document.addTextSortable(DictItemTerm.PARENT_ITEM_CODE, parentCode);
-		
+		document.addTextSortable(DictItemTerm.PARENT_ITEM_NAME, parentItemName);
+		document.addTextSortable(DictItemTerm.PARENT_ITEM_NAME_EN, parentItemNameEN);
+
 		document.setSortableTextFields(new String[]{DictItemTerm.TREE_INDEX});
 		
 		return document;

@@ -297,6 +297,153 @@ public class DossierNumberGenerator {
 		return dossierNumber;
 	}
 
+	public static String generateDossierNumber(long groupId, long companyId, long dossierId, String serviceProcessCode,
+			String seriNumberPattern, LinkedHashMap<String, Object> params, SearchContext... searchContext)
+			throws ParseException, SearchException {
+
+		String dossierNumber = StringPool.BLANK;
+
+		String codePattern = "\\{(n+|N+)\\}";
+		String dayPattern = "\\{(d{2}|D{2})\\}";
+		String monthPattern = "\\{(m{2}|M{2})\\}";
+		String yearPattern = "\\{(y+|Y+)\\}";
+		String dynamicVariablePattern = "\\{\\$(.*?)\\}";
+		String defaultValuePattern = "^([A-Z]|[a-z])+\\d*\\s";
+		String extractValuePattern = "\\[\\$(.*?)\\$\\]";
+		String datetimePattern = "\\{([D|d]{2}[-\\/]{1}[M|m]{2}[-|\\/]{1}[Y|y]{4})\\}";
+		String[] patterns = new String[] { codePattern, dayPattern, monthPattern, yearPattern,
+				dynamicVariablePattern, datetimePattern };
+
+		Date now = new Date();
+
+		String day = String.valueOf(DateTimeUtils.getDayFromDate(now));
+		String month = String.valueOf(DateTimeUtils.getMonthFromDate(now));
+		String year = String.valueOf(DateTimeUtils.getYearFromDate(now));
+
+		if (patterns != null && patterns.length > 0) {
+			for (String pattern : patterns) {
+	
+				Pattern r = Pattern.compile(pattern);
+				Matcher m = r.matcher(seriNumberPattern);
+	
+				while (m.find()) {
+					String tmp = m.group(1);
+	
+					if (r.toString().equals(codePattern)) {
+	
+						//String key = "opencps.dossier.number.counter#" + processOtionId + "#" + year;
+						
+						String number = countByInit(serviceProcessCode, dossierId);
+						
+	//						_log.info("==DossierNumberGenerator==" + serviceProcessCode + "=" + tmp + "=" + number);
+						
+						_log.info("//////////////////////////////////////////////////////////// " + number
+								+ "|processOtionId= " + number);
+	
+						tmp = tmp.replaceAll(tmp.charAt(0) + StringPool.BLANK, String.valueOf(0));
+	
+						if (number.length() < tmp.length()) {
+							number = tmp.substring(0, tmp.length() - number.length()).concat(number);
+						}
+	
+	//						_log.info("==DossierNumberGenerator==" + codePattern + "=" + m.group(1) + "=" + number);
+						seriNumberPattern = seriNumberPattern.replace(m.group(0), number);
+	
+					} else if (r.toString().equals(datetimePattern)) {
+	//						System.out.println(tmp);
+	
+						seriNumberPattern = seriNumberPattern.replace(m.group(0), "OK");
+	
+					} else if (r.toString().equals(dayPattern)) {
+	
+						tmp = tmp.replaceAll(tmp.charAt(0) + StringPool.BLANK, String.valueOf(0));
+	
+						if (day.length() < tmp.length()) {
+							day = tmp.substring(0, tmp.length() - day.length()).concat(day);
+						} else if (day.length() > tmp.length()) {
+							day = day.substring(day.length() - tmp.length(), day.length());
+						}
+	
+						seriNumberPattern = seriNumberPattern.replace(m.group(0), day);
+	
+					} else if (r.toString().equals(monthPattern)) {
+	
+						tmp = tmp.replaceAll(tmp.charAt(0) + StringPool.BLANK, String.valueOf(0));
+	
+						if (month.length() < tmp.length()) {
+							month = tmp.substring(0, tmp.length() - month.length()).concat(month);
+						} else if (month.length() > tmp.length()) {
+							month = month.substring(month.length() - tmp.length(), month.length());
+						}
+	
+						seriNumberPattern = seriNumberPattern.replace(m.group(0), month);
+	
+					} else if (r.toString().equals(yearPattern)) {
+	
+						tmp = tmp.replaceAll(tmp.charAt(0) + StringPool.BLANK, String.valueOf(0));
+	
+						if (year.length() < tmp.length()) {
+							year = tmp.substring(0, tmp.length() - year.length()).concat(year);
+						} else if (year.length() > tmp.length()) {
+							year = year.substring(year.length() - tmp.length(), year.length());
+						}
+	
+						seriNumberPattern = seriNumberPattern.replace(m.group(0), year);
+	
+					} else if (r.toString().equals(dynamicVariablePattern)) {
+						Pattern r1 = Pattern.compile(defaultValuePattern);
+						Matcher m1 = r1.matcher(tmp);
+	
+						String defaultValue = (m1.find() ? m1.group() : StringPool.BLANK).trim();
+	
+						Pattern r2 = Pattern.compile(extractValuePattern);
+						Matcher m2 = r2.matcher(tmp);
+						String extractContent = (m2.find() ? m2.group(1) : StringPool.BLANK).trim();
+						String key = StringPool.BLANK;
+						String param = StringPool.BLANK;
+						String value = StringPool.BLANK;
+						String[] textSplit = StringUtil.split(extractContent, "@");
+						if (textSplit == null || textSplit.length < 2) {
+							seriNumberPattern = seriNumberPattern.replace(m.group(0), defaultValue);
+						} else {
+							key = textSplit[0];
+							param = textSplit[1];
+	
+							DossierFile dossierFile = null;
+							try {
+								dossierFile = DossierFileLocalServiceUtil.getDossierFileByDID_FTNO_First(dossierId,
+										param, false, new DossierFileComparator(false, "createDate", Date.class));
+	
+								String formData = dossierFile.getFormData();
+	
+								if (Validator.isNotNull(formData)) {
+									JSONObject object = JSONFactoryUtil.createJSONObject(formData);
+									if (object.has(key)) {
+										value = object.getString(key);
+									}
+								}
+	
+							} catch (Exception e) {
+								_log.error("Can not get data from online form! " + e);
+	
+								seriNumberPattern = seriNumberPattern.replace(m.group(0), defaultValue);
+							}
+	
+							seriNumberPattern = seriNumberPattern.replace(m.group(0), value);
+						}
+	
+					}
+	
+					m = r.matcher(seriNumberPattern);
+	
+				}
+			}
+			dossierNumber = seriNumberPattern;
+		}
+
+		return dossierNumber;
+	}
+
 	@Deprecated
 	public static String generateDossierNumber(String code, String pattern, long groupId, Long companyId, String agency,
 			String service, String template) throws ParseException, SearchException {
@@ -450,7 +597,7 @@ public class DossierNumberGenerator {
 				}
 
 
-				certNumber = String.format("%07d", _counterNumber); 
+				certNumber = String.format("%05d", _counterNumber); 
 				
 			} else {
 				certNumber = "0";

@@ -81,6 +81,9 @@ public class RegistrationUtils {
 			model.setRegistrationState(GetterUtil.getInteger(doc.get(RegistrationTerm.REGISTRATIONSTATE)));
 			model.setRegistrationClass(doc.get(RegistrationTerm.REGISTRATION_CLASS));
 			model.setSubmitting(GetterUtil.getBoolean(doc.get(RegistrationTerm.SUBMITTING)));
+			model.setRemarks(doc.get(RegistrationTerm.REMARKS));
+			model.setMarkasdeleted(GetterUtil.getInteger(doc.get(RegistrationTerm.MARK_AS_DELETED)));
+			
 			data.add(model);
 		}
 
@@ -122,6 +125,8 @@ public class RegistrationUtils {
 			model.setRegistrationState(registration.getRegistrationState());
 			model.setRegistrationClass(registration.getRegistrationClass());
 			model.setSubmitting(registration.getSubmitting());
+			model.setRemarks(registration.getRemarks());
+			model.setMarkasdeleted(registration.getMarkasdeleted());
 			data.add(model);
 		}
 
@@ -150,6 +155,8 @@ public class RegistrationUtils {
 		model.setGovAgencyCode(registration.getGovAgencyCode());
 		model.setRegistrationState(registration.getRegistrationState());
 		model.setRegistrationClass(registration.getRegistrationClass());
+		model.setRemarks(registration.getRemarks());
+		model.setMarkasdeleted(registration.getMarkasdeleted());
 
 		return model;
 	}
@@ -201,6 +208,8 @@ public class RegistrationUtils {
 			model.setRegistrationState(registration.getRegistrationState());
 			model.setRegistrationClass(registration.getRegistrationClass());
 			model.setSubmitting(registration.isSubmitting());
+			model.setRemarks(registration.getRemarks());
+			model.setMarkasdeleted(registration.getMarkasdeleted());
 
 			return model;
 
@@ -246,11 +255,14 @@ public class RegistrationUtils {
 			model.setRegistrationState(registration.getRegistrationState());
 			model.setRegistrationClass(registration.getRegistrationClass());
 			model.setSubmitting(registration.isSubmitting());
+			model.setRemarks(registration.getRemarks());
+			model.setMarkasdeleted(registration.getMarkasdeleted());
 
 			return model;
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			_log.info("Failed to mappingToRegistrationDetailResultModel");
 			return null;
 		}
 
@@ -273,14 +285,12 @@ public class RegistrationUtils {
 					JSONObject xuongSXJson = JSONFactoryUtil.createJSONObject();
 					String formData = regForm.getFormData();
 					long registrationFormId = regForm.getRegistrationFormId();
-					_log.info("formData: "+formData);
+					_log.debug("formData: "+formData);
 					try {
 						JSONObject formJson = JSONFactoryUtil.createJSONObject(formData);
 						String xuongSX = formJson.getString("ten_xuong_san_xuat");
 						if (Validator.isNotNull(xuongSX)) {
-							xuongSXJson.put("ten_xuong_san_xuat", xuongSX);
-							xuongSXJson.put("registrationFormId",registrationFormId);
-							data.put(xuongSXJson);
+							
 							}
 						} catch (Exception e) {
 							// TODO: handle exception

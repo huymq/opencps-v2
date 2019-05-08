@@ -15,7 +15,18 @@
 package com.fds.vr.business.service.impl;
 
 import aQute.bnd.annotation.ProviderType;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.fds.vr.business.model.VRCorporationInspector;
 import com.fds.vr.business.service.base.VRCorporationInspectorLocalServiceBaseImpl;
 
 /**
@@ -40,4 +51,47 @@ public class VRCorporationInspectorLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.fds.vr.business.service.VRCorporationInspectorLocalServiceUtil} to access the vr corporation inspector local service.
 	 */
+	
+	public VRCorporationInspector findByInspectorId(long inspectorid) throws PortalException, SystemException {
+		try {
+			return vrCorporationInspectorPersistence.findByInspectorId(inspectorid);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return null;
+		
+	}
+
+
+	public List<VRCorporationInspector> findByInspectorcode(String inspectorcode) throws PortalException, SystemException {
+		try {
+			return vrCorporationInspectorPersistence.findByInspectorcode(inspectorcode);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCorporationInspector>();
+		
+	}
+	
+	public List<VRCorporationInspector> findByCorporationId(String corporationId) throws PortalException, SystemException {
+		try {
+			return vrCorporationInspectorPersistence.findByCorporationId(corporationId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCorporationInspector>();
+		
+	}
+	
+	public List<VRCorporationInspector> findByTeamId(long teamId) throws PortalException, SystemException {
+		try {
+			return vrCorporationInspectorPersistence.findByTeamId(teamId);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+		return new ArrayList<VRCorporationInspector>();
+		
+	}
+	
+	private Log _log = LogFactoryUtil.getLog(VRCorporationInspectorLocalServiceImpl.class);
 }

@@ -19,7 +19,8 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
-@Component(immediate = true, service = BusinessSchedule.class)
+//SONVH commented 1/4/2019
+//@Component(immediate = true, service = BusinessSchedule.class)
 public class BusinessSchedule extends BaseSchedulerEntryMessageListener{
 	@Override
 	protected void doReceive(Message message) throws Exception {

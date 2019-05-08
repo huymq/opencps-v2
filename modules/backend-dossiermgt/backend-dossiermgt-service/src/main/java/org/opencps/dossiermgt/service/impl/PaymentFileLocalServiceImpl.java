@@ -669,8 +669,11 @@ public class PaymentFileLocalServiceImpl extends PaymentFileLocalServiceBaseImpl
 
 	@Override
 	public List<PaymentFile> getByDossierId(long dossierId) {
-		// TODO Auto-generated method stub
 		return paymentFilePersistence.findByDossierId(dossierId);
+	}
+
+	public List<PaymentFile> getByDID_ISN(long dossierId, boolean isNew) {
+		return paymentFilePersistence.findByDID_ISN(dossierId, isNew);
 	}
 
 }

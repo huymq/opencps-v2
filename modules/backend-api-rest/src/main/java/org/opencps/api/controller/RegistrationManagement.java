@@ -22,6 +22,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.opencps.api.registration.model.RegistrationInputModel;
+import org.opencps.api.registration.model.RegistrationModel;
+import org.opencps.api.registration.model.RegistrationResultsModel;
+import org.opencps.api.registration.model.RegistrationSearchModel;
 import org.opencps.api.registrationform.model.RegistrationFormInputModel;
 import org.opencps.exception.model.ExceptionModel;
 
@@ -36,9 +39,23 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@Api(value = "/registrations", description = "APIs for Deliverables")
+@Api(value = "/registrations", description = "APIs for Registrations")
 public interface RegistrationManagement {
 
+	@GET
+	@Path("/registrationlist")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Get a list of Registrations", response = RegistrationResultsModel.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = HttpURLConnection.HTTP_OK, message = "Returns a list of Registrations have been filtered", response = RegistrationResultsModel.class),
+			@ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized", response = ExceptionModel.class),
+			@ApiResponse(code = HttpURLConnection.HTTP_NOT_FOUND, message = "Not found", response = ExceptionModel.class),
+			@ApiResponse(code = HttpURLConnection.HTTP_FORBIDDEN, message = "Access denied", response = ExceptionModel.class) })
+
+	public Response getRegistrationList(@Context HttpServletRequest request, @Context HttpHeaders header,
+			@Context Company company, @Context Locale locale, @Context User user,
+			@Context ServiceContext serviceContext, @BeanParam RegistrationSearchModel query);
+	
 	@POST
 	@Path("/registrations")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })

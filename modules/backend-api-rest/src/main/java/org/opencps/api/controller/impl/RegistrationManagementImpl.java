@@ -24,6 +24,7 @@ import org.opencps.api.controller.RegistrationManagement;
 import org.opencps.api.controller.exception.ErrorMsg;
 import org.opencps.api.controller.util.RegistrationFormUtils;
 import org.opencps.api.controller.util.RegistrationUtils;
+import org.opencps.api.registration.model.RegistrationSearchModel;
 import org.opencps.api.registration.model.RegistrationDetailModel;
 import org.opencps.api.registration.model.RegistrationDetailResultModel;
 import org.opencps.api.registration.model.RegistrationInputModel;
@@ -42,8 +43,10 @@ import org.opencps.datamgt.service.DictCollectionLocalServiceUtil;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.dossiermgt.action.RegistrationActions;
 import org.opencps.dossiermgt.action.RegistrationFormActions;
+import org.opencps.dossiermgt.action.impl.DossierPermission;
 import org.opencps.dossiermgt.action.impl.RegistrationActionsImpl;
 import org.opencps.dossiermgt.action.impl.RegistrationFormActionsImpl;
+import org.opencps.dossiermgt.action.util.SpecialCharacterUtils;
 import org.opencps.dossiermgt.constants.DeliverableTerm;
 import org.opencps.dossiermgt.constants.RegistrationFormTerm;
 import org.opencps.dossiermgt.constants.RegistrationTerm;
@@ -159,16 +162,23 @@ public class RegistrationManagementImpl implements RegistrationManagement {
 			_log.info("cityName: "+cityName);
 			_log.info("districtName: "+districtName);
 			_log.info("wardName: "+wardName);
+			_log.info("input.getRegistrationState(): "+input.getRegistrationState());
 
 			RegistrationActions action = new RegistrationActionsImpl();
 
-			Registration registration = action.insert(groupId, companyId, input.getApplicantName(), input.getApplicantIdType(),
-					input.getApplicantIdNo(), input.getApplicantIdDate(), input.getAddress(), input.getCityCode(),
-					cityName, input.getDistrictCode(), districtName, input.getWardCode(), wardName,
-					input.getContactName(), input.getContactTelNo(), input.getContactEmail(), input.getGovAgencyCode(),
-					input.getGovAgencyName(), input.getRegistrationState(), input.getRegistrationClass(),
-					input.getRepresentativeEnterprise(), serviceContext);
-
+			Registration registration = action.insert(groupId, companyId, input.getApplicantName(),
+					input.getApplicantIdType(), input.getApplicantIdNo(), input.getApplicantIdDate(),
+					input.getAddress(), input.getCityCode(), cityName, input.getDistrictCode(), districtName,
+					input.getWardCode(), wardName, input.getContactName(), input.getContactTelNo(),
+					input.getContactEmail(), 
+					input.getGovAgencyCode(),
+					input.getGovAgencyName(),
+					Validator.isNotNull(input.getRegistrationState()) ? input.getRegistrationState() : 0,
+					input.getRegistrationClass(), 
+					input.getRepresentativeEnterprise(),
+					Validator.isNotNull(input.getMarkasdeleted()) ? input.getMarkasdeleted() : 0, input.getRemarks(),
+					serviceContext);
+			
 			result = RegistrationUtils.mappingToRegistrationDetailModel(registration);
 			return Response.status(200).entity(result).build();
 		} catch (Exception e) {
@@ -219,12 +229,14 @@ public class RegistrationManagementImpl implements RegistrationManagement {
 				wardName = getDictItemName(groupId, ADMINISTRATIVE_REGION, input.getWardCode());
 
 			}
+			//_log.info("RegistrationInputModel========" + JSONFactoryUtil.looseSerialize(input));
 			Registration registration = action.updateRegistration(groupId, registrationId, input.getApplicantName(),
 					input.getApplicantIdType(), input.getApplicantIdNo(), input.getApplicantIdDate(),
 					input.getAddress(), input.getCityCode(), cityName, input.getDistrictCode(), districtName,
 					input.getWardCode(), wardName, input.getContactName(), input.getContactTelNo(),
 					input.getContactEmail(), input.getGovAgencyCode(), input.getGovAgencyName(),
 					input.getRegistrationState(), input.getRegistrationClass(), input.getRepresentativeEnterprise(),
+					Validator.isNull(input.getMarkasdeleted()) ? input.getMarkasdeleted(): 0, input.getRemarks(),
 					serviceContext);
 
 			RegistrationDetailResultModel result = RegistrationUtils.mappingToRegistrationDetailResultModel(registration);
@@ -374,7 +386,9 @@ public class RegistrationManagementImpl implements RegistrationManagement {
 					input.getDistrictName(), input.getWardCode(), input.getWardName(), input.getContactName(),
 					input.getContactTelNo(), input.getContactEmail(), input.getGovAgencyCode(),
 					input.getGovAgencyName(), input.getRegistrationState(), input.getRegistrationClass(),
-					input.getRepresentativeEnterprise(), serviceContext);
+					input.getRepresentativeEnterprise(),
+					Validator.isNotNull(input.getMarkasdeleted()) ? input.getMarkasdeleted() : 0, input.getRemarks(),
+					serviceContext);
 
 			return Response.status(200).build();
 		} catch (Exception e) {
@@ -533,8 +547,9 @@ public class RegistrationManagementImpl implements RegistrationManagement {
 			for (Document doc : docList) {
 				String formData = doc.get(RegistrationFormTerm.FORM_DATA);
 				String registrationFormId = doc.get(RegistrationFormTerm.REGISTRATION_FORM_ID);
+				String formDataRemoved = doc.get(RegistrationFormTerm.REMOVED);
 				JSONObject formDataJson = null;
-				if (Validator.isNotNull(formData)) {
+				if (Validator.isNotNull(formData) && !Boolean.valueOf(formDataRemoved)) {
 					formDataJson = JSONFactoryUtil.createJSONObject(formData);
 					formDataJson.put("registrationFormId", registrationFormId);
 				}
@@ -582,6 +597,85 @@ public class RegistrationManagementImpl implements RegistrationManagement {
 			results.put("data", JsonArr);
 
 			return Response.status(200).entity(JSONFactoryUtil.looseSerialize(results)).build();
+
+		} catch (Exception e) {
+			return processException(e);
+		}
+	}
+	
+	@Override
+	public Response getRegistrationList(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
+			User user, ServiceContext serviceContext, RegistrationSearchModel query) {
+
+		BackendAuth auth = new BackendAuthImpl();
+		RegistrationActions actions = new RegistrationActionsImpl();
+		DossierPermission dossierPermission = new DossierPermission();
+		
+		try {
+
+			if (!auth.isAuth(serviceContext)) {
+				throw new UnauthenticationException();
+			}
+			long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
+
+			boolean isCitizen = dossierPermission.isCitizen(user.getUserId());
+			String status = query.getTtdnTinhTrang();
+			String agency = StringPool.BLANK;
+			
+			String registrationClass = query.getTtdnLoaiHinh();
+			String applicantName = query.getTtdnMaDoanhNghiep();
+			String address = query.getTtdnDiaChi();
+			String applicantIdNo = query.getTtdnMaSoThue();
+			
+			String submitting = StringPool.BLANK;
+			String keywordSearch = StringPool.BLANK;
+			String sort = StringPool.BLANK;			
+			String owner = StringPool.BLANK;
+			// If user is citizen then default owner true
+			if (isCitizen) {
+				owner = String.valueOf(true);
+			}
+			
+			if (query.getEnd() == 0) {
+
+				query.setStart(-1);
+
+				query.setEnd(-1);
+
+			}
+			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+
+			params.put(Field.GROUP_ID, String.valueOf(groupId));
+			keywordSearch = query.getKeyword();
+			String keySearch = StringPool.BLANK;
+			if (Validator.isNotNull(keywordSearch)) {
+				keySearch = SpecialCharacterUtils.splitSpecial(keywordSearch);
+			}
+			params.put(Field.KEYWORD_SEARCH, keySearch);
+			
+			params.put(RegistrationTerm.REGISTRATIONSTATE, status);
+			params.put(RegistrationTerm.GOV_AGENCY_CODE, agency);
+			params.put(RegistrationTerm.OWNER, owner);
+			params.put(RegistrationTerm.REGISTRATION_CLASS, registrationClass);
+			params.put(RegistrationTerm.SUBMITTING, submitting);
+			params.put(RegistrationTerm.APPLICATION_NAME, applicantName);
+			params.put(RegistrationTerm.ADDRESS, address);
+			params.put(RegistrationTerm.APPLICATION_ID_NO, applicantIdNo);
+			
+			
+			Sort[] sorts = new Sort[] { SortFactoryUtil.create(sort + "_sortable", Sort.STRING_TYPE, true) };
+
+			JSONObject jsonData = actions.getRegistrations(serviceContext.getUserId(), serviceContext.getCompanyId(),
+					groupId, params, sorts, query.getStart(), query.getEnd(), serviceContext);
+
+			RegistrationResultsModel results = new RegistrationResultsModel();
+			//
+			results.setTotal(jsonData.getInt("total"));
+
+			results.getData()
+					.addAll(RegistrationUtils.mappingToRegistrationResultModel((List<Document>) jsonData.get("data")));
+
+			return Response.status(200).entity(results).build();
 
 		} catch (Exception e) {
 			return processException(e);

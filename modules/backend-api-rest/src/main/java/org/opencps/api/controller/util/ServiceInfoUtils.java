@@ -15,8 +15,10 @@ import org.opencps.dossiermgt.action.ServiceConfigActions;
 import org.opencps.dossiermgt.action.impl.ServiceConfigActionImpl;
 import org.opencps.dossiermgt.constants.ServiceConfigTerm;
 import org.opencps.dossiermgt.constants.ServiceInfoTerm;
+import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.model.ServiceFileTemplate;
 import org.opencps.dossiermgt.model.ServiceInfo;
+import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceFileTemplateLocalServiceUtil;
 
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
@@ -67,32 +69,50 @@ public class ServiceInfoUtils {
 			
 			List<ServiceInfoServiceConfig> lsServiceConfig = new ArrayList<ServiceInfoServiceConfig>();
 
-			ServiceConfigActions serviceConfigActions = new ServiceConfigActionImpl();
+//			ServiceConfigActions serviceConfigActions = new ServiceConfigActionImpl();
+//
+//			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+//
+//			params.put(Field.GROUP_ID, String.valueOf(doc.get(Field.GROUP_ID)));
+//
+//			params.put(ServiceConfigTerm.SERVICE_CODE, doc.get(ServiceInfoTerm.SERVICE_CODE));
+//
+//			Sort[] sorts = new Sort[] {
+//					SortFactoryUtil.create("_sortable", Sort.STRING_TYPE, Boolean.getBoolean(StringPool.BLANK)) };
 
-			LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+//			JSONObject jsonData = serviceConfigActions.getServiceConfigs(serviceContext.getUserId(),
+//					serviceContext.getCompanyId(), Long.parseLong(doc.get(Field.GROUP_ID)), params, sorts,
+//					QueryUtil.ALL_POS, QueryUtil.ALL_POS, serviceContext);
+//
+//			List<Document> serviceConfigs = (List<Document>) jsonData.get("data");
+//
+//			for (Document serviceConfig : serviceConfigs) {
+//				ServiceInfoServiceConfig cf = new ServiceInfoServiceConfig();
+//
+//				cf.setGovAgencyCode(serviceConfig.get(ServiceConfigTerm.GOVAGENCY_CODE));
+//				cf.setGovAgencyName(serviceConfig.get(ServiceConfigTerm.GOVAGENCY_NAME));
+//				cf.setServiceInstruction(serviceConfig.get(ServiceConfigTerm.SERVICE_INSTRUCTION));
+//				cf.setServiceUr(serviceConfig.get(ServiceConfigTerm.SERVICE_URL));
+//				cf.setServiceLevel(Integer.parseInt(serviceConfig.get(ServiceConfigTerm.SERVICE_LEVEL)));
+//
+//				lsServiceConfig.add(cf);
+//			}
+			
+			
+			List<ServiceConfig> lstScs = ServiceConfigLocalServiceUtil.getByServiceInfo(Long.valueOf(doc.get(Field.GROUP_ID)), GetterUtil.getLong(doc.get(Field.ENTRY_CLASS_PK)));
+			
+//			List<Document> serviceConfigs = (List<Document>) jsonData.get("data");
 
-			params.put(Field.GROUP_ID, String.valueOf(doc.get(Field.GROUP_ID)));
-
-			params.put(ServiceConfigTerm.SERVICE_CODE, doc.get(ServiceInfoTerm.SERVICE_CODE));
-
-			Sort[] sorts = new Sort[] {
-					SortFactoryUtil.create("_sortable", Sort.STRING_TYPE, Boolean.getBoolean(StringPool.BLANK)) };
-
-			JSONObject jsonData = serviceConfigActions.getServiceConfigs(serviceContext.getUserId(),
-					serviceContext.getCompanyId(), Long.parseLong(doc.get(Field.GROUP_ID)), params, sorts,
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS, serviceContext);
-
-			List<Document> serviceConfigs = (List<Document>) jsonData.get("data");
-
-			for (Document serviceConfig : serviceConfigs) {
+			for (ServiceConfig sc : lstScs) {
 				ServiceInfoServiceConfig cf = new ServiceInfoServiceConfig();
 
-				cf.setGovAgencyCode(serviceConfig.get(ServiceConfigTerm.GOVAGENCY_CODE));
-				cf.setGovAgencyName(serviceConfig.get(ServiceConfigTerm.GOVAGENCY_NAME));
-				cf.setServiceInstruction(serviceConfig.get(ServiceConfigTerm.SERVICE_INSTRUCTION));
-				cf.setServiceUr(serviceConfig.get(ServiceConfigTerm.SERVICE_URL));
-				cf.setServiceLevel(Integer.parseInt(serviceConfig.get(ServiceConfigTerm.SERVICE_LEVEL)));
-
+				cf.setGovAgencyCode(sc.getGovAgencyCode());
+				cf.setGovAgencyName(sc.getGovAgencyName());
+				cf.setServiceInstruction(sc.getServiceInstruction());
+				cf.setServiceUr(sc.getServiceUrl());
+				cf.setServiceLevel(sc.getServiceLevel());
+				cf.setServiceConfigId(sc.getServiceConfigId());
+				
 				lsServiceConfig.add(cf);
 			}
 			

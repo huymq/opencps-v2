@@ -195,7 +195,7 @@ public interface DataManagement {
 			@Context Company company, @Context Locale locale, @Context User user, @Context ServiceContext serviceContext,
 			@ApiParam(value = "code of DictCollection of DictItem that need to be gotten list", required = true) @PathParam("code") String code,
 			@BeanParam DataSearchModel query);
-
+	
 	@POST
 	@Path("/{code}/dictitems")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
@@ -399,4 +399,52 @@ public interface DataManagement {
 	public Response getSyncDictGroups(@Context HttpServletRequest request, @Context HttpHeaders header,
 			@Context Company company, @Context Locale locale, @Context User user, @Context ServiceContext serviceContext,
 			@BeanParam org.opencps.api.datamgtsync.model.DataSearchModel query);
+	
+	
+	
+	@GET
+	@Path("/{collectionCode}/dictitems/level")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Get DictItem list of DictCollectin", response = DictItemResults.class, notes = "Get DictItem list of DictCollection")
+	@ApiResponses(value = {
+			@ApiResponse(code = HttpURLConnection.HTTP_OK, message = "Get DictItem list of DictCollectin", response = DictItemResults.class),
+			@ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
+			@ApiResponse(code = HttpURLConnection.HTTP_NOT_FOUND, message = "Not found"),
+			@ApiResponse(code = HttpURLConnection.HTTP_INTERNAL_ERROR, message = "Internal server problems") })
+	public Response getDictItemsByCollection_Level_OrderBy(@Context HttpServletRequest request, @Context HttpHeaders header,
+			@Context Company company, @Context Locale locale, @Context User user, @Context ServiceContext serviceContext,
+			@ApiParam(value = "code of DictCollection of DictItem that need to be gotten list", required = true) @PathParam("collectionCode") String collectionCode,
+			@BeanParam DataSearchModel query);
+
+	@GET
+	@Path("/{collectionCode}/dictitems/grouplevel/dictgroups/{groupCode}")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Get DictItem list of DictCollectin", response = DictItemResults.class, notes = "Get DictItem list of DictCollection")
+	@ApiResponses(value = {
+			@ApiResponse(code = HttpURLConnection.HTTP_OK, message = "Get DictItem list of DictCollectin", response = DictItemResults.class),
+			@ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
+			@ApiResponse(code = HttpURLConnection.HTTP_NOT_FOUND, message = "Not found"),
+			@ApiResponse(code = HttpURLConnection.HTTP_INTERNAL_ERROR, message = "Internal server problems") })
+	public Response getDictItemsByCollection_Group_Level_OrderBy(@Context HttpServletRequest request, @Context HttpHeaders header,
+			@Context Company company, @Context Locale locale, @Context User user, @Context ServiceContext serviceContext,
+			@ApiParam(value = "code of DictCollection of DictItem that need to be gotten list", required = true) @PathParam("collectionCode") String collectionCode,
+			@PathParam("groupCode") String groupCode, 
+			@BeanParam DataSearchModel query);
+	
+	@GET
+	@Path("/{collectionCode}/dictitems/parentlevel")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Get DictItem list of DictCollectin", response = DictItemResults.class, notes = "Get DictItem list of DictCollection")
+	@ApiResponses(value = {
+			@ApiResponse(code = HttpURLConnection.HTTP_OK, message = "Get DictItem list of DictCollectin", response = DictItemResults.class),
+			@ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
+			@ApiResponse(code = HttpURLConnection.HTTP_NOT_FOUND, message = "Not found"),
+			@ApiResponse(code = HttpURLConnection.HTTP_INTERNAL_ERROR, message = "Internal server problems") })
+	public Response getDictItemsByCollection_Parent_Level_OrderBy(@Context HttpServletRequest request, @Context HttpHeaders header,
+			@Context Company company, @Context Locale locale, @Context User user, @Context ServiceContext serviceContext,
+			@ApiParam(value = "code of DictCollection of DictItem that need to be gotten list", required = true) @PathParam("collectionCode") String collectionCode,
+			@BeanParam DataSearchModel query);
 }

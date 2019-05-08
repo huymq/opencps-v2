@@ -74,7 +74,7 @@ public class DossierBriefNoteListenner extends BaseModelListener<DossierFile> {
 						String briefNoteStep = processStep.getBriefNote();
 //						_log.info("briefNoteStep: " + briefNoteStep);
 						if (Validator.isNotNull(briefNoteStep)) {
-							briefNote = DossierContentGenerator.getBriefNote(groupId, dossierId, briefNoteStep);
+							briefNote = DossierContentGenerator.getBriefNote(dossier, briefNoteStep);
 //							_log.info("briefNote: " + briefNote);
 							break;
 						}

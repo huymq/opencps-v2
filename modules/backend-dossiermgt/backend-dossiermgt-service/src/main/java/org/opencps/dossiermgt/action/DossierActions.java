@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierAction;
+import org.opencps.dossiermgt.model.ProcessAction;
+import org.opencps.dossiermgt.model.ProcessOption;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -62,8 +64,8 @@ public interface DossierActions {
 	public Dossier resetDossier(long groupId, long dossierId, String referenceUid, ServiceContext context)
 			throws PortalException;
 
-	public DossierAction doAction(long groupId, long dossierId, String referenceUid, String actionCode,
-			long processActionId, String actionUser, String actionNote, long assignUserId, long userId, String subUsers,
+	public DossierAction doAction(long groupId, Dossier dossier, ProcessOption option, ProcessAction proAction,
+			String actionCode, String actionUser, String actionNote, long assignUserId, long userId, String subUsers,
 			ServiceContext context) throws PortalException;
 
 	public Dossier markerVisited(long groupId, long dossierId, String referenceUid) throws PortalException;
@@ -95,5 +97,12 @@ public interface DossierActions {
 
 	public JSONObject getDossierCountTodoPermission(long userId, long companyId, long groupId,
 			LinkedHashMap<String, Object> params, Object object, ServiceContext serviceContext);
+
+	public JSONArray getNextActionList(long userId, long companyId, long groupId, LinkedHashMap<String, Object> params,
+			Sort[] sorts, Integer start, Integer end, ServiceContext serviceContext);
+
+	public JSONObject getDetailNextActions(long userId, long companyId, long groupId,
+			LinkedHashMap<String, Object> params, Sort[] sorts, Integer start, Integer end,
+			ServiceContext serviceContext);
 
 }

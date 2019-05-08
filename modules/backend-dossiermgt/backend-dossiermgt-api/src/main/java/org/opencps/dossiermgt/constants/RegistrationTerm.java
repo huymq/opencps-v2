@@ -29,4 +29,11 @@ public class RegistrationTerm {
 	public static final String CONTACT_EMAIL = "contactEmail";
 	public static final String GOV_AGENCY_NAME = "govAgencyName";
 	public static final String REPRESENTATIVE_ENTERPRISE = "representativeEnterprise";
+	public static final String ttdnMaDoanhNghiep = "ttdnMaDoanhNghiep";
+	public static final String ttdnMaSoThue = "ttdnMaSoThue";
+	public static final String ttdnLoaiHinh = "ttdnLoaiHinh";
+	public static final String ttdnTinhTrang = "ttdnTinhTrang";
+	public static final String ttdnDiaChi = "ttdnDiaChi";
+	public static final String REMARKS = "remarks";
+	public static final String MARK_AS_DELETED = "markasdeleted";
 }

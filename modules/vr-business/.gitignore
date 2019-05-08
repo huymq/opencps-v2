@@ -2,18 +2,8 @@
 build/
 target/
 bin/
-**/vr-business-api/**/model/
-**/vr-business-api/**/exception/
-**/vr-business-api/**/service/
-**/vr-business-api/**/service/persistence/
 **/.DS_Store
 **/**.class
-
-##Ignore tracking in service layer
-**/model/impl/
-**/service/base/
-**/service/persistence/impl/
-**/service/http/
 
 ##Ignore database
 **/indexes.sql
@@ -22,7 +12,6 @@ bin/
 **/module-hbm.xml
 **/portlet-model-hints.xml
 **/module-spring.xml
-**/service.properties
 **/sql/**
 **/**/**.sql
 

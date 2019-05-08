@@ -20,6 +20,7 @@ import org.opencps.auth.api.exception.UnauthorizationException;
 import org.opencps.dossiermgt.action.DossierFileActions;
 import org.opencps.dossiermgt.action.impl.DossierFileActionsImpl;
 import org.opencps.dossiermgt.action.util.AutoFillFormData;
+import org.opencps.dossiermgt.action.util.DossierMgtUtils;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierAction;
 import org.opencps.dossiermgt.model.DossierActionUser;
@@ -58,7 +59,7 @@ public class ProcessPluginManagementImpl implements ProcessPluginManagement {
 			User user, ServiceContext serviceContext, String id) {
 
 		long groupId = GetterUtil.getLong(header.getHeaderString("groupId"));
-
+		long userId = user.getUserId();
 		BackendAuth auth = new BackendAuthImpl();
 
 		try {
@@ -67,63 +68,56 @@ public class ProcessPluginManagementImpl implements ProcessPluginManagement {
 				throw new UnauthenticationException();
 			}
 			
-			Dossier dossier = getDossier(id, groupId);
-			
+			Dossier dossier = DossierMgtUtils.getDossier(id, groupId);
 			if (Validator.isNotNull(dossier)) {
-
 				long dossierActionId = dossier.getDossierActionId();
-				
-				long userId = user.getUserId();
-				
-				List<DossierActionUser> dossierActionUsers = DossierActionUserLocalServiceUtil.getListUser(dossierActionId);
-				
-				boolean hasPermission = false;
-				
-				for (DossierActionUser actionUser : dossierActionUsers) {
-					if (actionUser.getUserId() == userId && actionUser.getModerator() == 1) {
+				if (dossierActionId != 0) {
+					DossierActionUser dau = DossierActionUserLocalServiceUtil.getByDID_UID_MOD(dossierActionId, userId, 1);
+					boolean hasPermission = false;
+					if (dau != null) {
 						hasPermission = true;
 					}
-				}
-				
-				if (!hasPermission) {
-					
-					JSONObject resultsNull = JSONFactoryUtil.createJSONObject();
+//					for (DossierActionUser actionUser : dossierActionUsers) {
+//						if (actionUser.getUserId() == userId && actionUser.getModerator() == 1) {
+//							hasPermission = true;
+//						}
+//					}
 
-					resultsNull.put("total", 0);
-					
-					return Response.status(200).entity(JSONFactoryUtil.looseSerialize(resultsNull)).build();
-				}
-				
-				if (dossierActionId != 0) {
+					if (!hasPermission) {
 
-					DossierAction dossierAction = DossierActionLocalServiceUtil.getDossierAction(dossierActionId);
-
-					String stepCode = dossierAction.getStepCode();
-
-					List<ProcessPlugin> plugins = ProcessPluginLocalServiceUtil
-							.getProcessPlugins(dossierAction.getServiceProcessId(), stepCode);
-
-					JSONObject results = JSONFactoryUtil.createJSONObject();
-
-					int total = plugins.size();
-
-					results.put("total", total);
-
-					JSONArray dataArr = JSONFactoryUtil.createJSONArray();
-
-					for (ProcessPlugin plugin : plugins) {
-						JSONObject elm = JSONFactoryUtil.createJSONObject();
-
-						elm.put("processPluginId", plugin.getPrimaryKey());
-						elm.put("pluginName", plugin.getPluginName());
-
-						dataArr.put(elm);
+						JSONObject resultsNull = JSONFactoryUtil.createJSONObject();
+						resultsNull.put("total", 0);
+						return Response.status(200).entity(JSONFactoryUtil.looseSerialize(resultsNull)).build();
 					}
+				
+					DossierAction dossierAction = DossierActionLocalServiceUtil.getDossierAction(dossierActionId);
+					//String stepCode = dossierAction.getStepCode();
+					if (dossierAction != null) {
+						List<ProcessPlugin> plugins = ProcessPluginLocalServiceUtil
+								.getProcessPlugins(dossierAction.getServiceProcessId(), dossierAction.getStepCode());
 
-					results.put("data", dataArr);
+						JSONObject results = JSONFactoryUtil.createJSONObject();
+						if (plugins != null && plugins.size() > 0) {
 
-					return Response.status(200).entity(JSONFactoryUtil.looseSerialize(results)).build();
+							results.put("total", plugins.size());
 
+							JSONArray dataArr = JSONFactoryUtil.createJSONArray();
+
+							for (ProcessPlugin plugin : plugins) {
+								JSONObject elm = JSONFactoryUtil.createJSONObject();
+
+								elm.put("processPluginId", plugin.getPrimaryKey());
+								elm.put("pluginName", plugin.getPluginName());
+
+								dataArr.put(elm);
+							}
+
+							results.put("data", dataArr);
+						}
+						return Response.status(200).entity(JSONFactoryUtil.looseSerialize(results)).build();
+					} else {
+						throw new Exception("The dossier wasn't on process");
+					}
 				} else {
 					throw new Exception("The dossier wasn't on process");
 				}
@@ -179,7 +173,7 @@ public class ProcessPluginManagementImpl implements ProcessPluginManagement {
 				throw new UnauthenticationException();
 			}
 
-			Dossier dossier = getDossier(id, groupId);
+			Dossier dossier = DossierMgtUtils.getDossier(id, groupId);
 
 			if (Validator.isNotNull(dossier)) {
 
@@ -255,7 +249,7 @@ public class ProcessPluginManagementImpl implements ProcessPluginManagement {
 				throw new UnauthenticationException();
 			}
 
-			Dossier dossier = getDossier(id, groupId);
+			Dossier dossier = DossierMgtUtils.getDossier(id, groupId);
 
 			if (Validator.isNotNull(dossier)) {
 
@@ -318,24 +312,6 @@ public class ProcessPluginManagementImpl implements ProcessPluginManagement {
 
 	}
 
-	private Dossier getDossier(String id, long groupId) {
-		Dossier dossier = null;
-
-		long dossierId = GetterUtil.getLong(id);
-
-		try {
-			if (dossierId != 0) {
-				dossier = DossierLocalServiceUtil.getDossier(dossierId);
-			} else {
-				dossier = DossierLocalServiceUtil.getByRef(groupId, id);
-			}
-		} catch (Exception e) {
-			_log.info("Cant get dossier_" + id);
-		}
-
-		return dossier;
-	}
-
 	@Override
 	public Response getPreview(HttpServletRequest request, HttpHeaders header, Company company, Locale locale,
 			User user, ServiceContext serviceContext, String id, long pluginid) {
@@ -350,7 +326,7 @@ public class ProcessPluginManagementImpl implements ProcessPluginManagement {
 				throw new UnauthenticationException();
 			}
 
-			Dossier dossier = getDossier(id, groupId);
+			Dossier dossier = DossierMgtUtils.getDossier(id, groupId);
 
 			if (Validator.isNotNull(dossier)) {
 
@@ -588,7 +564,7 @@ public class ProcessPluginManagementImpl implements ProcessPluginManagement {
 				throw new UnauthenticationException();
 			}
 
-			Dossier dossier = getDossier(id, groupId);
+			Dossier dossier = DossierMgtUtils.getDossier(id, groupId);
 
 			if (Validator.isNotNull(dossier)) {
 

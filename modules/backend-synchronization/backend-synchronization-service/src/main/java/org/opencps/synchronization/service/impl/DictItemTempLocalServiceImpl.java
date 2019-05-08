@@ -695,9 +695,9 @@ public class DictItemTempLocalServiceImpl
 		String dictItemParentId = String.valueOf(params.get(DictItemTempTerm.PARENT_ITEM_ID));
 		String parentItemCode = (String) params.get(DictItemTempTerm.PARENT_ITEM_CODE);
 
-		if (Validator.isNull(parentItemCode)) {
-			parentItemCode = "0";
-		}
+//		if (Validator.isNull(parentItemCode)) {
+//			parentItemCode = "0";
+//		}
 
 		String dictItemCode = (String) params.get(DictItemTempTerm.ITEM_CODE);
 		String keywords = (String) params.get("keywords");
