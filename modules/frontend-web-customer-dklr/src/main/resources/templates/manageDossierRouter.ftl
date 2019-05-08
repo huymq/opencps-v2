@@ -87,6 +87,30 @@
 
 		});
 
+		manageDossier.route("/dossiers/(:id)/thong-bao-dung", function(id){
+			$("#mainType2").html("");
+			$("#panel_list").show();
+			$("#mainType1").removeClass("col-sm-12").addClass("col-sm-10");
+			$("#mainType1").hide();
+			$("#mainType2").show();
+			$("#mainType2").load("${ajax.customer_dossier_detail_4}&${portletNamespace}dossierId="+id+"&${portletNamespace}resExpired=true",function(result){
+			});
+			getTotal();
+
+		});
+
+		manageDossier.route("/dossiers/(:id)/mo-rong-hieu-luc", function(id){
+			$("#mainType2").html("");
+			$("#panel_list").show();
+			$("#mainType1").removeClass("col-sm-12").addClass("col-sm-10");
+			$("#mainType1").hide();
+			$("#mainType2").show();
+			$("#mainType2").load("${ajax.customer_dossier_detail_4}&${portletNamespace}dossierId="+id+"&${portletNamespace}resExtending=true",function(result){
+			});
+			getTotal();
+
+		});
+
 		
 		manageDossier.route("/dossiers/(:id)/guibosung", function(id){
 			$("#panel_list").show();
@@ -148,7 +172,7 @@
 						"state":"cancelling"
 
 					});
-				}else if(id == "correcting"){
+				} else if(id == "correcting"){
 					dataSourceProfile.read({
 						"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 						"serviceInfo" : $("#serviceInfo").val(),
@@ -157,7 +181,7 @@
 						"statusReg" : 3
 
 					});
-				}else if (id == "endorsement") {
+				} else if (id == "endorsement") {
 					dataSourceProfile.read({
 						"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 						"serviceInfo" : $("#serviceInfo").val(),
@@ -165,7 +189,7 @@
 						"state" : "endorsement",
 						"statusReg" : 3
 					});
-				}else if (id == "done") {
+				} else if (id == "done") {
 					dataSourceProfile.read({
 						"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 						"serviceInfo" : $("#serviceInfo").val(),
@@ -173,7 +197,16 @@
 						"status" : "done",
 						"notStatusReg" : 3
 					});
-				}else {
+				} else if (id == "EXPIRED") {
+					dataSourceProfile.read({
+						"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
+						"serviceInfo" : $("#serviceInfo").val(),
+						"govAgencyCode" : $("#govAgency").val(),
+						"status" : "EXPIRED",
+						"notStatusReg" : 3,
+						"url": "/o/rest/v2/dossiers"
+					});
+				} else {
 					dataSourceProfile.read({
 						"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 						"serviceInfo" : $("#serviceInfo").val(),

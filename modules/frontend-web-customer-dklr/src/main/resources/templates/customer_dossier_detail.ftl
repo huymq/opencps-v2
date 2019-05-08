@@ -96,86 +96,111 @@
 				</div>
 				<div class="content-part collapse" id="collapseDossierI" style="pointer-events:none;">
 					<div class="row-parts-head MT5">
-						<div class="row MT5">
 							
-							<div class="col-sm-2 PT5 text-right">
-								Họ và tên
-							</div>
-							<div class="col-sm-10">
-								<div class="form-group"> 
-									<input type="text" class="form-control" data-bind="value : applicantName" id="applicantName" name="applicantName" required="required" validationMessage="Bạn phải điền họ tên"> 
-									<span data-for="applicantName" class="k-invalid-msg"></span>
+							<div class="row">
+								<div class="col-md-2 lh32 text-right">
+									Họ và tên
 								</div>
-								
-							</div>
+								<div class="col-md-10">
+									<div class="form-group"> 
+										<input type="text" class="form-control" data-bind="value : applicantName" id="applicantName" name="applicantName" required="required" validationMessage="Bạn phải điền họ tên"> 
+										<span data-for="applicantName" class="k-invalid-msg"></span>
+									</div>
 
-							<div class="col-sm-2 PT5 text-right">
-								Địa chỉ
-							</div>
-							<div class="col-sm-10">
-								<div class="form-group"> 
-									<input type="text" class="form-control" data-bind="value: address" id="address" name="address"> 
 								</div>
 							</div>
 
-							<div class="col-sm-2 PT5 text-right">
-								Tỉnh/ Thành phố <span class="red">(*)</span>
-							</div>
-							<div class="col-sm-2 PR0">
-								<div class="form-group"> 
-									<select class="form-control" id="cityCode" name="cityCode" data-bind="value : cityCode" required="required" validationMessage="Bạn phải chọn Tỉnh/ Thành phố"> 
-									</select>
-									<span data-for="cityCode" class="k-invalid-msg"></span>
+							<div class="row">
+								<div class="col-md-2 lh32 text-right">
+									Địa chỉ
+								</div>
+								<div class="col-md-10">
+									<div class="form-group"> 
+										<input type="text" class="form-control" data-bind="value: address" id="address" name="address"> 
+									</div>
 								</div>
 							</div>
 
-							<div class="col-sm-2 PT5 text-right">
-								Quận/ Huyện <span class="red">(*)</span>
-							</div>
-							<div class="col-sm-2 PR0">
-								<div class="form-group"> 
-									<select class="form-control" id="districtCode" name="districtCode" data-bind="value : districtCode" required="required" validationMessage="Bạn phải chọn Quận/ Huyện"> 
-									</select>
-									<span data-for="districtCode" class="k-invalid-msg"></span>
+							<div class="row">
+								<div class="col-sm-4">
+									<div class="row">
+										<div class="col-md-6 lh32 text-right">
+											Tỉnh/ Thành phố <span class="red">(*)</span>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group"> 
+												<select class="form-control" id="cityCode" name="cityCode" data-bind="value : cityCode" required="required" validationMessage="Bạn phải chọn Tỉnh/ Thành phố"> 
+												</select>
+												<span data-for="cityCode" class="k-invalid-msg"></span>
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
-							
-							<div class="col-sm-2 PT5 text-right">
-								Xã/ Phường <span class="red">(*)</span>
-							</div>
-							<div class="col-sm-2 PL0">
-								<div class="form-group"> 
-									<select class="form-control" id="wardCode" name="wardCode" data-bind="value : wardCode" required="required" validationMessage="Bạn phải chọn Xã/ Phường"> 
-									</select>
-									<span data-for="wardCode" class="k-invalid-msg"></span>
+
+								<div class="col-sm-4">
+									<div class="row">
+										<div class="col-md-6 lh32 text-right">
+											Quận/ Huyện <span class="red">(*)</span>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group"> 
+												<select class="form-control" id="districtCode" name="districtCode" data-bind="value : districtCode" required="required" validationMessage="Bạn phải chọn Quận/ Huyện"> 
+												</select>
+												<span data-for="districtCode" class="k-invalid-msg"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="row">
+										<div class="col-md-6 lh32 text-right">
+											Xã/ Phường <span class="red">(*)</span>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group"> 
+												<select class="form-control" id="wardCode" name="wardCode" data-bind="value : wardCode" required="required" validationMessage="Bạn phải chọn Xã/ Phường"> 
+												</select>
+												<span data-for="wardCode" class="k-invalid-msg"></span>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 
-							<div class="col-sm-2 PT5 text-right">
-								Điện thoại
-							</div>
-							<div class="col-sm-2 PR0">
-								<div class="form-group"> 
-									<input type="text" class="form-control" id="contactTelNo" name="contactTelNo" data-bind="value : contactTelNo" required="required" validationMessage="Bạn phải điền số điện thoại">
-									<span data-for="contactTelNo" class="k-invalid-msg"></span> 
+							<div class="row">
+								<div class="col-sm-4">
+									<div class="row">
+										<div class="col-md-6 lh32 text-right">
+											Điện thoại
+										</div>
+										<div class="col-md-6">
+											<div class="form-group"> 
+												<input type="text" class="form-control" id="contactTelNo" name="contactTelNo" data-bind="value : contactTelNo" required="required" validationMessage="Bạn phải điền số điện thoại">
+												<span data-for="contactTelNo" class="k-invalid-msg"></span> 
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
-							
-							<div class="col-sm-2 PT5 text-right">
-								Địa chỉ email
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group"> 
-									<input type="text" class="form-control" id="contactEmail" name="contactEmail" data-bind="value : contactEmail" required="required" validationMessage="Bạn phải điền email">
-									<span data-for="contactEmail" class="k-invalid-msg"></span> 
+
+								<div class="col-sm-8">
+									<div class="row">
+										<div class="col-md-3 lh32 text-right">
+											Địa chỉ email
+										</div>
+										<div class="col-md-9">
+											<div class="form-group"> 
+												<input type="text" class="form-control" id="contactEmail" name="contactEmail" data-bind="value : contactEmail" required="required" validationMessage="Bạn phải điền email">
+												<span data-for="contactEmail" class="k-invalid-msg"></span> 
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 
 							<input type="hidden" name="serviceCode" id="serviceCode" data-bind="value:serviceCode">
 							<input type="hidden" name="govAgencyCode_" id="govAgencyCode_" data-bind="value:govAgencyCode">
 							<input type="hidden" name="dossierTemplateNo" id="dossierTemplateNo" data-bind="value:dossierTemplateNo">
-
-						</div>
 					</div>
 				</div>
 			</div>
@@ -859,7 +884,8 @@
 				data : {
 					actionCode  : 1100,
 					actionNote :  $("textarea#applicantNote").val(),
-					actionUser: '${(userInfo.actionUser)!}'
+					actionUser: '${(userInfo.actionUser)!}',
+					payment: ""
 				},
 				success : function(result){
 					$("#btn-save-dossier").button('reset');
@@ -901,7 +927,14 @@
 							parent : 0
 						},
 						success : function(result){
-							options.success(result);
+							if (result.data) {
+								options.success(result);
+							} else {
+								options.success({
+									data: [],
+									total: 0
+								});
+							}
 						},
 						error : function(result){
 							options.error(result);

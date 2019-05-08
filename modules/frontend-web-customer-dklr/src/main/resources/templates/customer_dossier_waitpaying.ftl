@@ -220,13 +220,13 @@
 							<div id="unpaid">
 								<div class="row MB10">
 									<div class="col-sm-12">
-										<button class="btn btn-sm btn-border-color MR10 text-light-blue" id="dossier-payment-online" data-bind="attr : {data-pk : referenceUid}">Thanh toán trực tuyến</button> 
-										<button class="btn btn-sm btn-border-color MR10 text-light-blue" data-bind="attr : {data-pk : referenceUid}" id="dossier-payment-confirm">Thông báo đã nộp chuyển khoản</button>
-										<button class="btn btn-sm btn-border-color text-light-blue" id="dossier-payment-viewpdf" data-bind="attr : {data-pk : referenceUid}">Xem phiếu thanh toán</button>
+										<button class="btn btn-sm btn-border-color MR10 text-light-blue btn-payment" id="dossier-payment-online" data-bind="attr : {data-pk : referenceUid}">Thanh toán trực tuyến</button> 
+										<button class="btn btn-sm btn-border-color MR10 text-light-blue btn-payment" data-bind="attr : {data-pk : referenceUid}" id="dossier-payment-confirm">Thông báo đã nộp chuyển khoản</button>
+										<button class="btn btn-sm btn-border-color text-light-blue btn-payment" id="dossier-payment-viewpdf" data-bind="attr : {data-pk : referenceUid}">Xem phiếu thanh toán</button>
 									</div>
 								</div>
 
-								<div class="row MB20 MT20" data-bind="value: isPay">
+								<div class="row MB20 MT20" data-bind="value: isPay" style="display: none;" id="display_upload_img_payment">
 									<div class="col-sm-12 text-center">
 										<div class="row">
 											<div class="col-sm-4">
@@ -293,6 +293,7 @@
 </div>
 <div class="button-row MT20">
 	<button class="btn btn-active" type="button" onclick="fnBack();"><i class="fa fa-reply" aria-hidden="true"></i> Quay lại</button>
+	<button class="btn btn-active" style="display: none;" id="btn-payment-accept-dossier" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Đang xử lý..."><i class="fa fa-paper-plane" ></i> Xác nhận</button>
 </div>
 </div>
 
@@ -314,6 +315,8 @@
 				success : function(result){
 					if(result.data){
 						resultModel = result.data[0];
+					} else {
+						$("#btn-payment-accept-dossier").remove();
 					}
 				},
 				error :  function(result){
@@ -373,6 +376,7 @@
 						referenceUid : function(e){
 							console.log(this.get('paymentDossier'));
 							if(this.get('paymentDossier').referenceUid){
+								$("#btn-payment-accept-dossier").attr("referenceUid", this.get('paymentDossier').referenceUid);
 								return this.get('paymentDossier').referenceUid;
 							}
 							return "";
@@ -467,6 +471,8 @@
 
 	$("#dossier-payment-online").click(function(){
 		var referenceUid = $(this).attr("data-pk");
+		$(".btn-payment").addClass('btn-border-color');
+		$(this).removeClass('btn-border-color');
 		if(referenceUid){
 			$.ajax({
 				url : "${api.server}/dossiers/${dossierId}/payments/"+referenceUid+"/epaymentprofile",
@@ -487,63 +493,72 @@
 		}
 	});
 
-	
-	$("#dossier-payment-confirm").click(function(){
+	$("#btn-payment-accept-dossier").click(function (event) {
+		event.preventDefault();
+		var referenceUid = $(this).attr('referenceUid');
+		var data = new FormData();
+
+		data.append( 'file', $("#filePayment")[0].files[0]);
+		data.append( 'confirmNote', $("textarea#confirmNote").val());
+		data.append( 'paymentMethod', "Chuyển khoản");
+		data.append( 'confirmPayload', null);
+		$.ajax({
+			url: "/o/rest/v2/dossiers/${(dossierId)!}/payments/" + referenceUid + "/confirm",
+			dataType : "json",
+			type: "PUT",
+			processData: false,
+			contentType: false,
+			cache: false,
+			headers: {
+				"groupId": ${groupId}
+			},
+			data: data,
+			success: function(result){
+				notification.show({
+					message: "Yêu cầu được thực hiện thành công"
+				}, "success");
+			},
+			error: function(result){
+				notification.show({
+					message: "Thực hiện không thành công, xin vui lòng thử lại"
+				}, "error")
+			}
+		});
+	});
+
+	var stateDisplayImgPayment = false;
+	$("#dossier-payment-confirm").click(function () {
 		var referenceUid = $(this).attr("data-pk");
-		if(referenceUid){
-
-			var data = new FormData();
-
-			data.append( 'file', $("#filePayment")[0].files[0]);
-			data.append( 'confirmNote', $("textarea#confirmNote").val());
-			data.append( 'paymentMethod', "Chuyển khoản");
-			data.append( 'confirmPayload', null);
-			$.ajax({
-				url : "${api.server}/dossiers/${dossierId}/payments/"+referenceUid+"/confirm",
-				dataType : "json",
-				type : "PUT",
-				headers : {"groupId": ${groupId}},
-				processData: false,
-				contentType: false,
-				cache: false,
-				data : data,
-				success : function(result){
-					notification.show({
-						message: "Yêu cầu được thực hiện thành công"
-					}, "success");
-					$("#dossier-payment-confirm").prop("disabled",true);
-				},
-				error :  function(result){
-					notification.show({
-						message: "Thực hiện không thành công, xin vui lòng thử lại"
-					}, "error");
-				}
-
-			});
+		stateDisplayImgPayment = !stateDisplayImgPayment;
+		if (stateDisplayImgPayment) {
+			$("#btn-payment-accept-dossier").show();
+			$("#display_upload_img_payment").show();
+		} else {
+			$("#btn-payment-accept-dossier").hide();
+			$("#display_upload_img_payment").hide();
 		}
+		$(".btn-payment").addClass('btn-border-color');
+		$(this).removeClass('btn-border-color');
 	});
 
 	$("#dossier-payment-viewpdf").click(function(){
 		var referenceUid = $(this).attr("data-pk");
+		$(".btn-payment").addClass('btn-border-color');
+		$(this).removeClass('btn-border-color');
 		if(referenceUid){
-			$.ajax({
-				url : "${api.server}/dossiers/${dossierId}/payments/"+referenceUid+"/invoicefile",
-				dataType : "json",
-				type : "GET",
-				headers : {"groupId": ${groupId}},
-				responseType: 'blob',
-				data : {
-
-				},
-				success : function(result){
-					var urlblob = window.URL.createObjectURL(response);
-					window.open(urlblob, '_blank');
-				},
-				error :  function(result){
-					
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(){
+				if (this.readyState == 4 && this.status == 200){
+					handler(this.response);
+					// console.log(this.response, typeof this.response);
+					var url = window.URL || window.webkitURL;
+					var urlSrc = url.createObjectURL(this.response);
+					window.open(urlSrc, '_blank');
 				}
-
-			});
+			}
+			xhr.open('GET', "${api.server}/dossiers/${dossierId}/payments/" + referenceUid + "/invoicefile/preview");
+			xhr.responseType = 'blob';
+			xhr.send();
 		}
 	});
 

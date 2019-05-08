@@ -282,13 +282,13 @@
 
 		<td class="" style="width: 23%">
 			# 
-			if(applicantNote){
+			if (applicantNote) {
 				var applicantNotes = applicantNote.split("<br>");
 				var strResult = "";
-				for(var i=0; i< applicantNotes.length; i++){
-					if(applicantNotes[i].startsWith("DN")){
+				for (var i=0; i< applicantNotes.length; i++) {
+					if (applicantNotes[i].startsWith("DN")) {
 						applicantNotes[i] = "<span class='text-light-blue'>"+applicantNotes[i]+"</span>"+"<br>";
-					}else {
+					} else {
 						applicantNotes[i] = "<span class='red'>"+applicantNotes[i]+"</span>"+"<br>";
 					}
 					strResult += applicantNotes[i];
@@ -312,7 +312,7 @@
 
 
 			#
-			if(dossierStatus === "done" && dossierSubStatus === "" && statusReg !== 3){
+			if (dossierStatus === "done" && dossierSubStatus === "" && statusReg !== 3) {
 			#
 				<button type="button" class="btn-link no-border PT10 sendAdd" data-pk="#:dossierId#">
 					<i class="fa fa-paper-plane" aria-hidden="true"></i>
@@ -329,7 +329,7 @@
 
 
 			#
-			if(dossierStatus == "waiting" && !cancellingDate && !endorsementDate && !correctingDate){
+			if (dossierStatus == "waiting" && !cancellingDate && !endorsementDate && !correctingDate) {
 			#
 
 				<button type="button" class="btn-link no-border PT10 resCancelling" data-pk="#:dossierId#">
@@ -340,9 +340,35 @@
 			#
 			}
 			#
+
+			#
+			if (dossierStatus == "expired") {
+			#
+
+				<button type="button" class="btn-link no-border PT10 resExpired" data-pk="#:dossierId#">
+					<i class="fa fa-stop" aria-hidden="true"></i>
+					Thông báo dừng
+				</button></br>
+
+			#
+			}
+			#
+
+			#
+			if (dossierStatus == "extending") {
+			#
+
+				<button type="button" class="btn-link no-border PT10 resExtending" data-pk="#:dossierId#">
+					<i class="fa fa-arrows" aria-hidden="true"></i>
+					Mở rộng hiệu lực
+				</button></br>
+
+			#
+			}
+			#
 			
 			<#--  -->
-			#if(dossierStatus == "receiving" && !cancellingDate && !endorsementDate && !cancellingDate){#
+			#if (dossierStatus == "receiving" && !cancellingDate && !endorsementDate && !cancellingDate) {#
 			<button type="button" class="btn-link no-border PT10 resCancelling" data-pk="#:dossierId#">
 				<i class="fa fa-trash-o" aria-hidden="true"></i>
 				Yêu cầu hủy

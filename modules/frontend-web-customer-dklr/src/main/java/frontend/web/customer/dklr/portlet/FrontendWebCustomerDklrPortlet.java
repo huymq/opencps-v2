@@ -114,14 +114,18 @@ public class FrontendWebCustomerDklrPortlet extends FreeMarkerPortlet {
 		String dossierPartNo = ParamUtil.getString(renderRequest, "dossierPartNo");
 		
 		String lockState = ParamUtil.getString(renderRequest, "lockState");
+		
+		String productId = ParamUtil.getString(renderRequest, "productId");
 
 		String dossierTemplateNo = ParamUtil.getString(renderRequest, "dossierTemplateNo");
 
 		String resCancelling = ParamUtil.getString(renderRequest, "resCancelling");
 		String sendAdd = ParamUtil.getString(renderRequest, "sendAdd");
 		String sendReissue = ParamUtil.getString(renderRequest, "sendReissue");
+		String resExpired = ParamUtil.getString(renderRequest, "resExpired");
+		String resExtending = ParamUtil.getString(renderRequest, "resExtending");
 
-		String lblApplicantNote = getLabelApplicantNote(resCancelling, sendAdd, sendReissue);
+		String lblApplicantNote = getLabelApplicantNote(resCancelling, sendAdd, sendReissue, resExtending, resExpired);
 
 		String dossierUUid = ParamUtil.getString(renderRequest, "dossierUUid");
 
@@ -145,10 +149,13 @@ public class FrontendWebCustomerDklrPortlet extends FreeMarkerPortlet {
 		renderRequest.setAttribute("applicant", applicantObj);
 		renderRequest.setAttribute("dossierTemplateId", dossierTemplateId);
 		renderRequest.setAttribute("dossierId", dossierId);
+		renderRequest.setAttribute("productId", productId);
 		renderRequest.setAttribute("dossierPartNo", dossierPartNo);
 		renderRequest.setAttribute("dossierTemplateNo", dossierTemplateNo);
 		renderRequest.setAttribute("constants", constantsObj);
 		renderRequest.setAttribute("resCancelling", resCancelling);
+		renderRequest.setAttribute("resExtending", resExtending);
+		renderRequest.setAttribute("resExpired", resExpired);
 		renderRequest.setAttribute("sendAdd", sendAdd);
 		renderRequest.setAttribute("sendReissue", sendReissue);
 		renderRequest.setAttribute("lblApplicantNote", lblApplicantNote);
@@ -240,9 +247,15 @@ public class FrontendWebCustomerDklrPortlet extends FreeMarkerPortlet {
 
 		JSONObject dossierExpired = JSONFactoryUtil.createJSONObject();
 		dossierExpired.put("text", "Hồ sơ đến hạn XN hiệu lực");
-		dossierExpired.put("value", "DONE_4");
-		dossierExpired.put("valueSub", "DONE_4");
+		dossierExpired.put("value", "EXPIRED");
+		dossierExpired.put("valueSub", "EXPIRED");
 		dossierStatus.add(dossierExpired);
+		
+		JSONObject dossierEndMake = JSONFactoryUtil.createJSONObject();
+		dossierEndMake.put("text", "DS sản phẩm dừng sản xuất");
+		dossierEndMake.put("value", "???");
+		dossierEndMake.put("valueSub", "???");
+		dossierStatus.add(dossierEndMake);
 
 		JSONObject dossierAll = JSONFactoryUtil.createJSONObject();
 		dossierAll.put("text", "Tất cả hồ sơ");
@@ -256,7 +269,7 @@ public class FrontendWebCustomerDklrPortlet extends FreeMarkerPortlet {
 
 	}
 
-	private String getLabelApplicantNote(String resCancelling, String sendAdd, String sendReissue) {
+	private String getLabelApplicantNote(String resCancelling, String sendAdd, String sendReissue, String resExtending, String resExpired) {
 
 		if (resCancelling != null && resCancelling != "") {
 			return "Thông báo yêu cầu huỷ";
@@ -268,6 +281,14 @@ public class FrontendWebCustomerDklrPortlet extends FreeMarkerPortlet {
 
 		if (sendReissue != null && sendReissue != "") {
 			return "Thông báo yêu cầu cấp lại";
+		}
+		
+		if (resExtending != null && resExtending != "") {
+			return "Thông báo mở rộng hiệu lực";
+		}
+		
+		if (resExpired != null && resExpired != "") {
+			return "Thông báo dừng";
 		}
 
 		return "Ghi chú";
@@ -425,8 +446,24 @@ public class FrontendWebCustomerDklrPortlet extends FreeMarkerPortlet {
 
 		urlObject.put("notificationPaying", customerNotificationPayingURL);
 		
-		
+		PortletURL customerDossierListBill = renderResponse.createRenderURL();
+		customerDossierListBill.setWindowState(LiferayWindowState.EXCLUSIVE);
+		customerDossierListBill.setParameter("mvcPath", "/templates/customer_dossier_list_bill.ftl");
 
+		urlObject.put("customer_dossier_list_bill", customerDossierListBill);
+
+		PortletURL customerProductStop = renderResponse.createRenderURL();
+		customerProductStop.setWindowState(LiferayWindowState.EXCLUSIVE);
+		customerProductStop.setParameter("mvcPath", "/templates/customer_dossier_list_product_stop.ftl");
+
+		urlObject.put("customer_dossier_list_product_stop", customerProductStop);
+
+		PortletURL customerProductStopDetail = renderResponse.createRenderURL();
+		customerProductStopDetail.setWindowState(LiferayWindowState.EXCLUSIVE);
+		customerProductStopDetail.setParameter("mvcPath", "/templates/customer_dossier_product_stop_detail.ftl");
+
+		urlObject.put("customer_dossier_product_stop_detail", customerProductStopDetail);
+		
 		return urlObject;
 	}
 

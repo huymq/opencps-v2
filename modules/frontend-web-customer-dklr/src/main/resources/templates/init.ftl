@@ -32,6 +32,8 @@
 	<#assign constants = (Request.constants)!>
 	<#assign userInfo = (Request.userInfo)!>
 	<#assign resCancelling = (Request.resCancelling)!>
+	<#assign resExtending = (Request.resExtending)!>
+	<#assign resExpired = (Request.resExpired)!>
 	<#assign sendAdd = (Request.sendAdd)!>
 	<#assign sendReissue = (Request.sendReissue)!>
 	<#assign lblApplicantNote = (Request.lblApplicantNote)!>

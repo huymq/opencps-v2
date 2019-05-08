@@ -158,7 +158,6 @@
 								</div>
 								<div class="col-sm-10">
 									<span data-bind="text:wardName" required></span>
-
 								</div>
 							</div>
 
@@ -377,13 +376,13 @@
 					<div id="unpaid">
 						<div class="row MB10">
 							<div class="col-sm-12">
-								<button class="btn btn-sm btn-border-color MR10 text-light-blue" id="dossier-payment-online" data-bind="attr : {data-pk : referenceUidPayment}">Thanh toán trực tuyến</button>
-								<button class="btn btn-sm btn-border-color MR10 text-light-blue" data-bind="attr : {data-pk : referenceUidPayment}" id="dossier-payment-confirm">Thông báo đã nộp chuyển khoản</button>
-								<button class="btn btn-sm btn-border-color text-light-blue" id="dossier-payment-viewpdf" data-bind="attr : {data-pk : referenceUidPayment}">Xem phiếu thanh toán</button>
+								<button class="btn btn-sm btn-border-color MR10 text-light-blue btn-payment" id="dossier-payment-online" data-bind="attr : {data-pk : referenceUidPayment}">Thanh toán trực tuyến</button>
+								<button class="btn btn-sm btn-border-color MR10 text-light-blue btn-payment" data-bind="attr : {data-pk : referenceUidPayment}" id="dossier-payment-confirm">Thông báo đã nộp chuyển khoản</button>
+								<button class="btn btn-sm btn-border-color text-light-blue btn-payment" id="dossier-payment-viewpdf" data-bind="attr : {data-pk : referenceUidPayment}">Xem phiếu thanh toán</button>
 							</div>
 						</div>
 
-						<div class="row MB20 MT20" data-bind="value: isPay">
+						<div class="row MB20 MT20" data-bind="value: isPay" style="display: none;" id="display_upload_img_payment">
 							<div class="col-sm-12 text-center">
 								<div class="row">
 									<div class="col-sm-4">
@@ -620,6 +619,8 @@
 </div>
 <div class="button-row MT20">
 
+
+
 	<button class="btn btn-active" id="btn-back-dossier" type="button"><i class="fa fa-reply" aria-hidden="true"></i> Quay lại</button>
 	<#if sendReissue?has_content >
 
@@ -633,6 +634,14 @@
 
 	<a href="javascript:;" class="btn btn-active" id="btn-rescancelling-dossier" data-bind="value : cancellingDate"><i class="fa fa-paper-plane" ></i> Yêu cầu hủy</a>
 
+	<#elseif resExtending?has_content >
+
+	<a href="javascript:;" class="btn btn-active" id="btn-resextending-dossier"><i class="fa fa-paper-plane" ></i> Mở rộng hiệu lực </a>
+
+	<#elseif resExpired?has_content >
+
+	<a href="javascript:;" class="btn btn-active" id="btn-resexpired-dossier"><i class="fa fa-paper-plane" ></i> Thông báo dừng</a>
+
 	<#elseif dossier.submitting?has_content &&  dossier.submitting != true && dossier.dossierStatus?has_content && dossier.dossierStatus == "waiting">
 
 	<button class="btn btn-active" id="btn-submit-dossier" data-bind="value : lockState" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Đang xử lý..."><i class="fa fa-paper-plane" ></i> Nộp hồ sơ</button>
@@ -644,13 +653,13 @@
 	<#else>
 
 	</#if>
-
-
+	<button class="btn btn-active" style="display: none;" id="btn-payment-accept-dossier" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Đang xử lý..."><i class="fa fa-paper-plane" ></i> Xác nhận</button>
 </div>
 </div>
 
 <script type="text/javascript">
 
+	var stateDisplayImgPayment = false;
 
 	$("#btn-submit-dossier").button('loading');
 
@@ -700,6 +709,8 @@
 				success : function(result){
 					if(result.data){
 						resultModel = result.data[0];
+					} else {
+						$("#btn-payment-accept-dossier").remove();
 					}
 				},
 				error :  function(result){
@@ -887,7 +898,7 @@
 								}
 								return "";
 							},
-							paymentApproveDatetime : function(e){
+							paymentApproveDatetime: function (e) {
 								if(this.get('paymentDossier')){
 									if(this.get('paymentDossier').approveDatetime){
 										return this.get('paymentDossier').approveDatetime;
@@ -895,7 +906,7 @@
 								}
 								return "---";
 							},
-							paymentConfirmNote : function(e){
+							paymentConfirmNote: function (e) {
 								if(this.get('paymentDossier')){
 									if(this.get('paymentDossier').confirmNote){
 										return this.get('paymentDossier').confirmNote;
@@ -903,15 +914,16 @@
 								}
 								return "";
 							},
-							referenceUidPayment : function(e){
+							referenceUidPayment: function (e) {
 								if(this.get('paymentDossier')){
 									if(this.get('paymentDossier').referenceUid){
 										return this.get('paymentDossier').referenceUid;
+										$("#btn-payment-accept-dossier").attr("referenceUid", this.get('paymentDossier').referenceUid);
 									}
 								}
 								return "";
 							},
-							isPay : function(){
+							isPay: function () {
 								if(this.get('paymentDossier')){
 									if(this.get('paymentDossier').paymentStatus !== 2){
 										$("#unpaid").show();
@@ -1718,6 +1730,39 @@ $(document).on("click",".saveFormAlpaca",function(event){
 
 });
 
+$("#btn-payment-accept-dossier").click(function (event) {
+	event.preventDefault();
+	var referenceUid = $(this).attr('referenceUid');
+	var data = new FormData();
+
+	data.append( 'file', $("#filePayment")[0].files[0]);
+	data.append( 'confirmNote', $("textarea#confirmNote").val());
+	data.append( 'paymentMethod', "Chuyển khoản");
+	data.append( 'confirmPayload', null);
+	$.ajax({
+		url: "/o/rest/v2/dossiers/${(dossierId)!}/payments/" + referenceUid + "/confirm",
+		dataType : "json",
+		type: "PUT",
+		processData: false,
+		contentType: false,
+		cache: false,
+		headers: {
+			"groupId": ${groupId}
+		},
+		data: data,
+		success: function(result){
+			notification.show({
+				message: "Yêu cầu được thực hiện thành công"
+			}, "success");
+		},
+		error: function(result){
+			notification.show({
+				message: "Thực hiện không thành công, xin vui lòng thử lại"
+			}, "error")
+		}
+	});
+});
+
 $("#btn-sendReissue-dossier").click(function(){
 	var cf = fnConfirm("Thông báo",
 		"Bạn có muốn gửi yêu cầu cấp lại?",
@@ -1743,12 +1788,13 @@ var createActionDossier = function(dossierId, callBackSubmit){
 			type : "POST",
 			headers: {
 				"groupId": ${groupId},
-				Accept : "application/json"
+				Accept: "application/json"
 			},
 			data : {
 				actionCode  : 1100,
 				actionNote :  $("textarea#applicantNote").val(),
-				actionUser: '${(userInfo.actionUser)!}'
+				actionUser: '${(userInfo.actionUser)!}',
+				payment: ""
 			},
 			success : function(result){
 				callBackSubmit();
@@ -1876,6 +1922,7 @@ $("#btn-cancelling-header").click(function(){
 });
 
 
+
 $("#btn-rescancelling-dossier").click(function(){
 	var cf = fnConfirm("Thông báo",
 		"Bạn có muốn gửi yêu cầu hủy?",
@@ -1890,6 +1937,29 @@ $("#btn-rescancelling-dossier").click(function(){
 
 	cf.open();
 
+});
+
+$("#btn-resextending-dossier").click(function () {
+	var cf = fnConfirm("Thông báo",
+		"Bạn có muốn gửi yêu cầu hủy?",
+		"OK", "Thoát",
+		function () {
+
+			fnExtending(${(dossierId)!});
+		}, function () {
+		});
+	cf.open();
+});
+
+$("#btn-resexpired-dossier").click(function () {
+	var cf = fnConfirm("Thông báo",
+		"Bạn có muốn gửi yêu cầu hủy?",
+		"OK", "Thoát",
+		function () {
+			fnExpired(${(dossierId)!});
+		}, function () {
+		});
+	cf.open();
 });
 
 var fnCancelling = function(dossierId){
@@ -1945,6 +2015,85 @@ var fnCancelling = function(dossierId){
 	}
 
 }
+
+var fnExpired = function(dossierId){
+	kendo.ui.progress($("#mainType2"), true);
+	$("#btn-resexpired-dossier,#btn-resexpired-dossier-header").hide();
+	$.ajax({
+		url : "${api.server}/dossiers/" + dossierId + "/expired",
+		dataType : "json",
+		type : "POST",
+		headers : {
+			"groupId" : ${groupId},
+			"Accept" : "application/json"
+		},
+		processData: false,
+		contentType: 'text/plain',
+		data : $("textarea#applicantNote").val(),
+		success : function(result){
+			kendo.ui.progress($("#mainType2"), false);
+			notification.show({
+				message: "Yêu cầu được thực hiện thành công!"
+			}, "success");
+
+			$("#btn-resexpired-dossier,#btn-resexpired-dossier-header").hide();
+
+			try{
+				manageDossier.navigate("/" + statusRouteTem.status);
+				$('html,body').scrollTop(0);
+			}catch(e){
+
+			}
+		},
+		error : function(result){
+			kendo.ui.progress($("#mainType2"), false);
+			$("#btn-resexpired-dossier,#btn-resexpired-dossier-header").hide();
+			notification.show({
+				message: "Thực hiện không thành công, xin vui lòng thử lại!"
+			}, "error");
+		}
+	});
+}
+
+var fnExtending = function (dossierId) {
+	kendo.ui.progress($("#mainType2"), true);
+	$("#btn-resextending-dossier,#btn-resextending-dossier-header").hide();
+	$.ajax({
+		url : "${api.server}/dossiers/" + dossierId + "/expired",
+		dataType : "json",
+		type : "POST",
+		headers : {
+			"groupId" : ${groupId},
+			"Accept" : "application/json"
+		},
+		processData: false,
+		contentType: 'text/plain',
+		data : $("textarea#applicantNote").val(),
+		success : function(result){
+			kendo.ui.progress($("#mainType2"), false);
+			notification.show({
+				message: "Yêu cầu được thực hiện thành công!"
+			}, "success");
+
+			$("#btn-resextending-dossier,#btn-resextending-dossier-header").hide();
+
+			try{
+				manageDossier.navigate("/" + statusRouteTem.status);
+				$('html,body').scrollTop(0);
+			}catch(e){
+
+			}
+		},
+		error : function(result){
+			kendo.ui.progress($("#mainType2"), false);
+			$("#btn-resextending-dossier,#btn-resextending-dossier-header").show();
+			notification.show({
+				message: "Thực hiện không thành công, xin vui lòng thử lại!"
+			}, "error");
+		}
+	});
+}
+
 
 
 $("#btn-back-dossier").click(function(){
@@ -2225,10 +2374,12 @@ window.onhashchange = function(event) {
 }
 
 $("#dossier-payment-online").click(function(){
+		$(".btn-payment").addClass('btn-border-color');
+		$(this).removeClass('btn-border-color');
 		var referenceUid = $(this).attr("data-pk");
 		if(referenceUid){
 			$.ajax({
-				url : "${api.server}/dossiers/${dossierId}/payments/"+referenceUid+"/epaymentprofile",
+				url : "${api.server}/dossiers/${dossierId}/payments/" + referenceUid + "/epaymentprofile",
 				dataType : "json",
 				type : "GET",
 				headers : {"groupId": ${groupId}},
@@ -2247,39 +2398,18 @@ $("#dossier-payment-online").click(function(){
 	});
 
 
-$("#dossier-payment-confirm").click(function(){
+$("#dossier-payment-confirm").click(function () {
 	var referenceUid = $(this).attr("data-pk");
-	if(referenceUid){
-
-		var data = new FormData();
-
-		data.append( 'file', $("#filePayment")[0].files[0]);
-		data.append( 'confirmNote', $("textarea#confirmNote").val());
-		data.append( 'paymentMethod', "Chuyển khoản");
-		data.append( 'confirmPayload', null);
-		$.ajax({
-			url : "${api.server}/dossiers/${dossierId}/payments/"+referenceUid+"/confirm",
-			dataType : "json",
-			type : "PUT",
-			headers : {"groupId": ${groupId}},
-			processData: false,
-			contentType: false,
-			cache: false,
-			data : data,
-			success : function(result){
-				notification.show({
-					message: "Yêu cầu được thực hiện thành công"
-				}, "success");
-				$("#dossier-payment-confirm").prop("disabled",true);
-			},
-			error :  function(result){
-				notification.show({
-					message: "Thực hiện không thành công, xin vui lòng thử lại"
-				}, "error");
-			}
-
-		});
+	stateDisplayImgPayment = !stateDisplayImgPayment;
+	if (stateDisplayImgPayment) {
+		$("#btn-payment-accept-dossier").show();
+		$("#display_upload_img_payment").show();
+	} else {
+		$("#btn-payment-accept-dossier").hide();
+		$("#display_upload_img_payment").hide();
 	}
+	$(".btn-payment").addClass('btn-border-color');
+	$(this).removeClass('btn-border-color');
 });
 
 $("#filePayment").change(function(event){
@@ -2300,9 +2430,11 @@ $("#filePayment").change(function(event){
 
 $("#dossier-payment-viewpdf").click(function(){
 	var referenceUid = $(this).attr("data-pk");
+	$(".btn-payment").addClass('btn-border-color');
+	$(this).removeClass('btn-border-color');
 	if(referenceUid){
 		$.ajax({
-			url : "${api.server}/dossiers/${dossierId}/payments/"+referenceUid+"/invoicefile",
+			url : "${api.server}/dossiers/${dossierId}/payments/" + referenceUid + "/invoicefile/preview",
 			dataType : "json",
 			type : "GET",
 			headers : {"groupId": ${groupId}},
@@ -2317,7 +2449,6 @@ $("#dossier-payment-viewpdf").click(function(){
 			error :  function(result){
 
 			}
-
 		});
 	}
 });

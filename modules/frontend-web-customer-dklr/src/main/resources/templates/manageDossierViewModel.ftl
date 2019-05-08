@@ -57,7 +57,7 @@
 				"govAgencyCode":$("#govAgency").val(),
 				"state":"cancelling",
 			});
-		}else if(id == "correcting"){
+		} else if(id == "correcting"){
 			dataSourceProfile.read({
 				"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 				"serviceInfo" : $("#serviceInfo").val(),
@@ -66,7 +66,7 @@
 				"statusReg" : 3
 				
 			});
-		}else if (id == "endorsement") {
+		} else if (id == "endorsement") {
 			dataSourceProfile.read({
 				"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 				"serviceInfo" : $("#serviceInfo").val(),
@@ -74,7 +74,7 @@
 				"state" : "endorsement",
 				"statusReg" : 3
 			});
-		}else if (id == "done") {
+		} else if (id == "done") {
 			dataSourceProfile.read({
 				"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 				"serviceInfo" : $("#serviceInfo").val(),
@@ -82,7 +82,16 @@
 				"status" : "done",
 				"notStatusReg" : 3
 			});
-		}else {
+		} else if (id == "EXPIRED") {
+			dataSourceProfile.read({
+				"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
+				"serviceInfo" : $("#serviceInfo").val(),
+				"govAgencyCode" : $("#govAgency").val(),
+				"status" : "EXPIRED",
+				"notStatusReg" : 3,
+				"url": "/o/rest/v2/dossiers"
+			});
+		} else {
 			dataSourceProfile.read({
 				"dossierNo" : $("#dossier-emp-nav-selectbox-by-dossierNo").val(),
 				"serviceInfo" : $("#serviceInfo").val(),
@@ -268,6 +277,10 @@
 	var dataSourceProfile = new kendo.data.DataSource({
 		transport:{
 			read:function(options){
+				var url = "${api.server}/dossiers";
+				if (options.data && options.data.url) {
+					url = options.data.url;
+				}
 				$.ajax({
 					url:"${api.server}/dossiers",
 					dataType:"json",
@@ -708,8 +721,8 @@
 			});
 		});
 	};
-	var copyProfile = function(){
-		$(".copyProfile").click(function(e){
+	var copyProfile = function () {
+		$(".copyProfile").click(function (e) {
 			e.stopPropagation();
 			var cf = confirm("Bạn có muốn sao chép hồ sơ!");
 			var id = $(this).attr("data-Pk");
@@ -719,31 +732,45 @@
 					dataType:"json",
 					type:"POST",
 					headers: {"groupId": ${groupId}},
-					success:function(res){
-						manageDossier.navigate("/taohosomoi/nophoso/"+res.dossierId);
+					success: function (res) {
+						manageDossier.navigate("/taohosomoi/nophoso/" + res.dossierId);
 					},
-					error:function(res){
+					error: function (res) {
 
 					}
 				})
 			}
 		})
 	};
-	var resCancelling = function(){
-		$(".resCancelling").click(function(e){
+	var resExpired = function () {
+		$(".resExpired").click(function (e) {
+			e.stopPropagation();
+			var id = $(this).attr("data-Pk");
+			manageDossier.navigate("/dossiers/" + id + "/thong-bao-dung");
+		});
+	};
+	var resExtending = function () {
+		$(".resExtending").click(function (e) {
+			e.stopPropagation();
+			var id = $(this).attr("data-Pk");
+			manageDossier.navigate("/dossiers/" + id + "/mo-rong-hieu-luc");
+		});
+	};
+	var resCancelling = function () {
+		$(".resCancelling").click(function (e) {
 			e.stopPropagation();
 			var id = $(this).attr("data-Pk");
 			manageDossier.navigate("/dossiers/"+id+"/yeucauhuy");
 		});
 	};
-	var sendAdd = function(){
-		$(".sendAdd").click(function(e){
+	var sendAdd = function () {
+		$(".sendAdd").click(function (e) {
 			e.stopPropagation();
 			var id = $(this).attr("data-Pk");
 			manageDossier.navigate("/dossiers/"+id+"/guibosung");
 		});
 	};
-	var counter = function(){
+	var counter = function () {
 		try {
 			if ($("#listViewDossier").data("kendoListView").dataSource.total()!=0) {
 				var count = $("#listViewDossier").data("kendoListView").dataSource.currentRangeStart();
@@ -756,7 +783,7 @@
 					$(value).html(arrCount[index])
 				})
 			}		
-		}catch(e){
+		} catch (e) {
 			return;
 		}
 	};
@@ -768,15 +795,15 @@
 		dataSourceDeliverables : dataSourceDeliverables,
 
 		filterKey: modelPanel.eventLookup,
-		changePageSize: function(){
+		changePageSize: function () {
 			dataSourceProfile.pageSize(parseInt($("#itemPpage").val()));
 			$("#pagerProfile .k-link").css({"border-radius":"0","border-color":"#ddd","height":"27px","margin-right":"0px"});
 		},
-		changePageSizeDeliverables : function(){
+		changePageSizeDeliverables: function () {
 			dataSourceDeliverables.pageSize(parseInt($("#itemPpageDeliverables").val()));
 			$("#pagerDeliverables .k-link").css({"border-radius":"0","border-color":"#ddd","height":"27px","margin-right":"0px"});
 		},
-		loadDossierDetail:function(e){
+		loadDossierDetail: function (e) {
 			e.preventDefault();
 			var dossierItemStatus = e.data.dossierStatus;
 			var cancellingDateDossier = e.data.cancellingDate;
@@ -785,7 +812,7 @@
 			manageDossier.navigate("/"+dossierItemStatus+"/dossiers/"+id);
 
 		},
-		loadDeliverableDetail : function(e){
+		loadDeliverableDetail: function (e) {
 
 			var btn = e.currentTarget;
 			var dataPK = $(btn).attr('data-pk');
@@ -795,17 +822,17 @@
 				url : "${api.server}/dossiers/number/headers"+dataPK,
 				dataType : "json",
 				headers: {"groupId": ${groupId}},
-				success: function(result){
+				success: function (result) {
 					var dossierId = result.dossierId;
 					manageDossier.navigate("/done/dossiers/"+dossierId);
 				},
-				error: function(result){
+				error: function (result) {
 
 				}
 			});	
 
 		},
-		viewDeliverableFile : function(e){
+		viewDeliverableFile: function (e) {
 			e.preventDefault();
 
 			var btn = e.currentTarget;
