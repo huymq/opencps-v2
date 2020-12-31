@@ -127,15 +127,21 @@ public class MultipartUtility {
 		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 		writer.append(LINE_FEED);
 		writer.flush();
-
-		FileInputStream inputStream = new FileInputStream(uploadFile);
-		byte[] buffer = new byte[4096];
-		int bytesRead = -1;
-		while ((bytesRead = inputStream.read(buffer)) != -1) {
-			outputStream.write(buffer, 0, bytesRead);
+		
+		FileInputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(uploadFile);
+			byte[] buffer = new byte[4096];
+			int bytesRead = -1;
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				outputStream.write(buffer, 0, bytesRead);
+			}
+			outputStream.flush();
+		} finally {
+			if(inputStream != null) {
+				inputStream.close();
+			}
 		}
-		outputStream.flush();
-		inputStream.close();
 
 		writer.append(LINE_FEED);
 		writer.flush();
@@ -169,17 +175,30 @@ public class MultipartUtility {
 		writer.close();
 
 		// checks server's status code first
-		int status = httpConn.getResponseCode();
-		if (status == HttpURLConnection.HTTP_OK) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				response.add(line);
+		BufferedReader reader = null;
+		try {
+			int status = httpConn.getResponseCode();
+			if (status == HttpURLConnection.HTTP_OK) {
+				reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+					response.add(line);
+				}
+			} else {
+				throw new IOException("Server returned non-OK status: " + status);
 			}
-			reader.close();
-			httpConn.disconnect();
-		} else {
-			throw new IOException("Server returned non-OK status: " + status);
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+			
+			if (outputStream != null) {
+				outputStream.close();
+			}
+	
+			if (httpConn != null) {
+				httpConn.disconnect();
+			}
 		}
 
 		return response;
