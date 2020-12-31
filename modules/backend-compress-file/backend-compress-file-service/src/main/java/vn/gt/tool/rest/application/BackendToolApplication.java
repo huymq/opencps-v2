@@ -44,12 +44,15 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import vn.gt.dao.model.CompressFileJob;
+import vn.gt.dao.model.PushStatisticsLog;
 import vn.gt.dao.service.CompressFileJobLocalServiceUtil;
+import vn.gt.dao.service.PushStatisticsLogLocalServiceUtil;
 import vn.gt.tool.context.provider.CompanyContextProvider;
 import vn.gt.tool.context.provider.LocaleContextProvider;
 import vn.gt.tool.context.provider.ServiceContextProvider;
 import vn.gt.tool.context.provider.UserContextProvider;
 import vn.gt.tool.util.CompressFileUtil;
+import vn.gt.tool.util.PushStatisticsUtil;
 
 /**
  * @author huymq
@@ -71,75 +74,136 @@ public class BackendToolApplication extends Application {
 		return singletons;
 	}
 	
-	@PUT
-	@Path("/dossier/{dossierId}")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response compressDossier(@Context HttpServletRequest request, @Context HttpHeaders header,
-			@Context Company company, @Context Locale locale, @Context User user,
-			@Context ServiceContext serviceContext,  @PathParam("dossierId") long dossierId) {
-		
-		String ok = "ok";
-		
-		try {
-			if(dossierId > 0) {
-				Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
-				
-				List<Dossier> listHoSo = new ArrayList<Dossier>();
-				listHoSo.add(dossier);
-				
-				doCompress(listHoSo);
-			}
-		} catch (Exception e) {
-			_log.error(e);
-			ok = "OH SHIT !";
-			return Response.status(500).entity(ok).build();
-		}
-		
-		return Response.status(200).entity(ok).build();
-		
-	}
-	
-	@POST
-	@Path("/dossiers")
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response compressDossier(@Context HttpServletRequest request, @Context HttpHeaders header,
-			@Context Company company, @Context Locale locale, @Context User user,
-			@Context ServiceContext serviceContext,  @FormParam(value="dossierIds") String dossierIds) {
-		
-		String ok = "ok";
-		
-		try {
-			long[] lDossierIds = StringUtil.split(dossierIds, ",", 0l);
-			List<Dossier> listHoSo = new ArrayList<Dossier>(); 
-			
-			for(long lDossierId : lDossierIds) {
-				if(lDossierId > 0) {
-					Dossier dossier = DossierLocalServiceUtil.fetchDossier(lDossierId);
-					
-					if(dossier != null) {
-						listHoSo.add(dossier);
-					}
-				}
-			}
-			
-			doCompress(listHoSo);
-		} catch (Exception e) {
-			_log.error(e);
-			ok = "OH SHIT !";
-			return Response.status(500).entity(ok).build();
-		}
-		
-		return Response.status(200).entity(ok).build();
-		
-	}
+//	@PUT
+//	@Path("/dossier/{dossierId}")
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+//	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response compressDossier(@Context HttpServletRequest request, @Context HttpHeaders header,
+//			@Context Company company, @Context Locale locale, @Context User user,
+//			@Context ServiceContext serviceContext,  @PathParam("dossierId") long dossierId) {
+//		
+//		String ok = "ok";
+//		
+//		try {
+//			if(dossierId > 0) {
+//				Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
+//				
+//				List<Dossier> listHoSo = new ArrayList<Dossier>();
+//				listHoSo.add(dossier);
+//				
+//				doCompress(listHoSo);
+//			}
+//		} catch (Exception e) {
+//			_log.error(e);
+//			ok = "OH SHIT !";
+//			return Response.status(500).entity(ok).build();
+//		}
+//		
+//		return Response.status(200).entity(ok).build();
+//		
+//	}
+//	
+//	@POST
+//	@Path("/dossiers")
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+//	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response compressDossier(@Context HttpServletRequest request, @Context HttpHeaders header,
+//			@Context Company company, @Context Locale locale, @Context User user,
+//			@Context ServiceContext serviceContext,  @FormParam(value="dossierIds") String dossierIds) {
+//		
+//		String ok = "ok";
+//		
+//		try {
+//			long[] lDossierIds = StringUtil.split(dossierIds, ",", 0l);
+//			List<Dossier> listHoSo = new ArrayList<Dossier>(); 
+//			
+//			for(long lDossierId : lDossierIds) {
+//				if(lDossierId > 0) {
+//					Dossier dossier = DossierLocalServiceUtil.fetchDossier(lDossierId);
+//					
+//					if(dossier != null) {
+//						listHoSo.add(dossier);
+//					}
+//				}
+//			}
+//			
+//			doCompress(listHoSo);
+//		} catch (Exception e) {
+//			_log.error(e);
+//			ok = "OH SHIT !";
+//			return Response.status(500).entity(ok).build();
+//		}
+//		
+//		return Response.status(200).entity(ok).build();
+//		
+//	}
+//	
+//	@PUT
+//	@Path("/{count}")
+//	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+//	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//	public Response compressList(@Context HttpServletRequest request, @Context HttpHeaders header,
+//			@Context Company company, @Context Locale locale, @Context User user,
+//			@Context ServiceContext serviceContext,  @PathParam("count") int count) {
+//		
+//		String ok = "ok";
+//		
+//		try {
+//			if(count == 0) {
+//				count = 100;
+//			}
+//			
+//			long lastedHoSoId = CompressFileJobLocalServiceUtil.getLastedHoSoId();
+//			
+//			DynamicQuery hosoQuery = DossierLocalServiceUtil.dynamicQuery();
+//			
+//			String[] trangThais = new String[]{TrangThaiHoSo.APPROVED,TrangThaiHoSo.CANCELED,TrangThaiHoSo.ENDED};
+//			
+//			hosoQuery.add(PropertyFactoryUtil.forName("groupId").eq(55301l));
+//			hosoQuery.add(PropertyFactoryUtil.forName("dossierStatus").in(trangThais));
+//			hosoQuery.add(PropertyFactoryUtil.forName("dossierId").gt(lastedHoSoId));
+//			hosoQuery.addOrder(OrderFactoryUtil.asc("dossierId"));
+//	
+//			
+//			List<Dossier> listHoSo = DossierLocalServiceUtil.dynamicQuery(hosoQuery, 0, count);
+//			
+//			doCompress(listHoSo);
+//		} catch (Exception e) {
+//			_log.error(e);
+//			ok = "OH SHIT !";
+//			return Response.status(500).entity(ok).build();
+//		}
+//		
+//		return Response.status(200).entity(ok).build();
+//		
+//	}
+//	
+//	private static void doCompress(List<Dossier> listHoSo) throws SystemException, PortalException, IOException, InterruptedException, TimeoutException {
+//		
+//		if(listHoSo != null && listHoSo.size() > 0) {
+//			CompressFileJob compressFileJob = CompressFileJobLocalServiceUtil.addJob(listHoSo);
+//			
+//			for(Dossier hoSo : listHoSo) {
+//				_log.info("CompressFile:" + listHoSo.size() + ": " + hoSo.getDossierTemplateNo() + ": " + hoSo.getReferenceUid() + ": " + hoSo.getDossierNo());
+//				
+//				List<DossierFile> listGiayToDinhKemHoSo = DossierFileLocalServiceUtil.getDossierFilesByDossierId(hoSo.getDossierId());
+//				
+//				for(DossierFile giayToDinhKemHoSo : listGiayToDinhKemHoSo) {
+//					if(giayToDinhKemHoSo.getDossierPartType() == 1) {
+//						CompressFileUtil.compressFile(hoSo.getDossierId(), giayToDinhKemHoSo.getFileEntryId());
+//					}
+//				}
+//			}
+//			
+//			CompressFileJobLocalServiceUtil.updateCompressFileJob(compressFileJob.getId());
+//		}
+//	}
 	
 	@PUT
 	@Path("/{count}")
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response compressList(@Context HttpServletRequest request, @Context HttpHeaders header,
+	public Response pushList(@Context HttpServletRequest request, @Context HttpHeaders header,
 			@Context Company company, @Context Locale locale, @Context User user,
 			@Context ServiceContext serviceContext,  @PathParam("count") int count) {
 		
@@ -150,21 +214,21 @@ public class BackendToolApplication extends Application {
 				count = 100;
 			}
 			
-			long lastedHoSoId = CompressFileJobLocalServiceUtil.getLastedHoSoId();
+			PushStatisticsLog lastedPushStatisticsLog = PushStatisticsLogLocalServiceUtil.getLasted();
 			
 			DynamicQuery hosoQuery = DossierLocalServiceUtil.dynamicQuery();
 			
-			String[] trangThais = new String[]{TrangThaiHoSo.APPROVED,TrangThaiHoSo.CANCELED,TrangThaiHoSo.ENDED};
-			
 			hosoQuery.add(PropertyFactoryUtil.forName("groupId").eq(55301l));
-			hosoQuery.add(PropertyFactoryUtil.forName("dossierStatus").in(trangThais));
-			hosoQuery.add(PropertyFactoryUtil.forName("dossierId").gt(lastedHoSoId));
-			hosoQuery.addOrder(OrderFactoryUtil.asc("dossierId"));
+			hosoQuery.add(PropertyFactoryUtil.forName("dossierStatus").eq(TrangThaiHoSo.APPROVED));
+			if(lastedPushStatisticsLog != null) {
+				hosoQuery.add(PropertyFactoryUtil.forName("finishDate").gt(lastedPushStatisticsLog.getFinishDate()));
+			}
+			hosoQuery.addOrder(OrderFactoryUtil.asc("finishDate"));
 	
 			
 			List<Dossier> listHoSo = DossierLocalServiceUtil.dynamicQuery(hosoQuery, 0, count);
 			
-			doCompress(listHoSo);
+			doPush(listHoSo);
 		} catch (Exception e) {
 			_log.error(e);
 			ok = "OH SHIT !";
@@ -175,24 +239,16 @@ public class BackendToolApplication extends Application {
 		
 	}
 	
-	private static void doCompress(List<Dossier> listHoSo) throws SystemException, PortalException, IOException, InterruptedException, TimeoutException {
+	private static void doPush(List<Dossier> listHoSo) throws SystemException, PortalException, IOException, InterruptedException, TimeoutException {
 		
 		if(listHoSo != null && listHoSo.size() > 0) {
-			CompressFileJob compressFileJob = CompressFileJobLocalServiceUtil.addJob(listHoSo);
-			
 			for(Dossier hoSo : listHoSo) {
-				_log.info("CompressFile:" + listHoSo.size() + ": " + hoSo.getDossierTemplateNo() + ": " + hoSo.getReferenceUid() + ": " + hoSo.getDossierNo());
+				_log.info("PushDossier:" + hoSo.getDossierId());
 				
-				List<DossierFile> listGiayToDinhKemHoSo = DossierFileLocalServiceUtil.getDossierFilesByDossierId(hoSo.getDossierId());
+				long newDossierId = PushStatisticsUtil.postDossier(hoSo);
 				
-				for(DossierFile giayToDinhKemHoSo : listGiayToDinhKemHoSo) {
-					if(giayToDinhKemHoSo.getDossierPartType() == 1) {
-						CompressFileUtil.compressFile(hoSo.getDossierId(), giayToDinhKemHoSo.getFileEntryId());
-					}
-				}
+				PushStatisticsLogLocalServiceUtil.addLog(hoSo.getDossierId(), newDossierId, hoSo.getFinishDate());
 			}
-			
-			CompressFileJobLocalServiceUtil.updateCompressFileJob(compressFileJob.getId());
 		}
 	}
 	

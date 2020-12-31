@@ -53,4 +53,30 @@
 			<finder-column name="fileEntryId" />
 		</finder>
 	</entity>
+	
+	<entity name="PushStatisticsLog" local-service="true" remote-service="false">
+
+		<!-- PK fields -->
+
+		<column name="id" type="long" primary="true" />
+
+		<column name="createDate" type="Date" />
+		<column name="dossierId" type="long" />
+		<column name="finishDate" type="Date" />
+		<column name="newDossierId" type="long" />
+		<column name="status" type="boolean" />
+		<column name="errorMsg" type="String" />
+
+		<!-- Order -->
+
+		<order by="desc">
+			<order-column name="finishDate" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="DossierId" return-type="PushStatisticsLog">
+			<finder-column name="dossierId" />
+		</finder>
+	</entity>
 </service-builder>

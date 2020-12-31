@@ -5,3 +5,9 @@ ConfigurationPath: /configuration
 Include-Resource: configuration=src/main/resources/configuration
 Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
+Include-Resource:\
+	@httpclient-4.3.1.jar,\
+	@httpmime-4.3.1.jar,\
+	@httpcore-4.3.1.jar,\
+	@commons-io-2.0.1.jar,\
+	@commons-codec-1.9.jar
